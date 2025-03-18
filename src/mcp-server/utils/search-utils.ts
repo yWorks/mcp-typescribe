@@ -3,8 +3,10 @@
  */
 
 import { TypeDocSymbol, SymbolInfo } from '../types/index.js';
-import { getKindName, getDescription } from './symbol-utils.js';
+import { getDescription } from './symbol-utils.js';
 import { isTypeReference } from './type-utils.js';
+import {getKindName} from "../utils.js";
+import {ReflectionKind} from "typedoc";
 
 /**
  * Searches for symbols by name.
@@ -18,7 +20,7 @@ import { isTypeReference } from './type-utils.js';
 export function searchSymbolsByName(
   query: string,
   symbols: TypeDocSymbol[],
-  kind?: string,
+  kind?: keyof ReflectionKind | "any",
   limit?: number
 ): TypeDocSymbol[] {
   const results: TypeDocSymbol[] = [];

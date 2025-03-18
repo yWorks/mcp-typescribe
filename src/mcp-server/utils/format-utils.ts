@@ -8,8 +8,9 @@ import {
   TypeHierarchy, 
   TypeDocSymbol
 } from '../types/index.js';
-import { getKindName, getDescription, getParentName } from './symbol-utils.js';
+import { getDescription, getParentName } from './symbol-utils.js';
 import { formatType } from './type-utils.js';
+import {getKindName} from "../utils.js";
 
 /**
  * Formats a symbol for LLM-friendly output.

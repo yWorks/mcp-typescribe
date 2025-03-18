@@ -2,44 +2,39 @@
  * Core TypeScript API handlers class.
  */
 
-import { ErrorCode, McpError } from '@modelcontextprotocol/sdk/types.js';
+import {ErrorCode, McpError} from '@modelcontextprotocol/sdk/types.js';
 import {
-  TypeDocSymbol,
-  TypeDocJson,
-  SymbolInfo,
-  ParameterInfo,
-  TypeHierarchy,
   ApiOverview,
-  BaseHandlerParams,
-  SearchSymbolsParams,
-  GetSymbolDetailsParams,
-  ListMembersParams,
-  GetParameterInfoParams,
   FindImplementationsParams,
-  SearchByReturnTypeParams,
-  SearchByDescriptionParams,
-  GetTypeHierarchyParams,
   FindUsagesParams,
+  GetParameterInfoParams,
+  GetSymbolDetailsParams,
+  GetTypeHierarchyParams,
+  ListMembersParams,
+  ParameterInfo,
+  SearchByDescriptionParams,
+  SearchByReturnTypeParams,
+  SearchSymbolsParams,
+  SymbolInfo,
+  TypeDocJson,
+  TypeDocSymbol,
+  TypeHierarchy,
 } from '../types/index.js';
 import {
-  getKindName,
-  getDescription,
-  createSymbolInfo,
-  getSymbolsByParams,
-  validateSymbolParams,
-  getParentName,
-  typeMatches,
-  isTypeReference,
-  formatSymbolForLLM,
-  formatParameterForLLM,
-  formatTypeHierarchyForLLM,
   createHandlerResponse,
-  searchSymbolsByName,
-  searchSymbolsByDescription,
   findSymbolsByReturnType,
-  hasReturnType,
   findTypeReferences,
+  formatParameterForLLM,
+  formatSymbolForLLM,
+  formatTypeHierarchyForLLM,
+  getDescription,
+  getSymbolsByParams,
+  searchSymbolsByDescription,
+  searchSymbolsByName,
+  validateSymbolParams,
 } from '../utils/index.js';
+import {getKindName} from "../utils.js";
+import {ReflectionKind} from "typedoc";
 
 /**
  * Class that provides handlers for TypeScript API queries.
@@ -142,7 +137,7 @@ export class TypeScriptApiHandlers {
    * @param limit - Optional result limit
    * @returns Array of matching symbols
    */
-  searchSymbols(query: string, kind?: string, limit?: number): SymbolInfo[] {
+  searchSymbols(query: string, kind?: keyof ReflectionKind | "any", limit?: number): SymbolInfo[] {
     const symbols = Array.from(this.symbolsById.values());
     const matchingSymbols = searchSymbolsByName(query, symbols, kind, limit);
     
@@ -264,8 +259,7 @@ export class TypeScriptApiHandlers {
     const matchingSymbols = findSymbolsByReturnType(typeName, symbols);
     
     return matchingSymbols.map(symbol => {
-      const info = formatSymbolForLLM(symbol, this.symbolsById);
-      return info;
+      return formatSymbolForLLM(symbol, this.symbolsById);
     });
   }
 

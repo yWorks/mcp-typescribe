@@ -3,43 +3,7 @@
  */
 
 import { TypeDocSymbol, SymbolInfo } from '../types/index.js';
-
-/**
- * Gets the name of a kind from its numeric value.
- * 
- * @param kind - The numeric kind value
- * @returns The kind name
- */
-export function getKindName(kind: number): SymbolKind {
-  switch (kind) {
-    case 0: return 'Global';
-    case 1: return 'Module';
-    case 2: return 'Namespace';
-    case 4: return 'Enum';
-    case 8: return 'EnumMember';
-    case 16: return 'Variable';
-    case 32: return 'Function';
-    case 64: return 'Class';
-    case 128: return 'Interface';
-    case 256: return 'Constructor';
-    case 512: return 'Property';
-    case 1024: return 'Method';
-    case 2048: return 'CallSignature';
-    case 4096: return 'IndexSignature';
-    case 8192: return 'ConstructorSignature';
-    case 16384: return 'Parameter';
-    case 32768: return 'TypeLiteral';
-    case 65536: return 'TypeParameter';
-    case 131072: return 'Accessor';
-    case 262144: return 'GetSignature';
-    case 524288: return 'SetSignature';
-    case 1048576: return 'TypeAlias';
-    case 2097152: return 'Reference';
-    default: return 'Unknown';
-  }
-}
-
-export type SymbolKind = 'Global' | 'Module' | 'Namespace' | 'Enum' | 'EnumMember' | 'Variable' | 'Function' | 'Class' | 'Interface' | 'Constructor' | 'Property' | 'Method' | 'CallSignature' | 'IndexSignature' | 'ConstructorSignature' | 'Parameter' | 'TypeLiteral' | 'TypeParameter' | 'Accessor' | 'GetSignature' | 'SetSignature' | 'TypeAlias' | 'Reference' | 'Unknown';
+import {getKindName} from "../utils.js";
 
 /**
  * Gets the description of a symbol from its comment.

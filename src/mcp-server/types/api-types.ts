@@ -3,6 +3,7 @@
  */
 
 import { TypeDocType } from './typedoc-types.js';
+import {ReflectionKind} from "typedoc";
 
 /**
  * Represents a simplified symbol for API responses.
@@ -11,7 +12,7 @@ import { TypeDocType } from './typedoc-types.js';
 export interface SymbolInfo {
   id?: number;
   name: string;
-  kind: string;
+  kind: keyof ReflectionKind | string;
   description: string;
   parentName?: string;
   inherited?: boolean;

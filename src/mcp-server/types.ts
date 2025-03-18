@@ -3,6 +3,30 @@
  */
 
 /**
+ * Represents a comment content item
+ */
+export interface CommentContent {
+  kind: string;
+  text: string;
+}
+
+/**
+ * Represents a comment block tag
+ */
+export interface CommentBlockTag {
+  tag: string;
+  content: CommentContent[];
+}
+
+/**
+ * Represents a TypeDoc comment structure
+ */
+export interface TypeDocComment {
+  summary?: CommentContent[];
+  blockTags?: CommentBlockTag[];
+}
+
+/**
  * Represents a TypeDoc symbol with its metadata.
  */
 export interface TypeDocSymbol {
@@ -18,19 +42,7 @@ export interface TypeDocSymbol {
     isStatic?: boolean;
     isExported?: boolean;
   };
-  comment?: {
-    summary?: Array<{
-      kind: string;
-      text: string;
-    }>;
-    blockTags?: Array<{
-      tag: string;
-      content: Array<{
-        kind: string;
-        text: string;
-      }>;
-    }>;
-  };
+  comment?: TypeDocComment;
   children?: TypeDocSymbol[];
   signatures?: TypeDocSignature[];
   type?: TypeDocType;
@@ -39,7 +51,6 @@ export interface TypeDocSymbol {
   defaultValue?: string;
   parentId?: number;
 }
-
 /**
  * Represents a TypeDoc function or method signature.
  */

@@ -2,7 +2,7 @@
  * Handler-related type definitions for the TypeScript API MCP server.
  */
 
-import { SymbolInfo, ParameterInfo, TypeHierarchy, ApiOverview } from './api-types.js';
+import {ReflectionKind} from "typedoc";
 
 /**
  * Base interface for handler parameters that can accept name, id, or arrays of either.
@@ -19,7 +19,7 @@ export interface BaseHandlerParams {
  */
 export interface SearchSymbolsParams {
   query: string;
-  kind?: string;
+  kind?: keyof ReflectionKind | "any";
   limit?: number;
 }
 
@@ -68,59 +68,3 @@ export interface GetTypeHierarchyParams extends BaseHandlerParams {}
  * Parameters for the find_usages handler.
  */
 export interface FindUsagesParams extends BaseHandlerParams {}
-
-/**
- * Base interface for handler responses.
- */
-export interface HandlerResponse<T> {
-  content: {
-    type: string;
-    text: string;
-  }[];
-  isError?: boolean;
-}
-
-/**
- * Response for the search_symbols handler.
- */
-export type SearchSymbolsResponse = HandlerResponse<SymbolInfo[]>;
-
-/**
- * Response for the get_symbol_details handler.
- */
-export type GetSymbolDetailsResponse = HandlerResponse<SymbolInfo>;
-
-/**
- * Response for the list_members handler.
- */
-export type ListMembersResponse = HandlerResponse<SymbolInfo[]>;
-
-/**
- * Response for the get_parameter_info handler.
- */
-export type GetParameterInfoResponse = HandlerResponse<ParameterInfo[]>;
-
-/**
- * Response for the find_implementations handler.
- */
-export type FindImplementationsResponse = HandlerResponse<SymbolInfo[]>;
-
-/**
- * Response for the search_by_return_type handler.
- */
-export type SearchByReturnTypeResponse = HandlerResponse<SymbolInfo[]>;
-
-/**
- * Response for the search_by_description handler.
- */
-export type SearchByDescriptionResponse = HandlerResponse<SymbolInfo[]>;
-
-/**
- * Response for the get_type_hierarchy handler.
- */
-export type GetTypeHierarchyResponse = HandlerResponse<TypeHierarchy>;
-
-/**
- * Response for the find_usages handler.
- */
-export type FindUsagesResponse = HandlerResponse<SymbolInfo[]>;
