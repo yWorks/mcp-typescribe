@@ -65,6 +65,22 @@ The server provides the following tools for querying the API:
 
 5. Connect an AI agent to the server to query the API
 
+   E.g. with cline in VSCode, specify the following MCP server in `cline_mcp_settings.json`:
+
+   ```json
+    {
+      "mcpServers": {
+        "typedoc": {
+          "command": "node",
+          "disabled": false,
+          "args":["path/to/typescript-mcp/dist/mcp-server/index.js"],
+          "autoApprove": []
+        }
+      }
+    }
+    ```
+
+
 ## Project Structure
 
 - `src/sample-api/`: A sample TypeScript API for testing
