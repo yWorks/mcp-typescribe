@@ -1,0 +1,36 @@
+{
+  "name": "typescript-api-mcp",
+  "version": "1.0.0",
+  "description": "An MCP server that answers questions about TypeScript APIs using TypeDoc JSON documentation",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "docs": "typedoc --json docs/api.json --entryPointStrategy expand src/sample-api/",
+    "start": "node dist/mcp-server/index.js",
+    "dev": "tsc -w",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "inspect": "npx @modelcontextprotocol/inspector node ./dist/mcp-server/index.js docs/api.json"
+  },
+  "keywords": [
+    "MCP Server",
+    "typescript",
+    "api",
+    "mcp",
+    "typedoc",
+    "documentation",
+    "model-context-protocol"
+  ],
+  "author": "yWorks Support Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.13.9",
+    "typedoc": "^0.28.0",
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.9"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.7.0"
+  }
+}

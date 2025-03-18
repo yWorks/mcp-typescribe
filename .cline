@@ -1,0 +1,159 @@
+# TypeScript API MCP Server Architecture
+
+## System Overview
+
+The TypeScript API MCP Server is designed to provide AI agents with the ability to efficiently query and understand TypeScript APIs. It loads TypeDoc-generated JSON documentation and exposes it through a set of query endpoints following the Model Context Protocol (MCP).
+
+## Components
+
+### 1. TypeDoc Integration
+
+- **Purpose**: Generate structured JSON documentation from TypeScript source code
+- **Implementation**: Uses TypeDoc to extract type information, JSDoc comments, and relationships between symbols
+- **Input**: TypeScript source files
+- **Output**: JSON documentation with detailed API information
+
+### 2. Data Indexing System
+
+- **Purpose**: Efficiently index and organize TypeDoc JSON for fast querying
+- **Implementation**: Creates multiple indexes (by ID, name, kind) for quick lookups
+- **Key Features**:
+  - Symbol indexing by ID
+  - Symbol indexing by name
+  - Symbol categorization by kind (class, interface, function, etc.)
+  - Relationship tracking (inheritance, implementation)
+
+### 3. MCP Server
+
+- **Purpose**: Expose TypeScript API information through MCP tools and resources
+- **Implementation**: Uses the MCP SDK to create a server with tools and resources
+- **Components**:
+  - Server configuration
+  - Tool definitions
+  - Resource templates
+  - Request handlers
+
+### 4. Query Handlers
+
+- **Purpose**: Process queries and return relevant API information
+- **Implementation**: Set of specialized handlers for different query types
+- **Key Handlers**:
+  - Symbol search
+  - Member listing
+  - Type hierarchy resolution
+  - Implementation finding
+  - Usage discovery
+
+## Data Flow
+
+1. **Documentation Generation**:
+   - TypeScript source code → TypeDoc → JSON documentation
+
+2. **Server Initialization**:
+   - Load JSON documentation
+   - Build indexes
+   - Register MCP tools and resources
+
+3. **Query Processing**:
+   - Receive query from agent
+   - Route to appropriate handler
+   - Execute query against indexes
+   - Format and return results
+
+## File Structure
+
+```
+typescript-api-mcp/
+├── src/
+│   ├── sample-api/         # Sample TypeScript API for testing
+│   │   ├── types.ts        # Type definitions
+│   │   ├── task-manager.ts # Classes and implementations
+│   │   ├── utils.ts        # Utility functions
+│   │   └── index.ts        # API exports
+│   │
+│   └── mcp-server/         # MCP server implementation
+│       ├── types.ts        # Type definitions for the server
+│       ├── utils.ts        # Utility functions
+│       ├── handlers.ts     # Query handlers
+│       ├── schemas.ts      # JSON schemas for tools
+│       ├── server.ts       # Server implementation
+│       └── index.ts        # Entry point
+│
+├── tests/                  # Test files
+│   └── handlers.test.ts    # Tests for API parsing
+│
+├── docs/                   # Generated documentation
+│   └── api.json            # TypeDoc JSON output
+│
+├── dist/                   # Compiled JavaScript
+├── package.json            # Project configuration
+└── tsconfig.json           # TypeScript configuration
+```
+
+## Key Interfaces
+
+### TypeDoc JSON Structure
+
+The system works with TypeDoc JSON, which follows this general structure:
+
+```typescript
+interface TypeDocJson {
+  id: number;
+  name: string;
+  kind: number;
+  kindString: string;
+  children?: TypeDocSymbol[];
+}
+
+interface TypeDocSymbol {
+  id: number;
+  name: string;
+  kind: number;
+  kindString?: string;
+  comment?: { summary?: Array<{ kind: string; text: string }> };
+  children?: TypeDocSymbol[];
+  signatures?: TypeDocSignature[];
+  type?: TypeDocType;
+  // ... other properties
+}
+```
+
+### MCP Tools
+
+The server exposes these main tools:
+
+1. `search_symbols`: Find symbols by name/pattern
+2. `get_symbol_details`: Get detailed information about a symbol
+3. `list_members`: List class/interface members
+4. `get_parameter_info`: Get function parameter details
+5. `find_implementations`: Find implementations of interfaces
+6. `search_by_return_type`: Find functions by return type
+7. `search_by_description`: Search in JSDoc comments
+8. `get_type_hierarchy`: Get inheritance relationships
+9. `find_usages`: Find symbol usages
+
+## Design Decisions
+
+1. **Separation of Concerns**:
+   - Split functionality into multiple files for better maintainability
+   - Clear separation between TypeDoc parsing, indexing, and query handling
+
+2. **Efficient Indexing**:
+   - Multiple indexes for fast lookups
+   - In-memory storage for quick access
+
+3. **Comprehensive Query Capabilities**:
+   - Wide range of tools to cover different query needs
+   - Support for both direct lookups and relationship exploration
+
+4. **Extensibility**:
+   - Modular design allows for adding new query capabilities
+   - Clear interfaces for extending functionality
+
+## Future Enhancements
+
+1. **Persistent Storage**: Option to cache indexed data for faster startup
+2. **Advanced Search**: Fuzzy matching and semantic search capabilities
+3. **Code Generation**: Generate example code for API usage
+4. **Visualization**: Generate visual representations of type hierarchies
+5. **Cross-Reference Analysis**: More advanced relationship tracking
