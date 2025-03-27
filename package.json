@@ -28,7 +28,9 @@
     "@types/node": "^22.13.9",
     "typedoc": "^0.28.0",
     "typescript": "^5.8.2",
-    "vitest": "^3.0.9"
+    "vitest": "^3.0.9",
+    "zod": "^3.24.2",
+    "prettier": "^3.5.3"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.7.0"

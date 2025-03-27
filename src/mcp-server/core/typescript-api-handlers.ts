@@ -2,7 +2,7 @@
  * Core TypeScript API handlers class.
  */
 
-import {ErrorCode, McpError} from '@modelcontextprotocol/sdk/types.js';
+import { ErrorCode, McpError } from "@modelcontextprotocol/sdk/types.js";
 import {
   ApiOverview,
   FindImplementationsParams,
@@ -16,41 +16,42 @@ import {
   SearchByReturnTypeParams,
   SearchSymbolsParams,
   SymbolInfo,
-  TypeDocJson,
-  TypeDocSymbol,
   TypeHierarchy,
-} from '../types/index.js';
+} from "../types/index.js";
 import {
-  createHandlerResponse,
   findSymbolsByReturnType,
-  findTypeReferences,
   formatParameterForLLM,
   formatSymbolForLLM,
   formatTypeHierarchyForLLM,
   getDescription,
   getSymbolsByParams,
+  isReference,
   searchSymbolsByDescription,
   searchSymbolsByName,
   validateSymbolParams,
-} from '../utils/index.js';
-import {getKindName} from "../utils.js";
-import {ReflectionKind} from "typedoc";
+} from "../utils/index.js";
+import { getKindName } from "../utils.js";
+import { JSONOutput, ReflectionKind } from "typedoc";
+
+type ProjectReflection = JSONOutput.ProjectReflection;
+type DeclarationReflection = JSONOutput.DeclarationReflection;
+type ContainerReflection = JSONOutput.ContainerReflection;
 
 /**
  * Class that provides handlers for TypeScript API queries.
  */
 export class TypeScriptApiHandlers {
-  private symbolsById: Map<number, TypeDocSymbol> = new Map();
-  private symbolsByName: Map<string, TypeDocSymbol> = new Map();
-  private symbolsByKind: Map<number, TypeDocSymbol[]> = new Map();
-  private apiDocs: TypeDocJson;
+  private symbolsById: Map<number, DeclarationReflection> = new Map();
+  private symbolsByName: Map<string, DeclarationReflection> = new Map();
+  private symbolsByKind: Map<number, DeclarationReflection[]> = new Map();
+  private apiDocs: ProjectReflection;
 
   /**
    * Creates a new TypeScriptApiHandlers instance.
    * 
    * @param apiDocs - The TypeDoc JSON documentation
    */
-  constructor(apiDocs: TypeDocJson) {
+  constructor(apiDocs: ProjectReflection) {
     this.apiDocs = apiDocs;
     this.buildIndexes(apiDocs);
   }
@@ -60,13 +61,13 @@ export class TypeScriptApiHandlers {
    * 
    * @param docs - The TypeDoc JSON documentation
    */
-  private buildIndexes(docs: TypeDocJson): void {
+  private buildIndexes(docs: ProjectReflection): void {
     // Process all children recursively
-    const processChildren = (node: TypeDocSymbol) => {
+    const processChildren = (node: DeclarationReflection) => {
       if (!node) return;
       
       // Index the current node if it has an id
-      if (node.id !== undefined) {
+      if (node.id !== undefined && node.kind !== ReflectionKind.Reference) {
         this.symbolsById.set(node.id, node);
         
         // Index by name if available
@@ -84,14 +85,14 @@ export class TypeScriptApiHandlers {
       }
       
       // Process children recursively
-      if (Array.isArray(node.children)) {
-        for (const child of node.children) {
+      if (Array.isArray((node as ContainerReflection).children)) {
+        for (const child of (node as ContainerReflection).children!) {
           processChildren(child);
         }
       }
     };
     
-    processChildren(docs);
+    processChildren(docs as unknown as DeclarationReflection);
   }
 
   /**
@@ -122,7 +123,8 @@ export class TypeScriptApiHandlers {
   private getTopLevelSymbols(): SymbolInfo[] {
     if (!this.apiDocs.children) return [];
     
-    return this.apiDocs.children.map((child: TypeDocSymbol) => ({
+    return this.apiDocs.children.map((child: DeclarationReflection) => ({
+      id: child.id,
       name: child.name,
       kind: getKindName(child.kind),
       description: getDescription(child),
@@ -137,7 +139,7 @@ export class TypeScriptApiHandlers {
    * @param limit - Optional result limit
    * @returns Array of matching symbols
    */
-  searchSymbols(query: string, kind?: keyof ReflectionKind | "any", limit?: number): SymbolInfo[] {
+  searchSymbols(query: string, kind?: ReflectionKind.KindString | "any", limit?: number): SymbolInfo[] {
     const symbols = Array.from(this.symbolsById.values());
     const matchingSymbols = searchSymbolsByName(query, symbols, kind, limit);
     
@@ -151,14 +153,13 @@ export class TypeScriptApiHandlers {
    * @param includeInherited - Whether to include inherited members
    * @returns Array of members
    */
-  getMembers(symbol: TypeDocSymbol, includeInherited: boolean): SymbolInfo[] {
+  getMembers(symbol: DeclarationReflection, includeInherited: boolean): SymbolInfo[] {
     const members: SymbolInfo[] = [];
     
     // Add direct members
     if (Array.isArray(symbol.children)) {
       for (const child of symbol.children) {
-        const kindName = getKindName(child.kind);
-        if (kindName === 'Property' || kindName === 'Method') {
+        if (child.kind === ReflectionKind.Property || child.kind === ReflectionKind.EnumMember || child.kind === ReflectionKind.Method) {
           const memberInfo = formatSymbolForLLM(child, this.symbolsById);
           memberInfo.inherited = false;
           members.push(memberInfo);
@@ -192,7 +193,7 @@ export class TypeScriptApiHandlers {
    * @param symbol - The function or method symbol
    * @returns Array of parameters
    */
-  getParameters(symbol: TypeDocSymbol): ParameterInfo[] {
+  getParameters(symbol: DeclarationReflection): ParameterInfo[] {
     const parameters: ParameterInfo[] = [];
     
     // Get signatures
@@ -215,7 +216,7 @@ export class TypeScriptApiHandlers {
    * @param symbol - The interface or class symbol
    * @returns Array of implementations
    */
-  findImplementations(symbol: TypeDocSymbol): SymbolInfo[] {
+  findImplementations(symbol: DeclarationReflection): SymbolInfo[] {
     const implementations: SymbolInfo[] = [];
     const symbolName = symbol.name;
     const isInterface = getKindName(symbol.kind) === 'Interface';
@@ -276,13 +277,17 @@ export class TypeScriptApiHandlers {
     return matchingSymbols.map(symbol => formatSymbolForLLM(symbol, this.symbolsById));
   }
 
+  getSymbol(ref: JSONOutput.ReferenceType | JSONOutput.ReferenceReflection): DeclarationReflection | undefined {
+    return this.symbolsById.get(ref.target as number);
+  }
+
   /**
    * Gets the type hierarchy of a symbol.
    * 
    * @param symbol - The symbol
    * @returns The type hierarchy
    */
-  getTypeHierarchy(symbol: TypeDocSymbol): TypeHierarchy {
+  getTypeHierarchy(symbol: DeclarationReflection): TypeHierarchy {
     const kindName = getKindName(symbol.kind);
     const result: TypeHierarchy = {
       name: symbol.name,
@@ -355,7 +360,7 @@ export class TypeScriptApiHandlers {
    * @param symbol - The symbol
    * @returns Array of usages
    */
-  findUsages(symbol: TypeDocSymbol): SymbolInfo[] {
+  findUsages(symbol: DeclarationReflection): SymbolInfo[] {
     const usages: SymbolInfo[] = [];
     const symbolName = symbol.name;
     
@@ -378,6 +383,7 @@ export class TypeScriptApiHandlers {
       // Check implemented types
       if (Array.isArray(otherSymbol.implementedTypes)) {
         for (const implementedType of otherSymbol.implementedTypes) {
+          if (isReference(implementedType))
           if (implementedType.type === 'reference' && implementedType.name === symbolName) {
             const usageInfo = formatSymbolForLLM(otherSymbol, this.symbolsById);
             usageInfo.relationship = 'implements';
@@ -387,7 +393,7 @@ export class TypeScriptApiHandlers {
       }
       
       // Check type references in properties, parameters, return types, etc.
-      findTypeReferences(otherSymbol, symbolName, usages, this.symbolsById);
+      //findTypeReferences(otherSymbol.type!, symbolName, usages, this.symbolsById);
     }
     
     return usages;
@@ -399,19 +405,10 @@ export class TypeScriptApiHandlers {
    * @param args - The tool arguments
    * @returns The tool response
    */
-  handleSearchSymbols(args: SearchSymbolsParams): any {
+  handleSearchSymbols(args: SearchSymbolsParams) {
     const { query, kind, limit } = args;
-    
-    if (typeof query !== 'string') {
-      throw new McpError(
-        ErrorCode.InvalidParams,
-        'Query must be a string'
-      );
-    }
-    
-    const results = this.searchSymbols(query, kind, limit);
-    
-    return createHandlerResponse(results);
+
+    return this.searchSymbols(query, kind, limit);
   }
 
   /**
@@ -420,12 +417,10 @@ export class TypeScriptApiHandlers {
    * @param args - The tool arguments
    * @returns The tool response
    */
-  handleGetSymbolDetails(args: GetSymbolDetailsParams): any {
+  handleGetSymbolDetails(args: GetSymbolDetailsParams) {
     const symbols = this.lookupSymbols(args);
 
-    const results = symbols.map(symbol => formatSymbolForLLM(symbol, this.symbolsById));
-    
-    return createHandlerResponse(results);
+    return symbols.map(symbol => formatSymbolForLLM(symbol, this.symbolsById));
   }
 
   private lookupSymbols(args: GetSymbolDetailsParams) {
@@ -453,7 +448,7 @@ export class TypeScriptApiHandlers {
    * @param args - The tool arguments
    * @returns The tool response
    */
-  handleListMembers(args: ListMembersParams): any {
+  handleListMembers(args: ListMembersParams) {
     const { includeInherited = false } = args;
     
     const symbols = this.lookupSymbols(args);
@@ -462,11 +457,10 @@ export class TypeScriptApiHandlers {
     
     for (const symbol of symbols) {
       // Check if symbol is a class or interface
-      const kindName = getKindName(symbol.kind);
-      if (kindName !== 'Class' && kindName !== 'Interface') {
+      if (symbol.kind !== ReflectionKind.Class && symbol.kind !== ReflectionKind.Interface && symbol.kind !== ReflectionKind.Enum && symbol.kind !== ReflectionKind.Module) {
         throw new McpError(
           ErrorCode.InvalidParams,
-          `Symbol is not a class or interface: ${symbol.name} (${kindName})`
+          `Symbol is not a class, interface, enum, or module: ${symbol.name} (${getKindName(symbol.kind)})`
         );
       }
       
@@ -475,7 +469,7 @@ export class TypeScriptApiHandlers {
       results.push(...members);
     }
     
-    return createHandlerResponse(results);
+    return results;
   }
 
   /**
@@ -484,7 +478,7 @@ export class TypeScriptApiHandlers {
    * @param args - The tool arguments
    * @returns The tool response
    */
-  handleGetParameterInfo(args: GetParameterInfoParams): any {
+  handleGetParameterInfo(args: GetParameterInfoParams) {
     const symbols = this.lookupSymbols(args);
 
     const results: ParameterInfo[] = [];
@@ -504,7 +498,7 @@ export class TypeScriptApiHandlers {
       results.push(...parameters);
     }
     
-    return createHandlerResponse(results);
+    return results;
   }
 
   /**
@@ -513,7 +507,7 @@ export class TypeScriptApiHandlers {
    * @param args - The tool arguments
    * @returns The tool response
    */
-  handleFindImplementations(args: FindImplementationsParams): any {
+  handleFindImplementations(args: FindImplementationsParams) {
     const symbols = this.lookupSymbols(args);
 
     const results: SymbolInfo[] = [];
@@ -533,7 +527,7 @@ export class TypeScriptApiHandlers {
       results.push(...implementations);
     }
     
-    return createHandlerResponse(results);
+    return results;
   }
 
   /**
@@ -542,13 +536,11 @@ export class TypeScriptApiHandlers {
    * @param args - The tool arguments
    * @returns The tool response
    */
-  handleSearchByReturnType(args: SearchByReturnTypeParams): any {
+  handleSearchByReturnType(args: SearchByReturnTypeParams) {
     const { typeName } = args;
     
     // Find functions and methods with matching return type
-    const results = this.findByReturnType(typeName);
-    
-    return createHandlerResponse(results);
+    return this.findByReturnType(typeName);
   }
 
   /**
@@ -557,13 +549,11 @@ export class TypeScriptApiHandlers {
    * @param args - The tool arguments
    * @returns The tool response
    */
-  handleSearchByDescription(args: SearchByDescriptionParams): any {
+  handleSearchByDescription(args: SearchByDescriptionParams) {
     const { query } = args;
     
     // Search in descriptions
-    const results = this.searchInDescriptions(query);
-    
-    return createHandlerResponse(results);
+    return this.searchInDescriptions(query);
   }
 
   /**
@@ -572,7 +562,7 @@ export class TypeScriptApiHandlers {
    * @param args - The tool arguments
    * @returns The tool response
    */
-  handleGetTypeHierarchy(args: GetTypeHierarchyParams): any {
+  handleGetTypeHierarchy(args: GetTypeHierarchyParams) {
     const symbols = this.lookupSymbols(args);
 
     const results: TypeHierarchy[] = [];
@@ -583,7 +573,7 @@ export class TypeScriptApiHandlers {
       results.push(hierarchy);
     }
     
-    return createHandlerResponse(results);
+    return results;
   }
 
   /**
@@ -592,7 +582,7 @@ export class TypeScriptApiHandlers {
    * @param args - The tool arguments
    * @returns The tool response
    */
-  handleFindUsages(args: FindUsagesParams): any {
+  handleFindUsages(args: FindUsagesParams) {
     const symbols = this.lookupSymbols(args);
     
     const results: SymbolInfo[] = [];
@@ -603,6 +593,6 @@ export class TypeScriptApiHandlers {
       results.push(...usages);
     }
     
-    return createHandlerResponse(results);
+    return results;
   }
 }

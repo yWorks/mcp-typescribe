@@ -2,8 +2,16 @@
  * Utility functions for working with TypeDoc symbols.
  */
 
-import { TypeDocSymbol, SymbolInfo } from '../types/index.js';
+import {TypeDocSymbol, SymbolInfo, TypeDocType} from '../types/index.js';
 import {getKindName} from "../utils.js";
+
+import type {JSONOutput } from "typedoc";
+
+type ProjectReflection = JSONOutput.ProjectReflection;
+type DeclarationReflection = JSONOutput.DeclarationReflection;
+type ContainerReflection = JSONOutput.ContainerReflection;
+type ReflectionGroup = JSONOutput.ReflectionGroup;
+type Reflection = JSONOutput.Reflection;
 
 /**
  * Gets the description of a symbol from its comment.
@@ -11,7 +19,7 @@ import {getKindName} from "../utils.js";
  * @param symbol - The symbol
  * @returns The description
  */
-export function getDescription(symbol: TypeDocSymbol): string {
+export function getDescription(symbol: Reflection): string {
   if (!symbol.comment) return '';
   
   if (symbol.comment.summary) {
@@ -31,7 +39,7 @@ export function getDescription(symbol: TypeDocSymbol): string {
  * @param symbol - The TypeDoc symbol
  * @returns The simplified symbol info
  */
-export function createSymbolInfo(symbol: TypeDocSymbol): SymbolInfo {
+export function createSymbolInfo(symbol: DeclarationReflection): SymbolInfo {
   return {
     name: symbol.name,
     kind: getKindName(symbol.kind),
@@ -49,10 +57,10 @@ export function createSymbolInfo(symbol: TypeDocSymbol): SymbolInfo {
  */
 export function getSymbolsByParams(
   params: { name?: string; id?: number; names?: string[]; ids?: number[] },
-  symbolsById: Map<number, TypeDocSymbol>,
-  symbolsByName: Map<string, TypeDocSymbol>
-): TypeDocSymbol[] {
-  const symbols: TypeDocSymbol[] = [];
+  symbolsById: Map<number, DeclarationReflection>,
+  symbolsByName: Map<string, DeclarationReflection>
+) {
+  const symbols: DeclarationReflection[] = [];
   
   // Handle single name
   if (params.name) {
@@ -121,8 +129,8 @@ export function getParentName(
   symbol: TypeDocSymbol,
   symbolsById: Map<number, TypeDocSymbol>
 ): string {
-  if (symbol.parentId !== undefined) {
-    const parent = symbolsById.get(symbol.parentId);
+  if ((symbol as any).parentId !== undefined) {
+    const parent = symbolsById.get((symbol as any).parentId);
     if (parent && parent.name) {
       return parent.name;
     }

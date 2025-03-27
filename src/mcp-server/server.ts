@@ -18,7 +18,8 @@ import {
   RESOURCE_TEMPLATE_DEFINITIONS, 
   TOOL_DEFINITIONS 
 } from './schemas/index.js';
-import { TypeDocJson } from './types/index.js';
+import {schemas, TypeDocJson} from './types/index.js';
+import {createHandlerResponse} from "./utils/index.js";
 
 // Get the directory name of the current module
 const __filename = fileURLToPath(import.meta.url);
@@ -180,32 +181,36 @@ export class TypeScriptApiServer {
     // Handle tool calls
     this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
       const { name, arguments: args } = request.params;
-      
-      switch (name) {
-        case 'search_symbols':
-          return handlers.handleSearchSymbols(args as any);
-        case 'get_symbol_details':
-          return handlers.handleGetSymbolDetails(args as any);
-        case 'list_members':
-          return handlers.handleListMembers(args as any);
-        case 'get_parameter_info':
-          return handlers.handleGetParameterInfo(args as any);
-        case 'find_implementations':
-          return handlers.handleFindImplementations(args as any);
-        case 'search_by_return_type':
-          return handlers.handleSearchByReturnType(args as any);
-        case 'search_by_description':
-          return handlers.handleSearchByDescription(args as any);
-        case 'get_type_hierarchy':
-          return handlers.handleGetTypeHierarchy(args as any);
-        case 'find_usages':
-          return handlers.handleFindUsages(args as any);
-        default:
-          throw new McpError(
-            ErrorCode.MethodNotFound,
-            `Unknown tool: ${name}`
-          );
+
+      function switchHandlers() {
+        switch (name) {
+          case 'search_symbols':
+            return handlers.handleSearchSymbols(schemas.searchSymbolsSchema.parse(args));
+          case 'get_symbol_details':
+            return handlers.handleGetSymbolDetails(schemas.getSymbolDetailsSchema.parse(args));
+          case 'list_members':
+            return handlers.handleListMembers(schemas.listMembersSchema.parse(args));
+          case 'get_parameter_info':
+            return handlers.handleGetParameterInfo(schemas.getParameterInfoSchema.parse(args));
+          case 'find_implementations':
+            return handlers.handleFindImplementations(schemas.findImplementationsSchema.parse(args));
+          case 'search_by_return_type':
+            return handlers.handleSearchByReturnType(schemas.searchByReturnTypeSchema.parse(args));
+          case 'search_by_description':
+            return handlers.handleSearchByDescription(schemas.searchByDescriptionSchema.parse(args));
+          case 'get_type_hierarchy':
+            return handlers.handleGetTypeHierarchy(schemas.getTypeHierarchySchema.parse(args));
+          case 'find_usages':
+            return handlers.handleFindUsages(schemas.findUsagesSchema.parse(args));
+          default:
+            throw new McpError(
+                ErrorCode.MethodNotFound,
+                `Unknown tool: ${name}`
+            );
+        }
       }
+
+      return createHandlerResponse(switchHandlers());
     });
   }
 

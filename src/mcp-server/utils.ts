@@ -1,5 +1,5 @@
-import {TypeDocSymbol, TypeDocType, SymbolInfo, CommentContent} from './types.js';
 import {ReflectionKind} from "typedoc";
+import {CommentContent, SymbolInfo, TypeDocSymbol, TypeDocType} from "./types/index.js";
 
 /**
  * Utility functions for the TypeScript API MCP server.
@@ -11,8 +11,7 @@ import {ReflectionKind} from "typedoc";
  * @param kind - The kind number
  * @returns The kind name
  */
-export function getKindName(kind: number): keyof typeof ReflectionKind | string {
-  //return ReflectionKind.singularString(kind)
+export function getKindName(kind: ReflectionKind): ReflectionKind.KindString | string {
   return ReflectionKind[kind] ?? `Unknown(${kind})`;
 }
 
@@ -83,6 +82,10 @@ export function typeMatches(type: TypeDocType, typeName: string): boolean {
   }
   
   if (type.type === 'union' && Array.isArray(type.types)) {
+    return type.types.some((t: TypeDocType) => typeMatches(t, typeName));
+  }
+
+  if (type.type === 'intersection' && Array.isArray(type.types)) {
     return type.types.some((t: TypeDocType) => typeMatches(t, typeName));
   }
   

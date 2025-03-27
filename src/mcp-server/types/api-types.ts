@@ -2,8 +2,9 @@
  * API-related type definitions for the TypeScript API MCP server.
  */
 
-import { TypeDocType } from './typedoc-types.js';
+
 import {ReflectionKind} from "typedoc";
+import {TypeDocType} from "./typedoc-types.js";
 
 /**
  * Represents a simplified symbol for API responses.
@@ -12,7 +13,7 @@ import {ReflectionKind} from "typedoc";
 export interface SymbolInfo {
   id?: number;
   name: string;
-  kind: keyof ReflectionKind | string;
+  kind: ReflectionKind.KindString | string;
   description: string;
   parentName?: string;
   inherited?: boolean;
@@ -27,7 +28,7 @@ export interface SymbolInfo {
 export interface ParameterInfo {
   id?: number;
   name: string;
-  type: TypeDocType | string;
+  type: string;
   description: string;
   optional: boolean;
   defaultValue?: string;
