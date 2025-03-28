@@ -2,41 +2,81 @@ import { z } from "zod";
 import { ReflectionKind } from "typedoc";
 
 // Base handler schema
-const baseHandlerSchema = z.object({
-  name: z.string().optional().describe("The name of the symbol to search for"),
-  id: z.number().optional().describe("The ID of the symbol to search for"),
-  names: z.array(z.string()).optional().describe("An array of names to search for"),
-  ids: z.array(z.number()).optional().describe("An array of IDs to search for"),
-}).refine(data => {
-  let setProperties = 0;
-  if (data.name !== undefined) setProperties++;
-  if (data.id !== undefined) setProperties++;
-  if (data.names !== undefined) setProperties++;
-  if (data.ids !== undefined) setProperties++;
+const baseHandlerSchema = z
+  .object({
+    name: z
+      .string()
+      .optional()
+      .describe("The name of the symbol to search for"),
+    id: z.number().optional().describe("The ID# of the symbol to search for"),
+    names: z
+      .array(z.string())
+      .min(1)
+      .optional()
+      .describe("An array of names to search for"),
+    ids: z
+      .array(z.number())
+      .min(1)
+      .optional()
+      .describe("An array of ID#s to search for"),
+  })
+  .refine(
+    (data) => {
+      let setProperties = 0;
+      if (data.name !== undefined) setProperties++;
+      if (data.id !== undefined) setProperties++;
+      if (data.names !== undefined) setProperties++;
+      if (data.ids !== undefined) setProperties++;
 
-  return setProperties === 1;
-}, {
-  message: "Exactly one of 'name', 'id', 'names', or 'ids' must be set.",
-  path: ['name', 'id', 'names', 'ids'], // Specify all paths to highlight errors on all fields
-});
-
+      return setProperties === 1;
+    },
+    {
+      message: "Exactly one of 'name', 'id', 'names', or 'ids' must be set.",
+      path: ["name", "id", "names", "ids"], // Specify all paths to highlight errors on all fields
+    },
+  );
 
 // Search symbols schema
 const searchSymbolsSchema = z.object({
-  query: z.string().describe("the name of the symbol to search for. This can be a partial match. "),
-  kind: (z.enum([...Object.keys(ReflectionKind) as [ReflectionKind.KindString, ...(ReflectionKind.KindString)[]], "any"])).optional(),
-  limit: z.number().optional().describe(
-    "The maximum number of results to return. If not specified, all results will be returned."),
+  query: z
+    .string()
+    .describe(
+      "the name of the symbol to search for. This can be a partial match. ",
+    ),
+  kind: z
+    .enum([
+      ...(Object.keys(ReflectionKind) as [
+        ReflectionKind.KindString,
+        ...ReflectionKind.KindString[],
+      ]),
+      "any",
+    ])
+    .optional(),
+  limit: z
+    .number()
+    .optional()
+    .describe(
+      "The maximum number of results to return. If not specified, all results will be returned.",
+    ),
 });
 
 // Get symbol details schema
 const getSymbolDetailsSchema = baseHandlerSchema;
 
 // List members schema
-const listMembersSchema = baseHandlerSchema.sourceType().extend({
-  includeInherited: z.boolean().optional().describe(
-    "Whether to include inherited members. If not specified, only direct members will be returned."),
-}).describe("Lists the members of a class, interface, enum, or module. If includeInherited is true, inherited members will also be returned.");
+const listMembersSchema = baseHandlerSchema
+  .sourceType()
+  .extend({
+    includeInherited: z
+      .boolean()
+      .optional()
+      .describe(
+        "Whether to include inherited members. If not specified, only direct members will be returned.",
+      ),
+  })
+  .describe(
+    "Lists the members of a class, interface, enum, or module. If includeInherited is true, inherited members will also be returned.",
+  );
 
 // Get parameter info schema
 const getParameterInfoSchema = baseHandlerSchema;
@@ -51,7 +91,11 @@ const searchByReturnTypeSchema = z.object({
 
 // Search by description schema
 const searchByDescriptionSchema = z.object({
-  query: z.string().describe("the description to search for. This can be a partial text match. "),
+  query: z
+    .string()
+    .describe(
+      "the description to search for. This can be a partial text match. ",
+    ),
 });
 
 // Get type hierarchy schema

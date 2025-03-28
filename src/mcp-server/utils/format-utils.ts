@@ -12,9 +12,8 @@ import { getDescription, getParentName } from "./symbol-utils.js";
 import { formatType } from "./type-utils.js";
 import { getKindName } from "../utils.js";
 
-import { JSONOutput, ReflectionKind, SignatureReflection } from "typedoc";
-import { optional } from "zod";
-import {isDeclaration} from "./search-utils.js";
+import { JSONOutput, ReflectionKind } from "typedoc";
+import { isDeclaration } from "./search-utils.js";
 
 type DeclarationReflection = JSONOutput.DeclarationReflection;
 type Reflection = JSONOutput.Reflection;
@@ -28,7 +27,7 @@ type Reflection = JSONOutput.Reflection;
  * @returns The formatted symbol info
  */
 export function formatSymbolForLLM(
-  symbol: Reflection,
+  symbol: TypeDocSymbol,
   symbolsById: Map<number, TypeDocSymbol>,
 ): SymbolInfo {
   if (
@@ -37,8 +36,7 @@ export function formatSymbolForLLM(
       symbol.kind === ReflectionKind.Method ||
       symbol.kind === ReflectionKind.Function)
   ) {
-    const decl = symbol as JSONOutput.DeclarationReflection;
-    const sigs = decl.signatures;
+    const sigs = symbol.signatures;
     if ((sigs?.length ?? 0) > 0) {
       return formatSymbolForLLM(sigs![0], symbolsById);
     }
@@ -50,15 +48,10 @@ export function formatSymbolForLLM(
     description: getDescription(symbol),
   };
 
-  if (
-    symbol.variant === "signature" &&
-    symbol.kind === ReflectionKind.CallSignature
-  ) {
-    const decl = symbol as JSONOutput.SignatureReflection;
+  if (symbol.variant === "signature") {
+    const decl = symbol;
     info.description += `\n${decl.name}<${decl.typeParameters?.map((t) => formatTypeParameterForLLMToString(t)).join(",") ?? ""}>(${decl.parameters?.map((p) => formatParameterForLLMToString(p)).join(",") ?? ""}): ${formatType(decl.type)}`;
   }
-
-
 
   if (isDeclaration(symbol) && symbol.kind === ReflectionKind.TypeAlias) {
     info.description += "\n" + formatType(symbol.type);

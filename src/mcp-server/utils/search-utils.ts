@@ -4,7 +4,7 @@
 
 import { TypeDocSymbol } from "../types/index.js";
 import { getDescription } from "./symbol-utils.js";
-import { isTypeReference } from "./type-utils.js";
+import { isReferencing } from "./type-utils.js";
 import { getKindName } from "../utils.js";
 import { JSONOutput, ReflectionKind } from "typedoc";
 
@@ -107,29 +107,24 @@ export function findSymbolsByReturnType(
  * @returns True if the symbol has the return type
  */
 export function hasReturnType(
-  symbol: JSONOutput.Reflection,
+  symbol: TypeDocSymbol,
   typeName: string,
 ): boolean {
-  if (!isDeclaration(symbol)) return false;
-  if (!Array.isArray(symbol.signatures)) return false;
-
-  for (const signature of symbol.signatures) {
-    if (signature.type && isTypeReference(signature.type, typeName)) {
-      return true;
-    }
-  }
-
-  return false;
+  return (
+    symbol.variant == "signature" &&
+    symbol.kind == ReflectionKind.Method &&
+    isReferencing(symbol.type, typeName)
+  );
 }
 
 export function isDeclaration(
-  symbol: JSONOutput.Reflection | JSONOutput.SomeType,
+  symbol: TypeDocSymbol,
 ): symbol is JSONOutput.DeclarationReflection {
-  return (symbol as JSONOutput.Reflection).variant === "declaration";
+  return symbol.variant === "declaration";
 }
 
 export function isReference(
-  symbol: JSONOutput.Reflection | JSONOutput.SomeType,
+  symbol: TypeDocSymbol,
 ): symbol is JSONOutput.ReferenceReflection {
-  return (symbol as JSONOutput.Reflection).variant === "reference";
+  return symbol.variant === "reference";
 }

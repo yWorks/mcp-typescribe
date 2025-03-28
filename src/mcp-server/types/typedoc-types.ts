@@ -2,7 +2,7 @@
  * TypeDoc-related type definitions for the TypeScript API MCP server.
  */
 
-import type {JSONOutput, ReflectionType} from "typedoc";
+import { JSONOutput, ReflectionType, SomeReflection } from "typedoc";
 
 type ProjectReflection = JSONOutput.ProjectReflection;
 type DeclarationReflection = JSONOutput.DeclarationReflection;
@@ -10,22 +10,20 @@ type ContainerReflection = JSONOutput.ContainerReflection;
 type ReflectionGroup = JSONOutput.ReflectionGroup;
 type Reflection = JSONOutput.Reflection;
 
-
 /**
  * Represents a TypeDoc symbol with its metadata.
  */
-export type TypeDocSymbol = Reflection
-
+export type TypeDocSymbol = JSONOutput.SomeReflection;
 
 /**
  * Represents a TypeDoc type reference.
  */
-export type TypeDoc = JSONOutput.ReferenceType
+export type TypeDoc = JSONOutput.ReferenceType;
 
 /**
  * Represents the TypeDoc JSON documentation.
  */
-export type TypeDocJson = JSONOutput.ProjectReflection
+export type TypeDocJson = JSONOutput.ProjectReflection;
 
 /**
  * Represents a comment content item
@@ -107,24 +105,23 @@ export interface TypeDocSignature {
  * Represents a TypeDoc type reference.
  */
 export type TypeDocType =
-    JSONOutput.ArrayType |
-    JSONOutput.ConditionalType |
-    JSONOutput.IndexedAccessType |
-    JSONOutput.InferredType |
-    JSONOutput.IntersectionType |
-    JSONOutput.IntrinsicType |
-    JSONOutput.OptionalType |
-    JSONOutput.PredicateType |
-    JSONOutput.QueryType |
-    JSONOutput.ReferenceType |
-    JSONOutput.ReflectionType |
-    JSONOutput.RestType |
-    JSONOutput.LiteralType |
-    JSONOutput.TupleType |
-    JSONOutput.NamedTupleMemberType |
-    JSONOutput.TemplateLiteralType |
-    JSONOutput.MappedType |
-    JSONOutput.TypeOperatorType |
-    JSONOutput.UnionType |
-    JSONOutput.UnknownType;
-
+  | JSONOutput.ArrayType
+  | JSONOutput.ConditionalType
+  | JSONOutput.IndexedAccessType
+  | JSONOutput.InferredType
+  | JSONOutput.IntersectionType
+  | JSONOutput.IntrinsicType
+  | JSONOutput.OptionalType
+  | JSONOutput.PredicateType
+  | JSONOutput.QueryType
+  | JSONOutput.ReferenceType
+  | JSONOutput.ReflectionType
+  | JSONOutput.RestType
+  | JSONOutput.LiteralType
+  | JSONOutput.TupleType
+  | JSONOutput.NamedTupleMemberType
+  | JSONOutput.TemplateLiteralType
+  | JSONOutput.MappedType
+  | JSONOutput.TypeOperatorType
+  | JSONOutput.UnionType
+  | JSONOutput.UnknownType;
