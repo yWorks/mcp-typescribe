@@ -3,16 +3,18 @@
 ## The Problem
 Large Language Models (LLMs) have made incredible strides in code generation and developer productivity. However, they face a key limitation: they can only reliably use APIs and libraries they’ve seen during training. This creates a bottleneck for adopting new tools, SDKs, or internal APIs — LLMs simply don’t know how to use them effectively.
 
+While tools can be given source code access (when interacting with APIs for which the sources are available) or access to documentation files (e.g. typescript type definition files), this doesn't scale well for large APIs. LLMs need a more efficient way to learn more about an API. Putting all the documentation into context for every request is inefficient, unfeasible, and leads to poor results. 
+
 ## As a result:
 
-New or internal APIs remain "invisible" to LLMs.
+Larger new or internal APIs remain "invisible" to LLMs.
 
 Developers must manually guide LLMs or provide example usage.
 
 Innovation is slowed by the lag between an API’s release and its widespread understanding by AI tools.
 
 ## The Idea
-This project is an open-source implementation of the Model Context Protocol (MCP)—a protocol designed to provide LLMs with contextual, real-time access to API documentation, in this case particularly TypeScript definitions.
+This project is an open-source implementation of the Model Context Protocol (MCP)—a protocol designed to provide LLMs with contextual, real-time access to information. In this case it's the API documentation, and particularly for now in this project TypeScript definitions.
 
 ## Our goal is to:
 
