@@ -1,12 +1,40 @@
-# TypeScript API MCP Server
+# MCP-Typescribe - an MCP Server providing LLMs API information
 
-An MCP (Model Context Protocol) server that answers questions about TypeScript APIs by loading TypeDoc JSON documentation and providing efficient query endpoints.
+## The Problem
+Large Language Models (LLMs) have made incredible strides in code generation and developer productivity. However, they face a key limitation: they can only reliably use APIs and libraries they’ve seen during training. This creates a bottleneck for adopting new tools, SDKs, or internal APIs — LLMs simply don’t know how to use them effectively.
 
-## Overview
+## As a result:
+
+New or internal APIs remain "invisible" to LLMs.
+
+Developers must manually guide LLMs or provide example usage.
+
+Innovation is slowed by the lag between an API’s release and its widespread understanding by AI tools.
+
+## The Idea
+This project is an open-source implementation of the Model Context Protocol (MCP)—a protocol designed to provide LLMs with contextual, real-time access to API documentation, in this case particularly TypeScript definitions.
+
+## Our goal is to:
+
+Parse TypeScript (and other) definitions into a machine-readable format.
+
+Serve this context dynamically to LLMs through tools like Claude, Cline, Cursor, or Windsurf and other custom interfaces.
+
+Enable agentic behavior by letting LLMs query, plan, and adapt to unfamiliar APIs without retraining.
+
+## What This Enables
+
+Plug-and-play API support for LLM-based coding assistants.
+
+Faster onboarding for new or proprietary SDKs.
+
+A step toward more autonomous, context-aware coding agents.
+
+## Project Overview
 
 This project provides a way for AI agents to efficiently explore and understand unknown TypeScript APIs. It loads TypeDoc-generated JSON documentation and exposes it through a set of query endpoints that allow agents to search for symbols, get detailed information about specific parts of the API, and understand relationships between different components.
 
-## Features
+## Current Features
 
 - **TypeDoc Integration**: Loads and indexes TypeDoc JSON documentation for efficient querying
 - **Comprehensive Query Capabilities**: Provides a wide range of tools for exploring TypeScript APIs
@@ -53,24 +81,19 @@ The server provides the following tools for querying the API:
    npm run build
    ```
 
-3. Start the MCP server:
+3. Explore the MCP server:
    ```bash
-   npm start -- docs/api.json
+   npx @modelcontextprotocol/inspector node ./dist/mcp-server/index.js docs/api.json
    ```
 
-4. Test the server with the MCP Inspector:
-   ```bash
-   npm run inspect
-   ```
-
-5. Connect an AI agent to the server to query the API
+4. Connect an AI agent to the server to query the API
 
    E.g. with cline in VSCode, specify the following MCP server in `cline_mcp_settings.json`:
 
    ```json
     {
       "mcpServers": {
-        "typedoc": {
+        "typescribe": {
           "command": "node",
           "disabled": false,
           "args":["path/to/typescript-mcp/dist/mcp-server/index.js"],
@@ -79,11 +102,11 @@ The server provides the following tools for querying the API:
       }
     }
     ```
-
+5. Enable the server and likely auto-approve for the various tools. Tell the agent to use the "typescribe" tool to learn about your API.
 
 ## Project Structure
 
-- `src/sample-api/`: A sample TypeScript API for testing
+- `src/sample-api/`: A sample TypeScript API for testing - it uses a weird German-like dialect for the API names to test that the LLM does not hallucinate the API 
 - `src/mcp-server/`: The MCP server implementation
   - `types/`: Type definitions
     - `typedoc-types.ts`: TypeDoc-related types
@@ -91,25 +114,9 @@ The server provides the following tools for querying the API:
     - `handler-types.ts`: Handler-related types
     - `index.ts`: Type exports
   - `utils/`: Utility functions
-    - `symbol-utils.ts`: Symbol-related utilities
-    - `type-utils.ts`: Type-related utilities
-    - `search-utils.ts`: Search-related utilities
-    - `format-utils.ts`: Formatting utilities for LLM-friendly output
-    - `index.ts`: Utility exports
   - `schemas/`: JSON schemas for the MCP tools
     - `tool-schemas.ts`: Tool schemas
     - `index.ts`: Schema exports
-  - `handlers/`: Individual handlers for each tool
-    - `search-symbols.ts`: Search symbols handler
-    - `get-symbol-details.ts`: Get symbol details handler
-    - `list-members.ts`: List members handler
-    - `get-parameter-info.ts`: Get parameter info handler
-    - `find-implementations.ts`: Find implementations handler
-    - `search-by-return-type.ts`: Search by return type handler
-    - `search-by-description.ts`: Search by description handler
-    - `get-type-hierarchy.ts`: Get type hierarchy handler
-    - `find-usages.ts`: Find usages handler
-    - `index.ts`: Handler exports
   - `core/`: Core functionality
     - `typescript-api-handlers.ts`: Main handler class
     - `index.ts`: Core exports
