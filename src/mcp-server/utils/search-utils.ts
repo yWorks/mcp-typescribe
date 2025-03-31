@@ -19,7 +19,7 @@ import {
  * Searches for symbols by name.
  *
  * @param query - The search query
- * @param symbols - The symbols to search
+ * @param project - The project to search
  * @param kind - Optional kind filter
  * @param limit - Optional result limit
  * @returns Array of matching symbols
@@ -62,7 +62,7 @@ function traverseAll(
   callback: (symbol: DeclarationReflection) => boolean,
 ) {
   let continueTraversal = true;
-  let collector = (symbol: Reflection, property: TraverseProperty) => {
+  let collector = (symbol: Reflection) => {
     if (continueTraversal) {
       symbol.traverse(collector);
     }
@@ -79,6 +79,7 @@ function traverseAll(
  *
  * @param query - The search query
  * @param symbols - The symbols to search
+ * @param limit - the maximum number of results
  * @returns Array of matching symbols
  */
 export function searchSymbolsByDescription(

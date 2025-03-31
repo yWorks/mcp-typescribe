@@ -40,10 +40,10 @@ export function reflectionIsReferencing(
     param: (refl) => {
       result = isReferencing(refl.type, typeName);
     },
-    document: (refl) => {
+    document: () => {
       result = false;
     },
-    project: (refl) => {
+    project: () => {
       result = false;
     },
   });

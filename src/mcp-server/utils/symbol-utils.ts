@@ -85,7 +85,7 @@ export function createSymbolInfo(symbol: DeclarationReflection): SymbolInfo {
  * Gets symbols by name, id, names array, or ids array.
  *
  * @param params - The parameters containing name, id, names, or ids
- * @param symbolsById - Map of symbols by ID
+ * @param project - the project to search
  * @param symbolsByName - Map of symbols by name
  * @returns Array of matching symbols
  */
