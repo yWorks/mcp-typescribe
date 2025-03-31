@@ -20,7 +20,9 @@ import {
   TypeHierarchy,
 } from "../types/index.js";
 import {
+  createSymbolInfo,
   findSymbolsByReturnType,
+  formatDetailSymbols,
   formatParameterForLLM,
   formatSymbolForLLM,
   formatTypeHierarchyForLLM,
@@ -138,14 +140,9 @@ export class TypeScriptApiHandlers {
    * @returns Array of top-level symbols
    */
   private getTopLevelSymbols(): SymbolInfo[] {
-    if (!this.project.children) return [];
-
-    return this.project.children.map((child: DeclarationReflection) => ({
-      id: child.id,
-      name: child.name,
-      kind: getKindName(child.kind),
-      description: getDescription(child),
-    }));
+    return (this.project.children ?? []).map((child: DeclarationReflection) =>
+      createSymbolInfo(child),
+    );
   }
 
   /**
@@ -438,7 +435,7 @@ export class TypeScriptApiHandlers {
   handleGetSymbolDetails(args: GetSymbolDetailsParams) {
     const symbols = this.lookupSymbols(args);
 
-    return symbols.map((symbol) => formatSymbolForLLM(symbol));
+    return symbols.map((symbol) => formatDetailSymbols(symbol));
   }
 
   private lookupSymbols(args: GetSymbolDetailsParams) {

@@ -19,7 +19,7 @@ import {
  * @param symbol - The symbol
  * @returns The description
  */
-export function getDescription(symbol: Reflection): string {
+export function getDescription(symbol: Reflection): string | undefined {
   let description = "";
   if (symbol.comment?.summary) {
     description = symbol.comment.summary
@@ -41,7 +41,7 @@ export function getDescription(symbol: Reflection): string {
     });
   }
 
-  return description;
+  return description.length > 0 ? description : undefined;
 }
 
 export function getSignature(symbol: Reflection) {

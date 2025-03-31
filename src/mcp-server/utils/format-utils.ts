@@ -12,14 +12,44 @@ import { formatType } from "./type-utils.js";
 import { getKindName } from "../utils.js";
 
 import {
+  ContainerReflection,
   DeclarationReflection,
   ParameterReflection,
+  ReferenceReflection,
   Reflection,
   ReflectionKind,
   SignatureReflection,
   TypeParameterReflection,
 } from "typedoc";
 import { isDeclaration } from "./search-utils.js";
+
+export function formatDetailSymbols(symbol: Reflection): SymbolInfo {
+  symbol = maybeResolve(symbol) ?? symbol;
+  const result = formatSymbolForLLM(symbol);
+  if (!result.children) {
+    result.children = [];
+    if (symbol instanceof ContainerReflection && symbol.children) {
+      for (const child of symbol.children) {
+        let info = formatSymbolForLLM(child);
+        delete info.parentName;
+        delete info.children;
+        result.children.push(info);
+      }
+    }
+  }
+  return result;
+}
+
+function maybeResolve(symbol: Reflection): DeclarationReflection | undefined {
+  if (symbol instanceof ReferenceReflection) {
+    let targetReflectionDeep = symbol.getTargetReflectionDeep();
+    return targetReflectionDeep instanceof DeclarationReflection
+      ? targetReflectionDeep
+      : undefined;
+  } else {
+    return symbol instanceof DeclarationReflection ? symbol : undefined;
+  }
+}
 
 /**
  * Formats a symbol for LLM-friendly output.
@@ -29,6 +59,8 @@ import { isDeclaration } from "./search-utils.js";
  * @returns The formatted symbol info
  */
 export function formatSymbolForLLM(symbol: Reflection): SymbolInfo {
+  symbol = maybeResolve(symbol) ?? symbol;
+
   if (symbol instanceof SignatureReflection) {
     return {
       name: symbol.name,

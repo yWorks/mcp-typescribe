@@ -91,7 +91,7 @@ export function searchSymbolsByDescription(
 
   traverseAll(symbols, (symbol) => {
     const description = getDescription(symbol);
-    if (description.toLowerCase().includes(queryLower)) {
+    if (description?.toLowerCase().includes(queryLower)) {
       results.push(symbol);
     }
 

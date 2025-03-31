@@ -11,11 +11,12 @@ import { ReflectionKind } from "typedoc";
 export interface SymbolInfo {
   id?: number;
   name: string;
-  kind: ReflectionKind.KindString | string;
-  description: string;
+  kind?: ReflectionKind.KindString | string;
+  description?: string;
   parentName?: string;
   inherited?: boolean;
   inheritedFrom?: string;
+  children?: SymbolInfo[];
   relationship?: "extends" | "implements";
 }
 
@@ -27,7 +28,7 @@ export interface ParameterInfo {
   id?: number;
   name: string;
   type: string;
-  description: string;
+  description?: string;
   optional: boolean;
   defaultValue?: string;
 }

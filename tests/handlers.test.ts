@@ -14,7 +14,7 @@ describe("TypeScriptApiHandlers", () => {
       const overview = handlers.getApiOverview();
 
       expect(overview.name).toBe("typescript-api-mcp");
-      expect(overview.totalSymbols).toBeGreaterThan(0);
+      expect(overview.totalSymbols).toBeGreaterThan(5);
       expect(overview.countByKind).toHaveProperty("Enum");
       expect(overview.countByKind).toHaveProperty("Interface");
       expect(overview.countByKind).toHaveProperty("Class");
@@ -119,7 +119,7 @@ describe("TypeScriptApiHandlers", () => {
       expect(results.some((r) => r.name === "TaskStatus")).toBe(true);
       // The method name is 'updateStatus' but its description contains 'task status'
       expect(
-        results.some((r) => r.description.toLowerCase().includes("task")),
+        results.some((r) => r.description?.toLowerCase().includes("task")),
       ).toBe(true);
     });
   });
@@ -174,7 +174,7 @@ describe("TypeScriptApiHandlers", () => {
       expect(
         result.some((r) =>
           r.description
-            .toLowerCase()
+            ?.toLowerCase()
             .includes("creates a new taskimpl instance."),
         ),
       ).toBe(true);
@@ -182,7 +182,7 @@ describe("TypeScriptApiHandlers", () => {
   });
 
   describe("handleGetSymbolDetails", () => {
-    it("should handle get_symbol_details tool", () => {
+    it("should handle get_symbol_details tool for enums", () => {
       const result = handlers.handleGetSymbolDetails({ name: "TaskStatus" });
 
       expect(result.length).toBe(1);
@@ -190,6 +190,25 @@ describe("TypeScriptApiHandlers", () => {
       expect(result[0].description).toContain(
         "Represents the status of a task.",
       );
+      expect(result[0]).toHaveProperty("children");
+      expect(result[0].children).toHaveLength(4);
+      expect(result[0].children![0]).not.toHaveProperty("children");
+      expect(result[0].children!.some((c) => c.name === "FERTIG")).toBe(true);
+    });
+    it("should handle get_symbol_details tool for modules", () => {
+      const result = handlers.handleGetSymbolDetails({ name: "index" });
+
+      expect(result.length).toBe(1);
+      expect(result[0].kind).toBe("Module");
+      expect(result[0].description).toContain("Task Management API");
+      expect(result[0]).toHaveProperty("children");
+      expect(result[0].children!.length).toBeGreaterThan(10);
+      expect(result[0].children![0]).not.toHaveProperty("children");
+      expect(
+        result[0].children!.some(
+          (c) => c.name === "calculateEstimatedCompletion",
+        ),
+      ).toBe(true);
     });
     it("should handle get_symbol_details for typealias", () => {
       const result = handlers.handleGetSymbolDetails({ name: "TaskOptions" });

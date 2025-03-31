@@ -72,7 +72,7 @@ export class TypeScriptApiServer {
       // Initialize handlers
       this.handlers = new TypeScriptApiHandlers(apiDocs);
 
-      console.log(`Loaded API documentation with symbols`);
+      console.error(`Loaded API documentation with symbols`);
     } catch (error) {
       console.error("Failed to load API documentation:", error);
       throw error;
