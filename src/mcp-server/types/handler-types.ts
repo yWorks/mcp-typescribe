@@ -96,6 +96,12 @@ const searchByDescriptionSchema = z.object({
     .describe(
       "the description to search for. This can be a partial text match. ",
     ),
+  limit: z
+    .number()
+    .optional()
+    .describe(
+      "The maximum number of results to return. If not specified, all results will be returned.",
+    ),
 });
 
 // Get type hierarchy schema

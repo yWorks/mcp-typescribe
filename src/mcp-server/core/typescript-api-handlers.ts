@@ -29,46 +29,57 @@ import {
   reflectionIsReferencing,
   searchSymbolsByDescription,
   searchSymbolsByName,
-  storeReference,
 } from "../utils/index.js";
 import { getKindName } from "../utils.js";
-import { JSONOutput, ReflectionKind } from "typedoc";
-
-type ProjectReflection = JSONOutput.ProjectReflection;
-type DeclarationReflection = JSONOutput.DeclarationReflection;
-type ContainerReflection = JSONOutput.ContainerReflection;
+import {
+  ConsoleLogger,
+  ContainerReflection,
+  DeclarationReflection,
+  Deserializer,
+  FileRegistry,
+  JSONOutput,
+  ProjectReflection,
+  ReferenceReflection,
+  ReferenceType,
+  Reflection,
+  ReflectionKind,
+} from "typedoc";
 
 /**
  * Class that provides handlers for TypeScript API queries.
  */
 export class TypeScriptApiHandlers {
-  private symbolsById: Map<number, DeclarationReflection> = new Map();
-  private symbolsByName: Map<string, DeclarationReflection> = new Map();
-  private symbolsByKind: Map<number, DeclarationReflection[]> = new Map();
-  private apiDocs: ProjectReflection;
+  private symbolsById: Map<number, Reflection> = new Map();
+  private symbolsByName: Map<string, Reflection> = new Map();
+  private symbolsByKind: Map<number, Reflection[]> = new Map();
+  private readonly project: ProjectReflection;
 
   /**
    * Creates a new TypeScriptApiHandlers instance.
    *
    * @param apiDocs - The TypeDoc JSON documentation
    */
-  constructor(apiDocs: ProjectReflection) {
-    this.apiDocs = apiDocs;
-    this.buildIndexes(apiDocs);
+  constructor(apiDocs: JSONOutput.ProjectReflection) {
+    const deserializer = new Deserializer(new ConsoleLogger());
+    apiDocs.schemaVersion ??= "2.0";
+    const project = deserializer.reviveProject("typescript-api-mcp", apiDocs, {
+      projectRoot: "/",
+      registry: new FileRegistry(),
+    });
+    this.project = project;
+    this.buildIndexes(project);
   }
 
   /**
    * Builds indexes for efficient symbol lookup.
    *
-   * @param docs - The TypeDoc JSON documentation
+   * @param projectReflection - The TypeDoc JSON documentation
    */
-  private buildIndexes(docs: ProjectReflection): void {
-    const referenceNodes: JSONOutput.ReferenceReflection[] = [];
+  private buildIndexes(projectReflection: ProjectReflection): void {
     // Process all children recursively
-    const processChildren = (node: DeclarationReflection) => {
+    const processChildren = (node: Reflection) => {
       if (!node) return;
-      if (node.kind === ReflectionKind.Reference) {
-        referenceNodes.push(node as JSONOutput.ReferenceReflection);
+      if (node instanceof ReferenceReflection) {
         return;
       }
 
@@ -91,21 +102,14 @@ export class TypeScriptApiHandlers {
       }
 
       // Process children recursively
-      if (Array.isArray((node as ContainerReflection).children)) {
-        for (const child of (node as ContainerReflection).children!) {
+      if (node instanceof ContainerReflection && node.children) {
+        for (const child of node.children) {
           processChildren(child);
         }
       }
     };
 
-    processChildren(docs as unknown as DeclarationReflection);
-
-    referenceNodes.forEach((node) => {
-      const target = this.getSymbol(node);
-      if (target) {
-        storeReference(node, target);
-      }
-    });
+    processChildren(projectReflection);
   }
 
   /**
@@ -121,7 +125,7 @@ export class TypeScriptApiHandlers {
     }
 
     return {
-      name: this.apiDocs.name,
+      name: this.project.name,
       totalSymbols: this.symbolsById.size,
       countByKind,
       topLevelSymbols: this.getTopLevelSymbols(),
@@ -134,9 +138,9 @@ export class TypeScriptApiHandlers {
    * @returns Array of top-level symbols
    */
   private getTopLevelSymbols(): SymbolInfo[] {
-    if (!this.apiDocs.children) return [];
+    if (!this.project.children) return [];
 
-    return this.apiDocs.children.map((child: DeclarationReflection) => ({
+    return this.project.children.map((child: DeclarationReflection) => ({
       id: child.id,
       name: child.name,
       kind: getKindName(child.kind),
@@ -157,12 +161,14 @@ export class TypeScriptApiHandlers {
     kind?: ReflectionKind.KindString | "any",
     limit?: number,
   ): SymbolInfo[] {
-    const symbols = Array.from(this.symbolsById.values());
-    const matchingSymbols = searchSymbolsByName(query, symbols, kind, limit);
-
-    return matchingSymbols.map((symbol) =>
-      formatSymbolForLLM(symbol, this.symbolsById),
+    const matchingSymbols = searchSymbolsByName(
+      query,
+      this.project,
+      kind,
+      limit,
     );
+
+    return matchingSymbols.map((symbol) => formatSymbolForLLM(symbol));
   }
 
   /**
@@ -186,7 +192,7 @@ export class TypeScriptApiHandlers {
           child.kind === ReflectionKind.EnumMember ||
           child.kind === ReflectionKind.Method
         ) {
-          const memberInfo = formatSymbolForLLM(child, this.symbolsById);
+          const memberInfo = formatSymbolForLLM(child);
           memberInfo.inherited = false;
           members.push(memberInfo);
         }
@@ -196,15 +202,15 @@ export class TypeScriptApiHandlers {
     // Add inherited members if requested
     if (includeInherited && Array.isArray(symbol.extendedTypes)) {
       for (const extendedType of symbol.extendedTypes) {
-        if (extendedType.type === "reference" && extendedType.name) {
-          const parentSymbol = this.symbolsByName.get(extendedType.name);
-          if (parentSymbol) {
-            const parentMembers = this.getMembers(parentSymbol, true);
-            for (const member of parentMembers) {
-              member.inherited = true;
-              member.inheritedFrom = extendedType.name;
-              members.push(member);
-            }
+        if (
+          extendedType instanceof ReferenceType &&
+          extendedType.reflection instanceof DeclarationReflection
+        ) {
+          const parentMembers = this.getMembers(extendedType.reflection, true);
+          for (const member of parentMembers) {
+            member.inherited = true;
+            member.inheritedFrom = extendedType.name;
+            members.push(member);
           }
         }
       }
@@ -248,31 +254,35 @@ export class TypeScriptApiHandlers {
     const isInterface = getKindName(symbol.kind) === "Interface";
 
     // Check all classes
-    for (const classSymbol of this.symbolsByKind.get(128) || []) {
+    for (const classSymbol of this.project.getReflectionsByKind(
+      ReflectionKind.Class,
+    )) {
       // Check extended types (for subclasses)
-      if (Array.isArray(classSymbol.extendedTypes)) {
-        for (const extendedType of classSymbol.extendedTypes) {
-          if (
-            extendedType.type === "reference" &&
-            extendedType.name === symbolName
-          ) {
-            const implInfo = formatSymbolForLLM(classSymbol, this.symbolsById);
-            implInfo.relationship = "extends";
-            implementations.push(implInfo);
+      if (classSymbol instanceof DeclarationReflection) {
+        if (Array.isArray(classSymbol.extendedTypes)) {
+          for (const extendedType of classSymbol.extendedTypes) {
+            if (
+              extendedType.type === "reference" &&
+              extendedType.name === symbolName
+            ) {
+              const implInfo = formatSymbolForLLM(classSymbol);
+              implInfo.relationship = "extends";
+              implementations.push(implInfo);
+            }
           }
         }
-      }
 
-      // Check implemented types (for interface implementations)
-      if (isInterface && Array.isArray(classSymbol.implementedTypes)) {
-        for (const implementedType of classSymbol.implementedTypes) {
-          if (
-            implementedType.type === "reference" &&
-            implementedType.name === symbolName
-          ) {
-            const implInfo = formatSymbolForLLM(classSymbol, this.symbolsById);
-            implInfo.relationship = "implements";
-            implementations.push(implInfo);
+        // Check implemented types (for interface implementations)
+        if (isInterface && Array.isArray(classSymbol.implementedTypes)) {
+          for (const implementedType of classSymbol.implementedTypes) {
+            if (
+              implementedType.type === "reference" &&
+              implementedType.name === symbolName
+            ) {
+              const implInfo = formatSymbolForLLM(classSymbol);
+              implInfo.relationship = "implements";
+              implementations.push(implInfo);
+            }
           }
         }
       }
@@ -288,11 +298,10 @@ export class TypeScriptApiHandlers {
    * @returns Array of functions and methods
    */
   findByReturnType(typeName: string): SymbolInfo[] {
-    const symbols = Array.from(this.symbolsById.values());
-    const matchingSymbols = findSymbolsByReturnType(typeName, symbols);
+    const matchingSymbols = findSymbolsByReturnType(typeName, this.project);
 
     return matchingSymbols.map((symbol) => {
-      return formatSymbolForLLM(symbol, this.symbolsById);
+      return formatSymbolForLLM(symbol);
     });
   }
 
@@ -300,21 +309,17 @@ export class TypeScriptApiHandlers {
    * Searches for symbols with descriptions containing a query.
    *
    * @param query - The search query
+   * @param limit - the maximum amount of results
    * @returns Array of matching symbols
    */
-  searchInDescriptions(query: string): SymbolInfo[] {
-    const symbols = Array.from(this.symbolsById.values());
-    const matchingSymbols = searchSymbolsByDescription(query, symbols);
-
-    return matchingSymbols.map((symbol) =>
-      formatSymbolForLLM(symbol, this.symbolsById),
+  searchInDescriptions(query: string, limit?: number): SymbolInfo[] {
+    const matchingSymbols = searchSymbolsByDescription(
+      query,
+      this.project,
+      limit,
     );
-  }
 
-  getSymbol(
-    ref: JSONOutput.ReferenceType | JSONOutput.ReferenceReflection,
-  ): DeclarationReflection | undefined {
-    return this.symbolsById.get(ref.target as number);
+    return matchingSymbols.map((symbol) => formatSymbolForLLM(symbol));
   }
 
   /**
@@ -336,9 +341,9 @@ export class TypeScriptApiHandlers {
       result.extends = [];
 
       for (const extendedType of symbol.extendedTypes) {
-        if (extendedType.type === "reference" && extendedType.name) {
-          const parentSymbol = this.symbolsByName.get(extendedType.name);
-          if (parentSymbol) {
+        if (extendedType instanceof ReferenceType) {
+          const parentSymbol = extendedType.reflection;
+          if (parentSymbol instanceof DeclarationReflection) {
             result.extends.push(this.getTypeHierarchy(parentSymbol));
           } else {
             result.extends.push({
@@ -356,10 +361,10 @@ export class TypeScriptApiHandlers {
       result.implements = [];
 
       for (const implementedType of symbol.implementedTypes) {
-        if (implementedType.type === "reference" && implementedType.name) {
-          const interfaceSymbol = this.symbolsByName.get(implementedType.name);
-          if (interfaceSymbol) {
-            result.implements.push(this.getTypeHierarchy(interfaceSymbol));
+        if (implementedType instanceof ReferenceType) {
+          const parentSymbol = implementedType.reflection;
+          if (parentSymbol instanceof DeclarationReflection) {
+            result.implements.push(this.getTypeHierarchy(parentSymbol));
           } else {
             result.implements.push({
               name: implementedType.name,
@@ -406,7 +411,7 @@ export class TypeScriptApiHandlers {
       if (otherSymbol.id === symbol.id) continue;
 
       if (reflectionIsReferencing(otherSymbol, symbol.name)) {
-        usages.push(formatSymbolForLLM(otherSymbol, this.symbolsById));
+        usages.push(formatSymbolForLLM(otherSymbol));
       }
     }
     return usages;
@@ -433,9 +438,7 @@ export class TypeScriptApiHandlers {
   handleGetSymbolDetails(args: GetSymbolDetailsParams) {
     const symbols = this.lookupSymbols(args);
 
-    return symbols.map((symbol) =>
-      formatSymbolForLLM(symbol, this.symbolsById),
-    );
+    return symbols.map((symbol) => formatSymbolForLLM(symbol));
   }
 
   private lookupSymbols(args: GetSymbolDetailsParams) {
@@ -443,7 +446,7 @@ export class TypeScriptApiHandlers {
 
     const symbols = getSymbolsByParams(
       params,
-      this.symbolsById,
+      this.project,
       this.symbolsByName,
     );
 
@@ -569,10 +572,10 @@ export class TypeScriptApiHandlers {
    * @returns The tool response
    */
   handleSearchByDescription(args: SearchByDescriptionParams) {
-    const { query } = args;
+    const { query, limit } = args;
 
     // Search in descriptions
-    return this.searchInDescriptions(query);
+    return this.searchInDescriptions(query, limit);
   }
 
   /**

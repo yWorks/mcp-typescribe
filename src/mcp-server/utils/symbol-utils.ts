@@ -2,22 +2,16 @@
  * Utility functions for working with TypeDoc symbols.
  */
 
-import {
-  TypeDocSymbol,
-  SymbolInfo,
-  TypeDocType,
-  SearchSymbolsParams,
-  BaseHandlerParams,
-} from "../types/index.js";
+import { SymbolInfo } from "../types/index.js";
 import { getKindName } from "../utils.js";
 
-import type { JSONOutput } from "typedoc";
-
-type ProjectReflection = JSONOutput.ProjectReflection;
-type DeclarationReflection = JSONOutput.DeclarationReflection;
-type ContainerReflection = JSONOutput.ContainerReflection;
-type ReflectionGroup = JSONOutput.ReflectionGroup;
-type Reflection = JSONOutput.Reflection;
+import {
+  DeclarationReflection,
+  ProjectReflection,
+  Reflection,
+  ReflectionKind,
+  SignatureReflection,
+} from "typedoc";
 
 /**
  * Gets the description of a symbol from its comment.
@@ -26,15 +20,48 @@ type Reflection = JSONOutput.Reflection;
  * @returns The description
  */
 export function getDescription(symbol: Reflection): string {
-  if (!symbol.comment) return "";
-
-  if (symbol.comment.summary) {
-    return symbol.comment.summary
+  let description = "";
+  if (symbol.comment?.summary) {
+    description = symbol.comment.summary
       .map((part) => part.text)
       .join("")
       .trim();
   }
 
+  if (symbol instanceof SignatureReflection) {
+    description += "\n" + getSignature(symbol);
+  }
+
+  if (
+    symbol instanceof DeclarationReflection &&
+    (symbol.signatures?.length ?? 0) > 0
+  ) {
+    symbol.signatures!.forEach((sig) => {
+      description += getDescription(sig) + "\n";
+    });
+  }
+
+  return description;
+}
+
+export function getSignature(symbol: Reflection) {
+  if (symbol instanceof SignatureReflection && symbol.isSignature()) {
+    switch (symbol.kind) {
+      case ReflectionKind.SetSignature:
+        return `set ${symbol.name}(${symbol.parameters![0].name}: ${symbol.parameters![0].type!.toString()})`;
+      case ReflectionKind.GetSignature:
+        return `get ${symbol.name}():${symbol.type!.toString()}`;
+      case ReflectionKind.IndexSignature:
+        return `get ${symbol.parameters![0].name}: ${symbol.parameters![1].type!.toString()}`;
+      case ReflectionKind.CallSignature:
+        const typeParameters = symbol.typeParameters
+          ?.map((t) => t.name + " extends " + t.type?.toString())
+          .join(",");
+        return `${symbol.name}${typeParameters ? `<${typeParameters}>` : ""}(${(symbol.parameters ?? []).map((p) => `${p.name}:${p.type?.toString()}`).join(",")}):${symbol.type!.toString()}`;
+      case ReflectionKind.ConstructorSignature:
+        return `constructor(${symbol.parameters?.map((p) => p.name).join(",")}) => ${symbol.type!.toString()}`;
+    }
+  }
   return "";
 }
 
@@ -47,6 +74,7 @@ export function getDescription(symbol: Reflection): string {
  */
 export function createSymbolInfo(symbol: DeclarationReflection): SymbolInfo {
   return {
+    id: symbol.id,
     name: symbol.name,
     kind: getKindName(symbol.kind),
     description: getDescription(symbol),
@@ -63,23 +91,23 @@ export function createSymbolInfo(symbol: DeclarationReflection): SymbolInfo {
  */
 export function getSymbolsByParams(
   params: { name?: string; id?: number; names?: string[]; ids?: number[] },
-  symbolsById: Map<number, DeclarationReflection>,
-  symbolsByName: Map<string, DeclarationReflection>,
+  project: ProjectReflection,
+  symbolsByName: Map<string, Reflection>,
 ) {
   const symbols: DeclarationReflection[] = [];
 
   // Handle single name
   if (params.name) {
     const symbol = symbolsByName.get(params.name);
-    if (symbol) {
+    if (symbol instanceof DeclarationReflection) {
       symbols.push(symbol);
     }
   }
 
   // Handle single ID
   if (params.id !== undefined) {
-    const symbol = symbolsById.get(params.id);
-    if (symbol) {
+    const symbol = project.getReflectionById(params.id);
+    if (symbol instanceof DeclarationReflection) {
       symbols.push(symbol);
     }
   }
@@ -88,7 +116,7 @@ export function getSymbolsByParams(
   if (params.names) {
     for (const name of params.names) {
       const symbol = symbolsByName.get(name);
-      if (symbol) {
+      if (symbol instanceof DeclarationReflection) {
         symbols.push(symbol);
       }
     }
@@ -97,8 +125,8 @@ export function getSymbolsByParams(
   // Handle array of IDs
   if (params.ids) {
     for (const id of params.ids) {
-      const symbol = symbolsById.get(id);
-      if (symbol) {
+      const symbol = project.getReflectionById(id);
+      if (symbol instanceof DeclarationReflection) {
         symbols.push(symbol);
       }
     }
@@ -106,38 +134,15 @@ export function getSymbolsByParams(
 
   return symbols;
 }
-
-/**
- * Validates that at least one symbol identifier is provided.
- *
- * @param params - The parameters containing name, id, names, or ids
- * @returns True if at least one identifier is provided
- */
-export function validateSymbolParams(params: BaseHandlerParams): boolean {
-  return !!(
-    params.name ||
-    params.id !== undefined ||
-    (params.names && params.names.length > 0) ||
-    (params.ids && params.ids.length > 0)
-  );
-}
-
 /**
  * Gets the parent name of a symbol.
  *
  * @param symbol - The symbol
- * @param symbolsById - Map of symbols by ID
  * @returns The parent name
  */
-export function getParentName(
-  symbol: TypeDocSymbol,
-  symbolsById: Map<number, TypeDocSymbol>,
-): string {
-  if ((symbol as any).parentId !== undefined) {
-    const parent = symbolsById.get((symbol as any).parentId);
-    if (parent && parent.name) {
-      return parent.name;
-    }
+export function getParentName(symbol: Reflection): string {
+  if (symbol.parent instanceof DeclarationReflection) {
+    return symbol.parent.name;
   }
   return "";
 }

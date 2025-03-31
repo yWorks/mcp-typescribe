@@ -170,7 +170,7 @@ describe("TypeScriptApiHandlers", () => {
       const result = handlers.handleFindUsages({ name: "TaskStatus" });
 
       expect(result.length).toBeGreaterThan(0);
-      expect(result.some((r) => r.name === "TaschgInEcht")).toBe(true);
+      expect(result.some((r) => r.name === "constructor")).toBe(true);
       expect(
         result.some((r) =>
           r.description
@@ -197,7 +197,7 @@ describe("TypeScriptApiHandlers", () => {
       expect(result.length).toBe(1);
       expect(result[0].kind).toBe("TypeAlias");
       expect(result[0].description).toContain(
-        "{autoAssign: boolean, defaultPriority: Priority, tags: string[]}",
+        "{ autoAssign?: boolean; defaultPriority?: Priority; tags?: string[] }",
       );
     });
     it("should show function signatures with the get details tool", () => {
@@ -206,13 +206,13 @@ describe("TypeScriptApiHandlers", () => {
       });
 
       expect(result.length).toBe(1);
-      expect(result[0].kind).toBe("CallSignature");
+      expect(result[0].kind).toBe("Function");
       expect(result[0].description).toContain(
         "Generates a summary of tasks grouped by status.",
       );
 
       expect(result[0].description).toContain(
-        "summarizeTasksByStatus<T extends Uffgabe<any>>(tasks: T[]): Record<TaskStatus, number>",
+        "summarizeTasksByStatus<T extends Uffgabe<any>>(tasks:T[]):Record<TaskStatus, number>",
       );
     });
     it("should handle get_symbol_details tool with lists", () => {

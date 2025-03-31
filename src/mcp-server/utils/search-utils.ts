@@ -2,11 +2,18 @@
  * Utility functions for searching and matching.
  */
 
-import { TypeDocSymbol } from "../types/index.js";
 import { getDescription } from "./symbol-utils.js";
 import { isReferencing } from "./type-utils.js";
 import { getKindName } from "../utils.js";
-import { JSONOutput, ReflectionKind } from "typedoc";
+import {
+  DeclarationReflection,
+  ProjectReflection,
+  ReferenceReflection,
+  Reflection,
+  ReflectionKind,
+  SignatureReflection,
+  TraverseProperty,
+} from "typedoc";
 
 /**
  * Searches for symbols by name.
@@ -19,15 +26,15 @@ import { JSONOutput, ReflectionKind } from "typedoc";
  */
 export function searchSymbolsByName(
   query: string,
-  symbols: TypeDocSymbol[],
+  project: ProjectReflection,
   kind?: ReflectionKind.KindString | "any",
   limit?: number,
-): TypeDocSymbol[] {
-  const results: TypeDocSymbol[] = [];
+): DeclarationReflection[] {
+  const results: DeclarationReflection[] = [];
   const queryLower = query.toLowerCase();
 
-  for (const symbol of symbols) {
-    if (!symbol.name) continue;
+  traverseAll(project, (symbol) => {
+    if (!symbol.name || symbol instanceof ReferenceReflection) return true;
 
     // Check if name matches query
     if (symbol.name.toLowerCase().includes(queryLower)) {
@@ -37,19 +44,34 @@ export function searchSymbolsByName(
         kind !== "any" &&
         getKindName(symbol.kind).toLowerCase() !== kind.toLowerCase()
       ) {
-        continue;
+        return true;
       }
 
       results.push(symbol);
     }
 
     // Apply limit if specified
-    if (limit && results.length >= limit) {
-      break;
-    }
-  }
+    return !(limit && results.length >= limit);
+  });
 
   return results;
+}
+
+function traverseAll(
+  project: ProjectReflection,
+  callback: (symbol: DeclarationReflection) => boolean,
+) {
+  let continueTraversal = true;
+  let collector = (symbol: Reflection, property: TraverseProperty) => {
+    if (continueTraversal) {
+      symbol.traverse(collector);
+    }
+    if (continueTraversal && symbol instanceof DeclarationReflection) {
+      continueTraversal = callback(symbol);
+    }
+    return continueTraversal;
+  };
+  project.traverse(collector);
 }
 
 /**
@@ -61,18 +83,21 @@ export function searchSymbolsByName(
  */
 export function searchSymbolsByDescription(
   query: string,
-  symbols: TypeDocSymbol[],
-): TypeDocSymbol[] {
-  const results: TypeDocSymbol[] = [];
+  symbols: ProjectReflection,
+  limit?: number,
+): DeclarationReflection[] {
+  const results: DeclarationReflection[] = [];
   const queryLower = query.toLowerCase();
 
-  for (const symbol of symbols) {
+  traverseAll(symbols, (symbol) => {
     const description = getDescription(symbol);
-
     if (description.toLowerCase().includes(queryLower)) {
       results.push(symbol);
     }
-  }
+
+    // Apply limit if specified
+    return !(limit && results.length >= limit);
+  });
 
   return results;
 }
@@ -86,12 +111,20 @@ export function searchSymbolsByDescription(
  */
 export function findSymbolsByReturnType(
   typeName: string,
-  symbols: TypeDocSymbol[],
-): TypeDocSymbol[] {
-  const results: TypeDocSymbol[] = [];
+  symbols: ProjectReflection,
+): DeclarationReflection[] {
+  const results: DeclarationReflection[] = [];
 
-  for (const symbol of symbols) {
-    if (hasReturnType(symbol, typeName)) {
+  const symbols2 = symbols
+    .getReflectionsByKind(ReflectionKind.Method)
+    .concat(symbols.getReflectionsByKind(ReflectionKind.Function))
+    .concat(symbols.getReflectionsByKind(ReflectionKind.Property));
+
+  for (const symbol of symbols2) {
+    if (
+      symbol instanceof DeclarationReflection &&
+      hasReturnType(symbol, typeName)
+    ) {
       results.push(symbol);
     }
   }
@@ -106,25 +139,20 @@ export function findSymbolsByReturnType(
  * @param typeName - The return type name
  * @returns True if the symbol has the return type
  */
-export function hasReturnType(
-  symbol: TypeDocSymbol,
-  typeName: string,
-): boolean {
+export function hasReturnType(symbol: Reflection, typeName: string): boolean {
   return (
+    symbol instanceof SignatureReflection &&
     symbol.variant == "signature" &&
-    symbol.kind == ReflectionKind.Method &&
     isReferencing(symbol.type, typeName)
   );
 }
 
 export function isDeclaration(
-  symbol: TypeDocSymbol,
-): symbol is JSONOutput.DeclarationReflection {
+  symbol: Reflection,
+): symbol is DeclarationReflection {
   return symbol.variant === "declaration";
 }
 
-export function isReference(
-  symbol: TypeDocSymbol,
-): symbol is JSONOutput.ReferenceReflection {
+export function isReference(symbol: Reflection): symbol is ReferenceReflection {
   return symbol.variant === "reference";
 }

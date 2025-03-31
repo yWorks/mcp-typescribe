@@ -2,55 +2,49 @@
  * Utility functions for formatting output in an LLM-friendly way.
  */
 
+import { ParameterInfo, SymbolInfo, TypeHierarchy } from "../types/index.js";
 import {
-  ParameterInfo,
-  SymbolInfo,
-  TypeDocSymbol,
-  TypeHierarchy,
-} from "../types/index.js";
-import { getDescription, getParentName } from "./symbol-utils.js";
+  createSymbolInfo,
+  getDescription,
+  getParentName,
+} from "./symbol-utils.js";
 import { formatType } from "./type-utils.js";
 import { getKindName } from "../utils.js";
 
-import { JSONOutput, ReflectionKind } from "typedoc";
+import {
+  DeclarationReflection,
+  ParameterReflection,
+  Reflection,
+  ReflectionKind,
+  SignatureReflection,
+  TypeParameterReflection,
+} from "typedoc";
 import { isDeclaration } from "./search-utils.js";
-
-type DeclarationReflection = JSONOutput.DeclarationReflection;
-type Reflection = JSONOutput.Reflection;
 
 /**
  * Formats a symbol for LLM-friendly output.
  * Removes metadata like sources and includes only relevant information.
  *
  * @param symbol - The symbol to format
- * @param symbolsById - Map of symbols by ID
  * @returns The formatted symbol info
  */
-export function formatSymbolForLLM(
-  symbol: TypeDocSymbol,
-  symbolsById: Map<number, TypeDocSymbol>,
-): SymbolInfo {
-  if (
-    symbol.variant === "declaration" &&
-    (symbol.kind == ReflectionKind.Constructor ||
-      symbol.kind === ReflectionKind.Method ||
-      symbol.kind === ReflectionKind.Function)
-  ) {
-    const sigs = symbol.signatures;
-    if ((sigs?.length ?? 0) > 0) {
-      return formatSymbolForLLM(sigs![0], symbolsById);
-    }
+export function formatSymbolForLLM(symbol: Reflection): SymbolInfo {
+  if (symbol instanceof SignatureReflection) {
+    return {
+      name: symbol.name,
+      kind: getKindName(symbol.kind),
+      description: getDescription(symbol),
+    };
   }
 
-  const info: SymbolInfo = {
-    name: symbol.name,
-    kind: getKindName(symbol.kind),
-    description: getDescription(symbol),
-  };
+  const info = createSymbolInfo(symbol as DeclarationReflection);
 
-  if (symbol.variant === "signature") {
+  if (symbol instanceof SignatureReflection) {
     const decl = symbol;
-    info.description += `\n${decl.name}<${decl.typeParameters?.map((t) => formatTypeParameterForLLMToString(t)).join(",") ?? ""}>(${decl.parameters?.map((p) => formatParameterForLLMToString(p)).join(",") ?? ""}): ${formatType(decl.type)}`;
+    const typeParameters = decl.typeParameters
+      ?.map((p) => formatTypeParameterForLLMToString(p))
+      .join(",");
+    info.description += `\n${decl.name}${typeParameters ? "<" + typeParameters + ">" : ""}(${decl.parameters?.map((p) => formatParameterForLLMToString(p)).join(",") ?? ""}): ${formatType(decl.type)}`;
   }
 
   if (isDeclaration(symbol) && symbol.kind === ReflectionKind.TypeAlias) {
@@ -59,7 +53,7 @@ export function formatSymbolForLLM(
 
   if (symbol.id) info.id = symbol.id;
 
-  const parentName = getParentName(symbol, symbolsById);
+  const parentName = getParentName(symbol);
   if (parentName) {
     info.parentName = parentName;
   }
@@ -75,7 +69,7 @@ export function formatSymbolForLLM(
  * @returns The formatted parameter info
  */
 export function formatParameterForLLM(
-  param: JSONOutput.ParameterReflection,
+  param: ParameterReflection,
 ): ParameterInfo {
   return {
     name: param.name,
@@ -94,7 +88,7 @@ export function formatParameterForLLM(
  * @returns The formatted parameter info
  */
 export function formatParameterForLLMToString(
-  param: JSONOutput.ParameterReflection,
+  param: ParameterReflection,
 ): string {
   return `${param.name}${param.flags?.isOptional ? "?" : ""}${param.defaultValue ? "=" + param.defaultValue : ""}: ${formatType(param.type)}`;
 }
@@ -107,7 +101,7 @@ export function formatParameterForLLMToString(
  * @returns The formatted parameter info
  */
 export function formatTypeParameterForLLMToString(
-  param: JSONOutput.TypeParameterReflection,
+  param: TypeParameterReflection,
 ): string {
   return `${param.name}${param.flags?.isOptional ? "?" : ""} extends ${formatType(param.type)}${param.default ? " = " + formatType(param.default) : ""}`;
 }
@@ -120,7 +114,7 @@ export function formatTypeParameterForLLMToString(
  * @returns The formatted parameter info
  */
 export function formatTypeParameterForLLM(
-  param: JSONOutput.TypeParameterReflection,
+  param: TypeParameterReflection,
 ): ParameterInfo {
   return {
     name: param.name,

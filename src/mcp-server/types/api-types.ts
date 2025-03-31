@@ -2,9 +2,7 @@
  * API-related type definitions for the TypeScript API MCP server.
  */
 
-
-import {ReflectionKind} from "typedoc";
-import {TypeDocType} from "./typedoc-types.js";
+import { ReflectionKind } from "typedoc";
 
 /**
  * Represents a simplified symbol for API responses.
@@ -18,7 +16,7 @@ export interface SymbolInfo {
   parentName?: string;
   inherited?: boolean;
   inheritedFrom?: string;
-  relationship?: 'extends' | 'implements';
+  relationship?: "extends" | "implements";
 }
 
 /**
