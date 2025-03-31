@@ -12,7 +12,6 @@ import {
   Reflection,
   ReflectionKind,
   SignatureReflection,
-  TraverseProperty,
 } from "typedoc";
 
 /**
