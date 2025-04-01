@@ -15,7 +15,9 @@
     "dev": "tsc -w",
     "test": "vitest run",
     "test:watch": "vitest",
-    "inspect": "npx @modelcontextprotocol/inspector node ./dist/mcp-server/index.js docs/api.json"
+    "inspect": "npx @modelcontextprotocol/inspector node ./dist/mcp-server/index.js docs/api.json",
+    "release": "npm run build && changeset publish",
+    "new-version": "changeset version && npm run format:write && npm run build"
   },
   "files": ["dist/mcp-server"],
   "keywords": [
