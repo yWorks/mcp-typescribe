@@ -32,7 +32,7 @@
   "devDependencies": {
     "@types/node": "^22.13.9",
     "typescript": "^5.8.2",
-    "vitest": "^3.0.9",
+    "vitest": "^3.1.1",
     "prettier": "^3.5.3",
     "@changesets/cli": "^2.28.1",
     "eslint": "^9.23.0",
