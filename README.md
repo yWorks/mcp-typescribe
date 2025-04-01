@@ -77,6 +77,25 @@ The server provides the following tools for querying the API:
    ```bash
    npx typedoc --json docs/api.json --entryPointStrategy expand path/to/your/typescript/files
    ```
+   If you (only) have an existing`.d.ts` file, you can create an api json file like so:
+
+   Create a separate `tsconfig.docs.json`:
+   ```json
+   {
+       "extends": "./tsconfig.json",
+       "files": ["existing.d.ts"],
+        "typedocOptions": {
+            "entryPoints": ["existing.d.ts"],
+            "json": "docs/api.json",
+            "pretty": false
+        }
+   }
+   ```
+   
+   Then do
+   ```bash
+   npx typedoc --tsconfig tsconfig.docs.json
+   ```
 
 2. Build the project:
    ```bash

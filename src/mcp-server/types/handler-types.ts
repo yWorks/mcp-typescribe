@@ -61,7 +61,9 @@ const searchSymbolsSchema = z.object({
 });
 
 // Get symbol details schema
-const getSymbolDetailsSchema = baseHandlerSchema;
+const getSymbolDetailsSchema = baseHandlerSchema.describe(
+  "Gets details about a symbol. This includes the symbol's name, kind, and description. If the symbol is a class, interface, enum, or module, this also includes the members of the symbol.",
+);
 
 // List members schema
 const listMembersSchema = baseHandlerSchema
@@ -70,6 +72,7 @@ const listMembersSchema = baseHandlerSchema
     includeInherited: z
       .boolean()
       .optional()
+      .default(false)
       .describe(
         "Whether to include inherited members. If not specified, only direct members will be returned.",
       ),
@@ -85,33 +88,44 @@ const getParameterInfoSchema = baseHandlerSchema;
 const findImplementationsSchema = baseHandlerSchema;
 
 // Search by return type schema
-const searchByReturnTypeSchema = z.object({
-  typeName: z.string(),
-});
+const searchByReturnTypeSchema = z
+  .object({
+    typeName: z.string(),
+  })
+  .describe(
+    "Finds functions and methods with a specific return type. This can be used to find functions and methods that return a specific type, or to find functions and methods that return a type that is a subclass of a given type.",
+  );
 
 // Search by description schema
-const searchByDescriptionSchema = z.object({
-  query: z
-    .string()
-    .describe(
-      "the description to search for. This can be a partial text match. ",
-    ),
-  limit: z
-    .number()
-    .optional()
-    .describe(
-      "The maximum number of results to return. If not specified, all results will be returned.",
-    ),
-});
+const searchByDescriptionSchema = z
+  .object({
+    query: z
+      .string()
+      .describe(
+        "the description to search for. This can be a partial text match. ",
+      ),
+    limit: z
+      .number()
+      .optional()
+      .describe(
+        "The maximum number of results to return. If not specified, all results will be returned.",
+      ),
+  })
+  .describe(
+    "Searches for symbols with descriptions containing a query. This can be used to find symbols that are similar to a given description, or to find symbols that are related to a given description.",
+  );
 
 // Get type hierarchy schema
-const getTypeHierarchySchema = baseHandlerSchema;
+const getTypeHierarchySchema = baseHandlerSchema.describe(
+  "Get the type hierarchy for a given type symbol. Inherited classes and interfaces, as well as inheritors.",
+);
 
 // Find usages schema
-const findUsagesSchema = baseHandlerSchema;
+const findUsagesSchema = baseHandlerSchema.describe(
+  "Finds usages of a symbol in the API. This includes references to the symbol in other symbols.",
+);
 
 // Derived types
-type BaseHandlerParams = z.infer<typeof baseHandlerSchema>;
 type SearchSymbolsParams = z.infer<typeof searchSymbolsSchema>;
 type GetSymbolDetailsParams = z.infer<typeof getSymbolDetailsSchema>;
 type ListMembersParams = z.infer<typeof listMembersSchema>;
@@ -124,21 +138,20 @@ type FindUsagesParams = z.infer<typeof findUsagesSchema>;
 
 // Export all schemas
 export const schemas = {
-  baseHandlerSchema,
-  searchSymbolsSchema,
-  getSymbolDetailsSchema,
-  listMembersSchema,
-  getParameterInfoSchema,
-  findImplementationsSchema,
-  searchByReturnTypeSchema,
-  searchByDescriptionSchema,
-  getTypeHierarchySchema,
-  findUsagesSchema,
+  base_handler_schema: baseHandlerSchema,
+  search_symbols: searchSymbolsSchema,
+  get_symbol_details: getSymbolDetailsSchema,
+  list_members_schema: listMembersSchema,
+  get_parameter_info_schema: getParameterInfoSchema,
+  find_implementations_schema: findImplementationsSchema,
+  search_by_return_type_schema: searchByReturnTypeSchema,
+  search_by_description_schema: searchByDescriptionSchema,
+  get_type_hierarchy_schema: getTypeHierarchySchema,
+  find_usages_schema: findUsagesSchema,
 } as const;
 
 // Export all types
 export type {
-  BaseHandlerParams,
   SearchSymbolsParams,
   GetSymbolDetailsParams,
   ListMembersParams,

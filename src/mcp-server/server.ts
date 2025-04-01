@@ -19,7 +19,7 @@ import {
   TOOL_DEFINITIONS,
 } from "./schemas/index.js";
 import { schemas } from "./types/index.js";
-import { createHandlerResponse } from "./utils/index.js";
+import { createHandlerResponse, stringify } from "./utils/index.js";
 import { JSONOutput } from "typedoc";
 
 // Get the directory name of the current module
@@ -32,15 +32,15 @@ const __dirname = path.dirname(__filename);
  * This server loads TypeDoc JSON documentation and provides endpoints for querying
  * TypeScript API information.
  */
-export class TypeScriptApiServer {
+export class TypescribeServer {
   private server: Server;
   private handlers: TypeScriptApiHandlers | null = null;
 
   constructor() {
     this.server = new Server(
       {
-        name: "typescript-api-server",
-        version: "0.1.0",
+        name: "typescribe-api-server",
+        version: "0.2.0",
       },
       {
         capabilities: {
@@ -114,8 +114,8 @@ export class TypeScriptApiServer {
             contents: [
               {
                 uri,
-                mimeType: "application/json",
-                text: JSON.stringify(handlers.getApiOverview(), null, 2),
+                mimeType: "text",
+                text: stringify(handlers.getApiOverview()),
               },
             ],
           };
@@ -138,8 +138,8 @@ export class TypeScriptApiServer {
             contents: [
               {
                 uri,
-                mimeType: "application/json",
-                text: JSON.stringify(results[0], null, 2),
+                mimeType: "text",
+                text: stringify(results),
               },
             ],
           };
@@ -156,7 +156,7 @@ export class TypeScriptApiServer {
               {
                 uri,
                 mimeType: "application/json",
-                text: JSON.stringify(results, null, 2),
+                text: stringify(results),
               },
             ],
           };
@@ -193,45 +193,41 @@ export class TypeScriptApiServer {
         switch (name) {
           case "search_symbols":
             return handlers.handleSearchSymbols(
-              schemas.searchSymbolsSchema.parse(args),
+              schemas.search_symbols.parse(args),
             );
           case "get_symbol_details":
             return handlers.handleGetSymbolDetails(
-              schemas.getSymbolDetailsSchema.parse(args),
+              schemas.get_symbol_details.parse(args),
             );
           case "list_members":
             return handlers.handleListMembers(
-              schemas.listMembersSchema.parse(args),
+              schemas.list_members_schema.parse(args),
             );
           case "get_parameter_info":
             return handlers.handleGetParameterInfo(
-              schemas.getParameterInfoSchema.parse(args),
+              schemas.get_parameter_info_schema.parse(args),
             );
           case "find_implementations":
             return handlers.handleFindImplementations(
-              schemas.findImplementationsSchema.parse(args),
+              schemas.find_implementations_schema.parse(args),
             );
           case "search_by_return_type":
             return handlers.handleSearchByReturnType(
-              schemas.searchByReturnTypeSchema.parse(args),
+              schemas.search_by_return_type_schema.parse(args),
             );
           case "search_by_description":
             return handlers.handleSearchByDescription(
-              schemas.searchByDescriptionSchema.parse(args),
+              schemas.search_by_description_schema.parse(args),
             );
           case "get_type_hierarchy":
             return handlers.handleGetTypeHierarchy(
-              schemas.getTypeHierarchySchema.parse(args),
+              schemas.get_type_hierarchy_schema.parse(args),
             );
           case "find_usages":
             return handlers.handleFindUsages(
-              schemas.findUsagesSchema.parse(args),
+              schemas.find_usages_schema.parse(args),
             );
           default:
-            throw new McpError(
-              ErrorCode.MethodNotFound,
-              `Unknown tool: ${name}`,
-            );
         }
       }
 

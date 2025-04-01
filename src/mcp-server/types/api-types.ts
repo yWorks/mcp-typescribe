@@ -13,7 +13,7 @@ export interface SymbolInfo {
   name: string;
   kind?: ReflectionKind.KindString | string;
   description?: string;
-  parentName?: string;
+  parent?: string;
   inherited?: boolean;
   inheritedFrom?: string;
   children?: SymbolInfo[];

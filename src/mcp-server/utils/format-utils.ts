@@ -23,6 +23,12 @@ import {
 } from "typedoc";
 import { isDeclaration } from "./search-utils.js";
 
+import { stringify as yamlStringify } from "yaml";
+
+export function stringify(json: any) {
+  return yamlStringify(json, null, { lineWidth: 0 });
+}
+
 export function formatDetailSymbols(symbol: Reflection): SymbolInfo {
   symbol = maybeResolve(symbol) ?? symbol;
   const result = formatSymbolForLLM(symbol);
@@ -31,7 +37,7 @@ export function formatDetailSymbols(symbol: Reflection): SymbolInfo {
     if (symbol instanceof ContainerReflection && symbol.children) {
       for (const child of symbol.children) {
         let info = formatSymbolForLLM(child);
-        delete info.parentName;
+        delete info.parent;
         delete info.children;
         result.children.push(info);
       }
@@ -87,7 +93,7 @@ export function formatSymbolForLLM(symbol: Reflection): SymbolInfo {
 
   const parentName = getParentName(symbol);
   if (parentName) {
-    info.parentName = parentName;
+    info.parent = parentName;
   }
 
   return info;
@@ -168,6 +174,7 @@ export function formatTypeHierarchyForLLM(
   hierarchy: TypeHierarchy,
 ): TypeHierarchy {
   const formatted: TypeHierarchy = {
+    id: hierarchy.id,
     name: hierarchy.name,
     kind: hierarchy.kind,
     description: hierarchy.description,
@@ -178,6 +185,7 @@ export function formatTypeHierarchyForLLM(
   formatted.implements = hierarchy.implements?.map(formatTypeHierarchyForLLM);
 
   formatted.implementedBy = hierarchy.implementedBy?.map((info) => ({
+    id: info.id,
     name: info.name,
     kind: info.kind,
     description: info.description,
@@ -185,6 +193,7 @@ export function formatTypeHierarchyForLLM(
   }));
 
   formatted.extendedBy = hierarchy.extendedBy?.map((info) => ({
+    id: info.id,
     name: info.name,
     kind: info.kind,
     description: info.description,
@@ -198,23 +207,17 @@ export function formatTypeHierarchyForLLM(
  * Creates a handler response with formatted content.
  *
  * @param content - The content to format
- * @param isError - Whether the response is an error
  * @returns The formatted handler response
  */
-export function createHandlerResponse<T>(
-  content: T,
-  isError = false,
-): {
+export function createHandlerResponse<T>(content: T): {
   content: { type: string; text: string }[];
-  isError?: boolean;
 } {
   return {
     content: [
       {
         type: "text",
-        text: JSON.stringify(content, null, 2),
+        text: stringify(content),
       },
     ],
-    ...(isError ? { isError: true } : {}),
   };
 }

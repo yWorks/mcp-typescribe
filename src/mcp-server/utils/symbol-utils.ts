@@ -23,7 +23,17 @@ export function getDescription(symbol: Reflection): string | undefined {
   let description = "";
   if (symbol.comment?.summary) {
     description = symbol.comment.summary
-      .map((part) => part.text)
+      .map((part) => {
+        if (
+          part.kind === "inline-tag" &&
+          part.target instanceof DeclarationReflection &&
+          part.target.id
+        ) {
+          return `[${part.text}](api://symbol/${part.target.id})`;
+        } else {
+          return part.text;
+        }
+      })
       .join("")
       .trim();
   }
@@ -44,6 +54,12 @@ export function getDescription(symbol: Reflection): string | undefined {
   return description.length > 0 ? description : undefined;
 }
 
+function formatParameters(symbol: SignatureReflection) {
+  return (symbol?.parameters ?? [])
+    .map((p) => `${p.name}:${p.type?.toString()}`)
+    .join(",");
+}
+
 export function getSignature(symbol: Reflection) {
   if (symbol instanceof SignatureReflection && symbol.isSignature()) {
     switch (symbol.kind) {
@@ -57,9 +73,9 @@ export function getSignature(symbol: Reflection) {
         const typeParameters = symbol.typeParameters
           ?.map((t) => t.name + " extends " + t.type?.toString())
           .join(",");
-        return `${symbol.name}${typeParameters ? `<${typeParameters}>` : ""}(${(symbol.parameters ?? []).map((p) => `${p.name}:${p.type?.toString()}`).join(",")}):${symbol.type!.toString()}`;
+        return `${symbol.name}${typeParameters ? `<${typeParameters}>` : ""}(${formatParameters(symbol)}):${symbol.type!.toString()}`;
       case ReflectionKind.ConstructorSignature:
-        return `constructor(${symbol.parameters?.map((p) => p.name).join(",")}) => ${symbol.type!.toString()}`;
+        return `constructor(${formatParameters(symbol)}) => ${symbol.type!.toString()}`;
     }
   }
   return "";
@@ -140,9 +156,12 @@ export function getSymbolsByParams(
  * @param symbol - The symbol
  * @returns The parent name
  */
-export function getParentName(symbol: Reflection): string {
+export function getParentName(symbol: Reflection): string | undefined {
   if (symbol.parent instanceof DeclarationReflection) {
-    return symbol.parent.name;
+    if (symbol.parent.id) {
+      return `[${symbol.parent.name}](api://symbol${symbol.parent.id})`;
+    } else {
+      return symbol.parent.name;
+    }
   }
-  return "";
 }

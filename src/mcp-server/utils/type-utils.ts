@@ -2,7 +2,7 @@
  * Utility functions for working with TypeScript types.
  */
 
-import { Reflection, Type } from "typedoc";
+import { DeclarationReflection, Reflection, Type } from "typedoc";
 
 export function reflectionIsReferencing(
   symbol: Reflection | undefined,
@@ -58,7 +58,22 @@ export function isReferencing(
 
   return (
     type.visit({
-      reference: (type) => type.name === typeName,
+      reference: (type) => {
+        if (
+          !type.refersToTypeParameter &&
+          type.reflection instanceof DeclarationReflection
+        ) {
+          return !!(
+            type.name === typeName ||
+            type.reflection.implementedTypes?.some((type) =>
+              isReferencing(type, typeName),
+            ) ||
+            type.reflection.extendedTypes?.some((type) =>
+              isReferencing(type, typeName),
+            )
+          );
+        } else return type.name === typeName;
+      },
       array: (type) => isReferencing(type.elementType, typeName),
       intersection: (type) =>
         type.types.some((t) => isReferencing(t, typeName)),

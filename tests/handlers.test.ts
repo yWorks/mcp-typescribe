@@ -140,6 +140,26 @@ describe("TypeScriptApiHandlers", () => {
       expect(hierarchy.name).toBe("TaschgInEcht");
       expect(hierarchy.kind).toBe("Class");
     });
+    it("should get the type hierarchy of an interface downwards", () => {
+      // First find the class
+      const classResults = handlers.handleGetTypeHierarchy({ name: "Uffgabe" });
+
+      expect(classResults.length).toBe(1);
+      expect(classResults[0].implementedBy).toBeDefined();
+      expect(classResults[0].implementedBy!.length).toBeGreaterThan(0);
+      expect(classResults[0].implementedBy![0].name).toBe("TaschgInEcht");
+    });
+    it("should get the type hierarchy of an interface upwards", () => {
+      // First find the class
+      const classResults = handlers.handleGetTypeHierarchy({
+        name: "UffgabeWechFaehler",
+      });
+
+      expect(classResults.length).toBe(1);
+      expect(classResults[0].extends).toBeDefined();
+      expect(classResults[0].extends!.length).toBeGreaterThan(0);
+      expect(classResults[0].extends![0].name).toBe("UffgabeFaehler");
+    });
   });
 
   // Test the handler methods
@@ -150,7 +170,7 @@ describe("TypeScriptApiHandlers", () => {
       expect(result.length).toBeGreaterThan(0);
       expect(result[0].name).toBe("TaskStatus");
       expect(result[0].description).toContain(
-        "Represents the status of a task.",
+        "Represents the status of a [task]",
       );
     });
   });
@@ -169,7 +189,9 @@ describe("TypeScriptApiHandlers", () => {
     it("should handle find_usages tool", () => {
       const result = handlers.handleFindUsages({ name: "TaskStatus" });
 
-      expect(result.length).toBeGreaterThan(0);
+      console.log(result);
+
+      expect(result.length).toBe(7);
       expect(result.some((r) => r.name === "constructor")).toBe(true);
       expect(
         result.some((r) =>
@@ -177,6 +199,14 @@ describe("TypeScriptApiHandlers", () => {
             ?.toLowerCase()
             .includes("creates a new taskimpl instance."),
         ),
+      ).toBe(true);
+    });
+    it("should handle find_usages tool with subclasses", () => {
+      const result = handlers.handleFindUsages({ name: "UffgabeFaehler" });
+
+      expect(result.length).toBe(3);
+      expect(
+        result.some((r) => r.description?.includes(" => UffgabeWechFaehler")),
       ).toBe(true);
     });
   });
@@ -188,12 +218,28 @@ describe("TypeScriptApiHandlers", () => {
       expect(result.length).toBe(1);
       expect(result[0].kind).toBe("Enum");
       expect(result[0].description).toContain(
-        "Represents the status of a task.",
+        "Represents the status of a [task]",
       );
       expect(result[0]).toHaveProperty("children");
       expect(result[0].children).toHaveLength(4);
       expect(result[0].children![0]).not.toHaveProperty("children");
       expect(result[0].children!.some((c) => c.name === "FERTIG")).toBe(true);
+    });
+    it("should show the link in an inline tag", () => {
+      const result = handlers.handleGetSymbolDetails({
+        names: ["Uffgabe", "Kerle"],
+      });
+      expect(result).toHaveLength(2);
+      expect(result[0].description).toContain(
+        "Represents a task that can be assigned to a [user](",
+      );
+      expect(result[1].description).toContain(
+        "Represents a user in the system.",
+      );
+      expect(result[1].id).toBeDefined();
+      expect(result[0].description).toContain(
+        `](api://symbol/${result[1].id})`,
+      );
     });
     it("should handle get_symbol_details tool for modules", () => {
       const result = handlers.handleGetSymbolDetails({ name: "index" });
@@ -242,7 +288,7 @@ describe("TypeScriptApiHandlers", () => {
       expect(result.length).toBe(2);
       expect(result[0].kind).toBe("Enum");
       expect(result[0].description).toContain(
-        "Represents the status of a task.",
+        "Represents the status of a [task]",
       );
       expect(result[1].kind).toBe("Interface");
       expect(result[1].description).toContain(
