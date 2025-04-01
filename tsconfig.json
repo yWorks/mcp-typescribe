@@ -6,10 +6,10 @@
     "esModuleInterop": true,
     "strict": true,
     "outDir": "dist",
-    "declaration": true,
+    "declaration": false,
     "sourceMap": true,
     "rootDir": "src"
   },
-  "include": ["src/**/*"],
+  "include": ["src/mcp-server/**/*", "src/sample-api/**/*"],
   "exclude": ["node_modules", "dist"]
 }

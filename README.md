@@ -1,9 +1,10 @@
 # MCP-Typescribe - an MCP Server providing LLMs API information
 
 ## The Problem
+
 Large Language Models (LLMs) have made incredible strides in code generation and developer productivity. However, they face a key limitation: they can only reliably use APIs and libraries they’ve seen during training. This creates a bottleneck for adopting new tools, SDKs, or internal APIs — LLMs simply don’t know how to use them effectively.
 
-While tools can be given source code access (when interacting with APIs for which the sources are available) or access to documentation files (e.g. typescript type definition files), this doesn't scale well for large APIs. LLMs need a more efficient way to learn more about an API. Putting all the documentation into context for every request is inefficient, unfeasible, and leads to poor results. 
+While tools can be given source code access (when interacting with APIs for which the sources are available) or access to documentation files (e.g. typescript type definition files), this doesn't scale well for large APIs. LLMs need a more efficient way to learn more about an API. Putting all the documentation into context for every request is inefficient, unfeasible, and leads to poor results.
 
 ## As a result:
 
@@ -14,6 +15,7 @@ Developers must manually guide LLMs or provide example usage.
 Innovation is slowed by the lag between an API’s release and its widespread understanding by AI tools.
 
 ## The Idea
+
 This project is an open-source implementation of the Model Context Protocol (MCP)—a protocol designed to provide LLMs with contextual, real-time access to information. In this case it's the API documentation, and particularly for now in this project TypeScript definitions.
 
 ## Our goal is to:
@@ -74,35 +76,41 @@ The server provides the following tools for querying the API:
 ### Usage
 
 1. Generate TypeDoc JSON for your TypeScript API:
+
    ```bash
    npx typedoc --json docs/api.json --entryPointStrategy expand path/to/your/typescript/files
    ```
+
    If you (only) have an existing`.d.ts` file, you can create an api json file like so:
 
    Create a separate `tsconfig.docs.json`:
+
    ```json
    {
-       "extends": "./tsconfig.json",
-       "files": ["existing.d.ts"],
-        "typedocOptions": {
-            "entryPoints": ["existing.d.ts"],
-            "json": "docs/api.json",
-            "pretty": false
-        }
+     "extends": "./tsconfig.json",
+     "files": ["existing.d.ts"],
+     "typedocOptions": {
+       "entryPoints": ["existing.d.ts"],
+       "json": "docs/api.json",
+       "pretty": false
+     }
    }
    ```
-   
+
    Then do
+
    ```bash
    npx typedoc --tsconfig tsconfig.docs.json
    ```
 
 2. Build the project:
+
    ```bash
    npm run build
    ```
 
 3. Explore the MCP server:
+
    ```bash
    npx @modelcontextprotocol/inspector node ./dist/mcp-server/index.js docs/api.json
    ```
@@ -112,22 +120,23 @@ The server provides the following tools for querying the API:
    E.g. with cline in VSCode, specify the following MCP server in `cline_mcp_settings.json`:
 
    ```json
-    {
-      "mcpServers": {
-        "typescribe": {
-          "command": "node",
-          "disabled": false,
-          "args":["path/to/typescript-mcp/dist/mcp-server/index.js"],
-          "autoApprove": []
-        }
-      }
-    }
-    ```
+   {
+     "mcpServers": {
+       "typescribe": {
+         "command": "node",
+         "disabled": false,
+         "args": ["path/to/typescript-mcp/dist/mcp-server/index.js"],
+         "autoApprove": []
+       }
+     }
+   }
+   ```
+
 5. Enable the server and likely auto-approve for the various tools. Tell the agent to use the "typescribe" tool to learn about your API.
 
 ## Project Structure
 
-- `src/sample-api/`: A sample TypeScript API for testing - it uses a weird German-like dialect for the API names to test that the LLM does not hallucinate the API 
+- `src/sample-api/`: A sample TypeScript API for testing - it uses a weird German-like dialect for the API names to test that the LLM does not hallucinate the API
 - `src/mcp-server/`: The MCP server implementation
   - `types/`: Type definitions
     - `typedoc-types.ts`: TypeDoc-related types
@@ -171,6 +180,5 @@ npm run build
 ## License
 
 MIT
-
 
 Copyright 2025 yWorks GmbH - https://www.yworks.com

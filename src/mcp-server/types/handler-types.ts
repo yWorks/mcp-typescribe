@@ -71,8 +71,8 @@ const listMembersSchema = baseHandlerSchema
   .extend({
     includeInherited: z
       .boolean()
-      .optional()
       .default(false)
+      .optional()
       .describe(
         "Whether to include inherited members. If not specified, only direct members will be returned.",
       ),

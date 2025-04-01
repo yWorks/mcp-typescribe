@@ -1,18 +1,23 @@
 {
-  "name": "typescripe-mcp",
+  "name": "mcp-typescripe",
   "version": "0.1.0",
   "description": "An MCP server that answers questions about TypeScript APIs using TypeDoc JSON documentation",
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
     "build": "tsc",
+    "watch": "tsc --watch",
     "docs": "typedoc --json docs/api.json --entryPointStrategy expand src/sample-api/",
     "start": "node dist/mcp-server/index.js",
+    "format": "prettier --ignore-unknown --cache --check .",
+    "format:write": "prettier --ignore-unknown --write .",
+    "lint": "eslint . --ext .ts,.js,.mjs",
     "dev": "tsc -w",
     "test": "vitest run",
     "test:watch": "vitest",
     "inspect": "npx @modelcontextprotocol/inspector node ./dist/mcp-server/index.js docs/api.json"
   },
+  "files": ["dist/mcp-server"],
   "keywords": [
     "MCP Server",
     "typescript",
@@ -28,7 +33,11 @@
     "@types/node": "^22.13.9",
     "typescript": "^5.8.2",
     "vitest": "^3.0.9",
-    "prettier": "^3.5.3"
+    "prettier": "^3.5.3",
+    "@changesets/cli": "^2.28.1",
+    "eslint": "^9.23.0",
+    "eslint-config-prettier": "^10.1.1",
+    "typescript-eslint": "^8.29.0"
   },
   "dependencies": {
     "yaml": "^2.7.1",

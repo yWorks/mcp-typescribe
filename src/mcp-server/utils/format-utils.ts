@@ -25,7 +25,7 @@ import { isDeclaration } from "./search-utils.js";
 
 import { stringify as yamlStringify } from "yaml";
 
-export function stringify(json: any) {
+export function stringify(json: unknown) {
   return yamlStringify(json, null, { lineWidth: 0 });
 }
 
@@ -36,7 +36,7 @@ export function formatDetailSymbols(symbol: Reflection): SymbolInfo {
     result.children = [];
     if (symbol instanceof ContainerReflection && symbol.children) {
       for (const child of symbol.children) {
-        let info = formatSymbolForLLM(child);
+        const info = formatSymbolForLLM(child);
         delete info.parent;
         delete info.children;
         result.children.push(info);
@@ -48,7 +48,7 @@ export function formatDetailSymbols(symbol: Reflection): SymbolInfo {
 
 function maybeResolve(symbol: Reflection): DeclarationReflection | undefined {
   if (symbol instanceof ReferenceReflection) {
-    let targetReflectionDeep = symbol.getTargetReflectionDeep();
+    const targetReflectionDeep = symbol.getTargetReflectionDeep();
     return targetReflectionDeep instanceof DeclarationReflection
       ? targetReflectionDeep
       : undefined;

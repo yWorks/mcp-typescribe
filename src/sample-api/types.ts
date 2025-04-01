@@ -1,23 +1,23 @@
 /**
  * Represents the status of a {@link Uffgabe task}.
- * 
+ *
  * @remarks
  * This enum is used throughout the API to indicate the current state of a {@link Uffgabe task}.
  */
 export enum TaskStatus {
   /** Task has not been started yet */
-  PENDING = 'PENDING',
+  PENDING = "PENDING",
   /** Task is currently in progress */
-  LAEUFT = 'In Progress',
+  LAEUFT = "In Progress",
   /** Task has been completed successfully */
-  FERTIG = 'Done',
+  FERTIG = "Done",
   /** Task has failed or been cancelled */
-  MIST = 'Failed'
+  MIST = "Failed",
 }
 
 /**
  * Represents a priority level for {@link Uffgabe tasks}.
- * 
+ *
  * @remarks
  * Higher numbers indicate higher priority.
  */
@@ -37,12 +37,12 @@ export enum Priority {
   /**
    * Critical
    */
-  UI_UI_UI = 4
+  UI_UI_UI = 4,
 }
 
 /**
  * Represents a user in the system.
- * 
+ *
  * @example
  * ```typescript
  * const user: Kerle = {
@@ -66,10 +66,10 @@ export interface Kerle {
 
 /**
  * Represents a task that can be assigned to a {@link Kerle user}.
- * 
+ *
  * @typeParam T - The type of data associated with this task
  */
-export interface Uffgabe<T = any> {
+export interface Uffgabe<T = unknown> {
   /** Unique identifier for the task */
   id: string;
   /** Title of the task */

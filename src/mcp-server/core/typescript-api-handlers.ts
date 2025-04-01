@@ -73,6 +73,17 @@ export class TypeScriptApiHandlers {
   }
 
   /**
+   * Get a symbol by name
+   */
+  getSymbolByName(name: string): DeclarationReflection | undefined {
+    const result = this.symbolsByName.get(name);
+    if (result instanceof ReferenceReflection) {
+      return result.getTargetReflectionDeep() as DeclarationReflection;
+    }
+    return result as DeclarationReflection;
+  }
+
+  /**
    * Builds indexes for efficient symbol lookup.
    *
    * @param projectReflection - The TypeDoc JSON documentation
@@ -254,17 +265,21 @@ export class TypeScriptApiHandlers {
     const implementations: SymbolInfo[] = [];
     if (Array.isArray(symbol.extendedBy)) {
       for (const extendedType of symbol.extendedBy) {
-        const implInfo = formatSymbolForLLM(symbol);
-        implInfo.relationship = "extends";
-        implementations.push(implInfo);
+        if (extendedType.reflection instanceof DeclarationReflection) {
+          const implInfo = formatSymbolForLLM(extendedType.reflection);
+          implInfo.relationship = "extends";
+          implementations.push(implInfo);
+        }
       }
     }
 
     if (Array.isArray(symbol.implementedBy)) {
       for (const implementedType of symbol.implementedBy) {
-        const implInfo = formatSymbolForLLM(symbol);
-        implInfo.relationship = "implements";
-        implementations.push(implInfo);
+        if (implementedType.reflection instanceof DeclarationReflection) {
+          const implInfo = formatSymbolForLLM(implementedType.reflection);
+          implInfo.relationship = "implements";
+          implementations.push(implInfo);
+        }
       }
     }
     return implementations;

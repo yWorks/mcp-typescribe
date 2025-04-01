@@ -69,11 +69,12 @@ export function getSignature(symbol: Reflection) {
         return `get ${symbol.name}():${symbol.type!.toString()}`;
       case ReflectionKind.IndexSignature:
         return `get ${symbol.parameters![0].name}: ${symbol.parameters![1].type!.toString()}`;
-      case ReflectionKind.CallSignature:
+      case ReflectionKind.CallSignature: {
         const typeParameters = symbol.typeParameters
           ?.map((t) => t.name + " extends " + t.type?.toString())
           .join(",");
         return `${symbol.name}${typeParameters ? `<${typeParameters}>` : ""}(${formatParameters(symbol)}):${symbol.type!.toString()}`;
+      }
       case ReflectionKind.ConstructorSignature:
         return `constructor(${formatParameters(symbol)}) => ${symbol.type!.toString()}`;
     }

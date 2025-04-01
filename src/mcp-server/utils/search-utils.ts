@@ -61,7 +61,7 @@ function traverseAll(
   callback: (symbol: DeclarationReflection) => boolean,
 ) {
   let continueTraversal = true;
-  let collector = (symbol: Reflection) => {
+  const collector = (symbol: Reflection) => {
     if (continueTraversal) {
       symbol.traverse(collector);
     }

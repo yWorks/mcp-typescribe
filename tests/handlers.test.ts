@@ -59,11 +59,11 @@ describe("TypeScriptApiHandlers", () => {
       expect(classResults.length).toBeGreaterThan(0);
 
       // Get the class symbol from the handlers
-      const classSymbol = (handlers as any).symbolsByName.get("TaschgInEcht");
+      const classSymbol = handlers.getSymbolByName("TaschgInEcht");
       expect(classSymbol).toBeDefined();
 
       // Get members
-      const members = handlers.getMembers(classSymbol, false);
+      const members = handlers.getMembers(classSymbol!, false);
 
       expect(members.length).toBeGreaterThan(0);
       expect(members.some((m) => m.name === "korrigiera")).toBe(true);
@@ -77,11 +77,11 @@ describe("TypeScriptApiHandlers", () => {
       expect(interfaceResults.length).toBeGreaterThan(0);
 
       // Get the interface symbol from the handlers
-      const interfaceSymbol = (handlers as any).symbolsByName.get("Kerle");
+      const interfaceSymbol = handlers.getSymbolByName("Kerle");
       expect(interfaceSymbol).toBeDefined();
 
       // Find implementations
-      const implementations = handlers.findImplementations(interfaceSymbol);
+      const implementations = handlers.findImplementations(interfaceSymbol!);
 
       // In our sample data, there are no implementations of User
       expect(implementations.length).toBe(0);
@@ -98,13 +98,11 @@ describe("TypeScriptApiHandlers", () => {
       expect(functionResults.length).toBeGreaterThan(0);
 
       // Get the function symbol from the handlers
-      const functionSymbol = (handlers as any).symbolsByName.get(
-        "sortByPriority",
-      );
+      const functionSymbol = handlers.getSymbolByName("sortByPriority");
       expect(functionSymbol).toBeDefined();
 
       // Get parameters
-      const parameters = handlers.getParameters(functionSymbol);
+      const parameters = handlers.getParameters(functionSymbol!);
 
       expect(parameters.length).toBeGreaterThan(0);
       expect(parameters.some((p) => p.name === "tasks")).toBe(true);
@@ -131,11 +129,11 @@ describe("TypeScriptApiHandlers", () => {
       expect(classResults.length).toBeGreaterThan(0);
 
       // Get the class symbol from the handlers
-      const classSymbol = (handlers as any).symbolsByName.get("TaschgInEcht");
+      const classSymbol = handlers.getSymbolByName("TaschgInEcht");
       expect(classSymbol).toBeDefined();
 
       // Get type hierarchy
-      const hierarchy = handlers.getTypeHierarchy(classSymbol);
+      const hierarchy = handlers.getTypeHierarchy(classSymbol!);
 
       expect(hierarchy.name).toBe("TaschgInEcht");
       expect(hierarchy.kind).toBe("Class");
@@ -188,8 +186,6 @@ describe("TypeScriptApiHandlers", () => {
   describe("handleFindUsages", () => {
     it("should handle find_usages tool", () => {
       const result = handlers.handleFindUsages({ name: "TaskStatus" });
-
-      console.log(result);
 
       expect(result.length).toBe(7);
       expect(result.some((r) => r.name === "constructor")).toBe(true);

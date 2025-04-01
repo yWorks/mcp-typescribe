@@ -1,4 +1,4 @@
-import { Uffgabe, TaskStatus, Priority, Kerle, TaskOptions } from './types.js';
+import { Uffgabe, TaskStatus, Priority, Kerle, TaskOptions } from "./types.js";
 
 /**
  * Base class for task-related errors.
@@ -6,12 +6,12 @@ import { Uffgabe, TaskStatus, Priority, Kerle, TaskOptions } from './types.js';
 export class UffgabeFaehler extends Error {
   /**
    * Creates a new UffgabeFaehler.
-   * 
+   *
    * @param message - Error message
    */
   constructor(message: string) {
     super(message);
-    this.name = 'TaskError';
+    this.name = "TaskError";
   }
 }
 
@@ -21,20 +21,21 @@ export class UffgabeFaehler extends Error {
 export class UffgabeWechFaehler extends UffgabeFaehler {
   /**
    * Creates a new TaskNotFoundError.
-   * 
+   *
    * @param taskId - ID of the task that was not found
    */
   constructor(public taskId: string) {
     super(`Task with ID ${taskId} not found`);
-    this.name = 'TaskNotFoundError';
+    this.name = "TaskNotFoundError";
   }
 }
 
 /**
  * Represents a concrete implementation of a task with additional functionality.
- * 
+ *
  * @typeParam T - The type of data associated with this task
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export class TaschgInEcht<T = any> implements Uffgabe<T> {
   /** Unique identifier for the task */
   id: string;
@@ -61,10 +62,10 @@ export class TaschgInEcht<T = any> implements Uffgabe<T> {
 
   /**
    * Creates a new TaskImpl instance.
-   * 
+   *
    * @param task - Task properties
    */
-  constructor(task: Omit<Uffgabe<T>, 'status'> & { status?: TaskStatus }) {
+  constructor(task: Omit<Uffgabe<T>, "status"> & { status?: TaskStatus }) {
     this.id = task.id;
     this.do_Tittel = task.do_Tittel;
     this.umWosGoots = task.umWosGoots;
@@ -80,7 +81,7 @@ export class TaschgInEcht<T = any> implements Uffgabe<T> {
 
   /**
    * Updates the task status and records the change in history.
-   * 
+   *
    * @param status - New status to set
    * @returns The updated task
    */
@@ -95,7 +96,7 @@ export class TaschgInEcht<T = any> implements Uffgabe<T> {
 
   /**
    * Assigns the task to a user.
-   * 
+   *
    * @param user - User to assign the task to
    * @returns The updated task
    */
@@ -107,7 +108,7 @@ export class TaschgInEcht<T = any> implements Uffgabe<T> {
 
   /**
    * Gets the status history of the task.
-   * 
+   *
    * @returns Array of status changes with timestamps
    */
   wasWarDavor(): ReadonlyArray<{ status: TaskStatus; timestamp: Date }> {
@@ -116,7 +117,7 @@ export class TaschgInEcht<T = any> implements Uffgabe<T> {
 
   /**
    * Checks if the task is overdue.
-   * 
+   *
    * @returns True if the task is overdue, false otherwise
    */
   ojeZuSpaet(): boolean {
@@ -127,7 +128,7 @@ export class TaschgInEcht<T = any> implements Uffgabe<T> {
 
   /**
    * Creates a string representation of the task.
-   * 
+   *
    * @returns String representation
    */
   toString(): string {
@@ -137,22 +138,23 @@ export class TaschgInEcht<T = any> implements Uffgabe<T> {
 
 /**
  * Manages a collection of tasks.
- * 
+ *
  * @typeParam T - The type of data associated with tasks
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export class TaschgMaenaedscha<T = any> {
   private tasks: Map<string, TaschgInEcht<T>> = new Map();
   private nextId: number = 1;
 
   /**
    * Creates a new task.
-   * 
+   *
    * @param title - Task title
    * @param description - Task description
    * @param priority - Task priority
    * @param options - Additional options
    * @returns The created task
-   * 
+   *
    * @example
    * ```typescript
    * const taskManager = new TaskManager();
@@ -167,7 +169,8 @@ export class TaschgMaenaedscha<T = any> {
     title: string,
     description: string,
     priority: Priority,
-    options?: TaskOptions
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    options?: TaskOptions,
   ): TaschgInEcht<T> {
     const id = `TASK-${this.nextId++}`;
     const task = new TaschgInEcht<T>({
@@ -175,16 +178,16 @@ export class TaschgMaenaedscha<T = any> {
       do_Tittel: title,
       umWosGoots: description,
       priority,
-      status: TaskStatus.PENDING
+      status: TaskStatus.PENDING,
     });
-    
+
     this.tasks.set(id, task);
     return task;
   }
 
   /**
    * Gets a task by ID.
-   * 
+   *
    * @param id - Task ID
    * @returns The task
    * @throws {UffgabeWechFaehler} If the task is not found
@@ -199,7 +202,7 @@ export class TaschgMaenaedscha<T = any> {
 
   /**
    * Gets all tasks.
-   * 
+   *
    * @returns Array of all tasks
    */
   iWillAelles(): TaschgInEcht<T>[] {
@@ -208,27 +211,27 @@ export class TaschgMaenaedscha<T = any> {
 
   /**
    * Gets tasks filtered by status.
-   * 
+   *
    * @param status - Status to filter by
    * @returns Array of matching tasks
    */
   holsMir(status: TaskStatus): TaschgInEcht<T>[] {
-    return this.iWillAelles().filter(task => task.status === status);
+    return this.iWillAelles().filter((task) => task.status === status);
   }
 
   /**
    * Gets tasks assigned to a specific user.
-   * 
+   *
    * @param userId - User ID
    * @returns Array of matching tasks
    */
   holsFuerEnKerle(userId: string): TaschgInEcht<T>[] {
-    return this.iWillAelles().filter(task => task.assignee?.id === userId);
+    return this.iWillAelles().filter((task) => task.assignee?.id === userId);
   }
 
   /**
    * Deletes a task.
-   * 
+   *
    * @param id - Task ID
    * @returns True if the task was deleted, false if it wasn't found
    */
