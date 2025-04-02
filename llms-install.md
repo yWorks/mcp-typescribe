@@ -26,7 +26,7 @@ where docs/api.json is the file to create that I need to pass to the server.
 If you have a library with typescript definitions, you can create that api.json file like so:
 
    ```bash
-   npx -y mcp-typescripe create-api-json <project-root> <library-name> <path-to-created-api-json)
+   npx -y mcp-typescribe create-api-json <project-root> <library-name> -o <path-to-created-api-json)
    ```
 "
 ````

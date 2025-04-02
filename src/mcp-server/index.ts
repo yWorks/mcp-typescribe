@@ -19,17 +19,16 @@ export * from "./server.js";
  * Main entry point for the TypeScript API MCP server.
  */
 async function main(): Promise<void> {
-  const program = new Command();
+  const program = new Command().name("typescribe");
 
   program
-    .name("typescribe")
     .command("run-server")
     .argument("<typedocjson>", "Path to the TypeDoc JSON file")
     .description("Run the TypeScript API MCP server")
-    .action(async () => {
+    .action(async function () {
       try {
         const server = new TypescribeServer();
-        await server.initialize(program.args[0]);
+        await server.initialize(this.args[0]);
         await server.run();
       } catch (error) {
         console.error("Failed to start server:", error);
@@ -58,8 +57,14 @@ async function main(): Promise<void> {
       console.log(
         `Creating api.json for '${libraryName}' in ${root} with output ${output}.`,
       );
-      await createTypedoc(root, libraryName, tsConfigPath, output);
-      console.log("Done");
+      try {
+        await createTypedoc(root, libraryName, tsConfigPath, output);
+        console.log("Done");
+        process.exit(0);
+      } catch (error) {
+        console.error("Failed to create api.json file:", error);
+        process.exit(1);
+      }
     });
 
   program.parse();
