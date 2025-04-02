@@ -112,7 +112,7 @@ The server provides the following tools for querying the API:
 3. Explore the MCP server:
 
    ```bash
-   npx @modelcontextprotocol/inspector node ./dist/mcp-server/index.js docs/api.json
+   npx @modelcontextprotocol/inspector node ./dist/mcp-server/index.js run-server docs/api.json
    ```
 
 4. Connect an AI agent to the server to query the API
@@ -123,16 +123,20 @@ The server provides the following tools for querying the API:
    {
      "mcpServers": {
        "typescribe": {
-         "command": "node",
-         "disabled": false,
-         "args": ["path/to/typescript-mcp/dist/mcp-server/index.js"],
-         "autoApprove": []
+         "command": "npx",
+         "args": [
+           "-y",
+           "mcp-typescribe@latest",
+           "run-server",
+           "<PATH_TO_API_DOT_JSON>"
+         ],
+         "env": {}
        }
      }
    }
    ```
 
-5. Enable the server and likely auto-approve for the various tools. Tell the agent to use the "typescribe" tool to learn about your API.
+5. Enable the server and likely auto-approve the various tools. Tell the agent to use the "typescribe" tool to learn about your API.
 
 ## Project Structure
 
@@ -154,14 +158,6 @@ The server provides the following tools for querying the API:
   - `index.ts`: Entry point
 - `tests/`: Tests for the API parsing functionality
 - `docs/`: Generated TypeDoc JSON documentation
-
-## Enhanced Features
-
-The server now supports:
-
-- Querying by ID or name for all handlers
-- Querying by arrays of IDs or names to get multiple results at once
-- LLM-friendly output format without metadata like sources
 
 ## Development
 
