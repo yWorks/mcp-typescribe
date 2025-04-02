@@ -33,8 +33,8 @@ export function formatDetailSymbols(symbol: Reflection): SymbolInfo {
   symbol = maybeResolve(symbol) ?? symbol;
   const result = formatSymbolForLLM(symbol);
   if (!result.children) {
-    result.children = [];
     if (symbol instanceof ContainerReflection && symbol.children) {
+      result.children = [];
       for (const child of symbol.children) {
         const info = formatSymbolForLLM(child);
         delete info.parent;

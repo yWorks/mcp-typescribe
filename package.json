@@ -19,7 +19,9 @@
     "release": "npm run build && changeset publish",
     "new-version": "changeset version && npm run format:write && npm run build"
   },
-  "files": ["dist/mcp-server"],
+  "files": [
+    "dist/mcp-server"
+  ],
   "keywords": [
     "MCP Server",
     "typescript",

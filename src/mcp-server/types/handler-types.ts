@@ -37,32 +37,39 @@ const baseHandlerSchema = z
   );
 
 // Search symbols schema
-const searchSymbolsSchema = z.object({
-  query: z
-    .string()
-    .describe(
-      "the name of the symbol to search for. This can be a partial match. ",
-    ),
-  kind: z
-    .enum([
-      ...(Object.keys(ReflectionKind) as [
-        ReflectionKind.KindString,
-        ...ReflectionKind.KindString[],
-      ]),
-      "any",
-    ])
-    .optional(),
-  limit: z
-    .number()
-    .optional()
-    .describe(
-      "The maximum number of results to return. If not specified, all results will be returned.",
-    ),
-});
+const searchSymbolsSchema = z
+  .object({
+    query: z
+      .string()
+      .describe(
+        "the name of the symbol to search for. This can be a partial match. ",
+      ),
+    kind: z
+      .enum([
+        ...(Object.keys(ReflectionKind) as [
+          ReflectionKind.KindString,
+          ...ReflectionKind.KindString[],
+        ]),
+        "any",
+      ])
+      .optional()
+      .describe(
+        "The kind of symbol to search for. One of Module,Namespace,Enum,EnumMember,Function,Class,Interface,Property,Method,CallSignature",
+      ),
+    limit: z
+      .number()
+      .optional()
+      .describe(
+        "The maximum number of results to return. If not specified, all results will be returned.",
+      ),
+  })
+  .describe(
+    "Searches for symbols with a given name. You can search by type and limit the number of results.",
+  );
 
 // Get symbol details schema
 const getSymbolDetailsSchema = baseHandlerSchema.describe(
-  "Gets details about a symbol. This includes the symbol's name, kind, and description. If the symbol is a class, interface, enum, or module, this also includes the members of the symbol.",
+  "Gets details about a symbol. This includes the symbol's name, kind, and description. If the symbol is a class, interface, enum, or module, this also includes the members of the symbol. Use this to resolve api://symbol/[id] urls",
 );
 
 // List members schema
@@ -82,10 +89,14 @@ const listMembersSchema = baseHandlerSchema
   );
 
 // Get parameter info schema
-const getParameterInfoSchema = baseHandlerSchema;
+const getParameterInfoSchema = baseHandlerSchema.describe(
+  "Gets information about function or method parameters. This includes the parameter's name, type, and description.",
+);
 
 // Find implementations schema
-const findImplementationsSchema = baseHandlerSchema;
+const findImplementationsSchema = baseHandlerSchema.describe(
+  "Lists all known implementations of a given interface or subclasses of a given class. ",
+);
 
 // Search by return type schema
 const searchByReturnTypeSchema = z
@@ -136,17 +147,18 @@ type SearchByDescriptionParams = z.infer<typeof searchByDescriptionSchema>;
 type GetTypeHierarchyParams = z.infer<typeof getTypeHierarchySchema>;
 type FindUsagesParams = z.infer<typeof findUsagesSchema>;
 
+export const base_handler_schema = baseHandlerSchema;
+
 // Export all schemas
 export const schemas = {
-  base_handler_schema: baseHandlerSchema,
   search_symbols: searchSymbolsSchema,
   get_symbol_details: getSymbolDetailsSchema,
   list_members_schema: listMembersSchema,
-  get_parameter_info_schema: getParameterInfoSchema,
-  find_implementations_schema: findImplementationsSchema,
-  search_by_return_type_schema: searchByReturnTypeSchema,
-  search_by_description_schema: searchByDescriptionSchema,
-  get_type_hierarchy_schema: getTypeHierarchySchema,
+  get_parameter_info: getParameterInfoSchema,
+  find_implementations: findImplementationsSchema,
+  search_by_return_type: searchByReturnTypeSchema,
+  search_by_description: searchByDescriptionSchema,
+  get_type_hierarchy: getTypeHierarchySchema,
   find_usages_schema: findUsagesSchema,
 } as const;
 

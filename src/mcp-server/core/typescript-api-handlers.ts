@@ -5,6 +5,7 @@
 import { ErrorCode, McpError } from "@modelcontextprotocol/sdk/types.js";
 import {
   ApiOverview,
+  base_handler_schema,
   FindImplementationsParams,
   FindUsagesParams,
   GetParameterInfoParams,
@@ -12,7 +13,6 @@ import {
   GetTypeHierarchyParams,
   ListMembersParams,
   ParameterInfo,
-  schemas,
   SearchByDescriptionParams,
   SearchByReturnTypeParams,
   SearchSymbolsParams,
@@ -292,11 +292,7 @@ export class TypeScriptApiHandlers {
    * @returns Array of functions and methods
    */
   findByReturnType(typeName: string): SymbolInfo[] {
-    const matchingSymbols = findSymbolsByReturnType(
-      typeName,
-      this.project,
-      this.symbolsByName,
-    );
+    const matchingSymbols = findSymbolsByReturnType(typeName, this.project);
 
     return matchingSymbols.map((symbol) => {
       return formatSymbolForLLM(symbol);
@@ -461,7 +457,7 @@ export class TypeScriptApiHandlers {
   }
 
   private lookupSymbols(args: GetSymbolDetailsParams) {
-    const params = schemas.base_handler_schema.parse(args);
+    const params = base_handler_schema.parse(args);
 
     const symbols = getSymbolsByParams(
       params,

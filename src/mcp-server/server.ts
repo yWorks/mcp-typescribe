@@ -205,23 +205,23 @@ export class TypescribeServer {
             );
           case "get_parameter_info":
             return handlers.handleGetParameterInfo(
-              schemas.get_parameter_info_schema.parse(args),
+              schemas.get_parameter_info.parse(args),
             );
           case "find_implementations":
             return handlers.handleFindImplementations(
-              schemas.find_implementations_schema.parse(args),
+              schemas.find_implementations.parse(args),
             );
           case "search_by_return_type":
             return handlers.handleSearchByReturnType(
-              schemas.search_by_return_type_schema.parse(args),
+              schemas.search_by_return_type.parse(args),
             );
           case "search_by_description":
             return handlers.handleSearchByDescription(
-              schemas.search_by_description_schema.parse(args),
+              schemas.search_by_description.parse(args),
             );
           case "get_type_hierarchy":
             return handlers.handleGetTypeHierarchy(
-              schemas.get_type_hierarchy_schema.parse(args),
+              schemas.get_type_hierarchy.parse(args),
             );
           case "find_usages":
             return handlers.handleFindUsages(

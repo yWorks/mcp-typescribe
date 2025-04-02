@@ -1,6 +1,7 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import { TypeScriptApiHandlers } from "../src/mcp-server/core/typescript-api-handlers.js";
 import { sampleTypeDocJson } from "./sampleTypeDocJson.js";
+import { stringify } from "yaml";
 
 describe("TypeScriptApiHandlers", () => {
   let handlers: TypeScriptApiHandlers;
@@ -174,6 +175,17 @@ describe("TypeScriptApiHandlers", () => {
   });
 
   // Test the handler methods
+  describe("handleSearchSymbols", () => {
+    it("should handle find_by_return_type tool", () => {
+      const result = handlers.findByReturnType("Uffgabe");
+
+      expect(result.length).toBeGreaterThan(0);
+      expect(result[0].name).toBe("bauWatt");
+      expect(result[0].description).toContain("Creates a new task");
+    });
+  });
+
+  // Test the handler methods
   describe("handleListMembers", () => {
     it("should handle list_symbols tool", () => {
       const result = handlers.handleListMembers({ name: "TaskStatus" });
@@ -237,6 +249,28 @@ describe("TypeScriptApiHandlers", () => {
         `](api://symbol/${result[1].id})`,
       );
     });
+    it("should show code examples", () => {
+      const result = handlers.handleGetSymbolDetails({
+        names: ["bauWatt"],
+      });
+      console.log(stringify(result));
+      expect(result).toHaveLength(1);
+      expect(result[0].description).toContain("Creates a new task.");
+      expect(result[0].description).toContain(
+        `const taskManager = new TaskManager();`,
+      );
+    });
+    it("should show the link in the parent", () => {
+      const result = handlers.handleGetSymbolDetails({
+        names: ["Kerle", "types"],
+      });
+      expect(result).toHaveLength(2);
+      expect(result[0].description).toContain(
+        "Represents a user in the system.",
+      );
+      expect(result[0].parent).toBeDefined();
+      expect(result[0].parent).toContain(`](api://symbol/${result[1].id})`);
+    });
     it("should handle get_symbol_details tool for modules", () => {
       const result = handlers.handleGetSymbolDetails({ name: "index" });
 
@@ -250,6 +284,20 @@ describe("TypeScriptApiHandlers", () => {
         result[0].children!.some(
           (c) => c.name === "calculateEstimatedCompletion",
         ),
+      ).toBe(true);
+    });
+    it("should handle get_symbol_details tool for inner modules", () => {
+      const result = handlers.handleGetSymbolDetails({
+        name: "taschg-maenaedscha",
+      });
+
+      expect(result.length).toBe(1);
+      expect(result[0].kind).toBe("Module");
+      expect(result[0]).toHaveProperty("children");
+      expect(result[0].children!.length).toBeGreaterThan(3);
+      expect(result[0].children![0]).not.toHaveProperty("children");
+      expect(
+        result[0].children!.some((c) => c.name === "TaschgMaenaedscha"),
       ).toBe(true);
     });
     it("should handle get_symbol_details for typealias", () => {

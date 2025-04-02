@@ -2,7 +2,7 @@
  * Utility functions for searching and matching.
  */
 
-import { getDescription, getSymbolsByParams } from "./symbol-utils.js";
+import { getDescription } from "./symbol-utils.js";
 import { isReferencing } from "./type-utils.js";
 import { getKindName } from "../utils.js";
 import {
@@ -107,21 +107,13 @@ export function searchSymbolsByDescription(
  *
  * @param typeName - The return type name
  * @param symbols - The symbols to search
- * @param symbolsByName a map of all symbols by name
  * @returns Array of matching symbols
  */
 export function findSymbolsByReturnType(
   typeName: string,
   symbols: ProjectReflection,
-  symbolsByName: Map<string, Reflection>,
 ): DeclarationReflection[] {
   const results: DeclarationReflection[] = [];
-
-  const types = getSymbolsByParams({ name: typeName }, symbols, symbolsByName);
-
-  if (types.length > 0 && types[0] instanceof DeclarationReflection) {
-    console.log("found type", types[0].name);
-  }
 
   const symbols2 = symbols
     .getReflectionsByKind(ReflectionKind.Method)
@@ -148,6 +140,9 @@ export function findSymbolsByReturnType(
  * @returns True if the symbol has the return type
  */
 export function hasReturnType(symbol: Reflection, typeName: string): boolean {
+  if (symbol instanceof DeclarationReflection && symbol.signatures) {
+    return symbol.signatures.some((sig) => isReferencing(sig.type, typeName));
+  }
   return (
     symbol instanceof SignatureReflection &&
     symbol.variant == "signature" &&
@@ -159,8 +154,4 @@ export function isDeclaration(
   symbol: Reflection,
 ): symbol is DeclarationReflection {
   return symbol.variant === "declaration";
-}
-
-export function isReference(symbol: Reflection): symbol is ReferenceReflection {
-  return symbol.variant === "reference";
 }

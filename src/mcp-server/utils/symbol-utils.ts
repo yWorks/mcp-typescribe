@@ -6,6 +6,7 @@ import { SymbolInfo } from "../types/index.js";
 import { getKindName } from "../utils.js";
 
 import {
+  CommentDisplayPart,
   DeclarationReflection,
   ProjectReflection,
   Reflection,
@@ -13,17 +14,10 @@ import {
   SignatureReflection,
 } from "typedoc";
 
-/**
- * Gets the description of a symbol from its comment.
- *
- * @param symbol - The symbol
- * @returns The description
- */
-export function getDescription(symbol: Reflection): string | undefined {
-  let description = "";
-  if (symbol.comment?.summary) {
-    description = symbol.comment.summary
-      .map((part) => {
+function convertContent(summary?: CommentDisplayPart[]): string {
+  return (
+    summary
+      ?.map((part) => {
         if (
           part.kind === "inline-tag" &&
           part.target instanceof DeclarationReflection &&
@@ -34,12 +28,35 @@ export function getDescription(symbol: Reflection): string | undefined {
           return part.text;
         }
       })
-      .join("")
-      .trim();
+      ?.join("")
+      ?.replace(/(\r)?\n/g, "\n")
+      ?.trim() ?? ""
+  );
+}
+
+/**
+ * Gets the description of a symbol from its comment.
+ *
+ * @param symbol - The symbol
+ * @returns The description
+ */
+export function getDescription(symbol: Reflection): string | undefined {
+  let description = "";
+  if (symbol.comment?.summary) {
+    description = convertContent(symbol.comment.summary);
+  }
+
+  if (symbol.comment?.blockTags) {
+    symbol.comment.blockTags
+      .filter((tag) => tag.tag == "@example")
+      .forEach((blockTag) => {
+        description += "\nExample\n";
+        description += convertContent(blockTag.content);
+      });
   }
 
   if (symbol instanceof SignatureReflection) {
-    description += "\n" + getSignature(symbol);
+    description += "\nSignature: " + getSignature(symbol);
   }
 
   if (
@@ -160,7 +177,7 @@ export function getSymbolsByParams(
 export function getParentName(symbol: Reflection): string | undefined {
   if (symbol.parent instanceof DeclarationReflection) {
     if (symbol.parent.id) {
-      return `[${symbol.parent.name}](api://symbol${symbol.parent.id})`;
+      return `[${symbol.parent.name}](api://symbol/${symbol.parent.id})`;
     } else {
       return symbol.parent.name;
     }
