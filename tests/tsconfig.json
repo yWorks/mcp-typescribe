@@ -4,5 +4,5 @@
     "rootDir": "..",
     "types": ["vitest/globals", "node"]
   },
-  "include": ["./**/*"],
+  "include": ["./**/*"]
 }
