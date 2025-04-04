@@ -13,11 +13,21 @@ import {
   ReflectionKind,
   SignatureReflection,
 } from "typedoc";
+import { Verbosity } from "../types.js";
+import { formatType } from "./type-utils.js";
 
-function convertContent(summary?: CommentDisplayPart[]): string {
+function convertContent(
+  summary: CommentDisplayPart[] | undefined,
+  summaryOnly = false,
+): string {
+  let stop = false;
   return (
     summary
       ?.map((part) => {
+        if (stop) return "";
+        if (part.kind === "code") {
+          return "`" + part.text + "`";
+        }
         if (
           part.kind === "inline-tag" &&
           part.target instanceof DeclarationReflection &&
@@ -25,6 +35,20 @@ function convertContent(summary?: CommentDisplayPart[]): string {
         ) {
           return `[${part.text}](api://symbol/${part.target.id})`;
         } else {
+          if (part.kind === "text" && summaryOnly) {
+            if (part.text.includes(".\n")) {
+              const trimmedText = part.text.substring(
+                0,
+                part.text.indexOf(".\n"),
+              );
+              stop = true;
+              return trimmedText.trim() + "...";
+            }
+            if (part.text.trim().endsWith(".")) {
+              stop = true;
+              return part.text;
+            }
+          }
           return part.text;
         }
       })
@@ -38,15 +62,22 @@ function convertContent(summary?: CommentDisplayPart[]): string {
  * Gets the description of a symbol from its comment.
  *
  * @param symbol - The symbol
+ * @param verbosity - how verbose the output should be
  * @returns The description
  */
-export function getDescription(symbol: Reflection): string | undefined {
+export function getDescription(
+  symbol: Reflection,
+  verbosity: Verbosity,
+): string | undefined {
   let description = "";
   if (symbol.comment?.summary) {
-    description = convertContent(symbol.comment.summary);
+    description = convertContent(
+      symbol.comment.summary,
+      verbosity === Verbosity.SUMMARY,
+    );
   }
 
-  if (symbol.comment?.blockTags) {
+  if (verbosity == Verbosity.DETAIL && symbol.comment?.blockTags) {
     symbol.comment.blockTags
       .filter((tag) => tag.tag == "@example")
       .forEach((blockTag) => {
@@ -56,7 +87,7 @@ export function getDescription(symbol: Reflection): string | undefined {
   }
 
   if (symbol instanceof SignatureReflection) {
-    description += "\nSignature: " + getSignature(symbol);
+    description += "\nSignature: " + getSignature(symbol, verbosity);
   }
 
   if (
@@ -64,36 +95,50 @@ export function getDescription(symbol: Reflection): string | undefined {
     (symbol.signatures?.length ?? 0) > 0
   ) {
     symbol.signatures!.forEach((sig) => {
-      description += getDescription(sig) + "\n";
+      description += getDescription(sig, verbosity) + "\n";
     });
   }
 
   return description.length > 0 ? description : undefined;
 }
 
-function formatParameters(symbol: SignatureReflection) {
+function formatParameters(symbol: SignatureReflection, verbosity: Verbosity) {
   return (symbol?.parameters ?? [])
-    .map((p) => `${p.name}:${p.type?.toString()}`)
+    .map((p) => {
+      if (p.type) {
+        return `${p.name}:${formatType(p.type, "none", verbosity)}`;
+      } else {
+        return p.name;
+      }
+    })
     .join(",");
 }
 
-export function getSignature(symbol: Reflection) {
+export function getSignature(symbol: Reflection, verbosity: Verbosity) {
   if (symbol instanceof SignatureReflection && symbol.isSignature()) {
     switch (symbol.kind) {
       case ReflectionKind.SetSignature:
-        return `set ${symbol.name}(${symbol.parameters![0].name}: ${symbol.parameters![0].type!.toString()})`;
+        return `set ${symbol.name}(${symbol.parameters![0].name}: ${formatType(symbol.parameters![0].type!, "none", verbosity)})`;
       case ReflectionKind.GetSignature:
         return `get ${symbol.name}():${symbol.type!.toString()}`;
       case ReflectionKind.IndexSignature:
-        return `get ${symbol.parameters![0].name}: ${symbol.parameters![1].type!.toString()}`;
+        return `get ${symbol.parameters![0].name}: ${formatType(symbol.parameters![0].type!, "none", verbosity)}`;
       case ReflectionKind.CallSignature: {
         const typeParameters = symbol.typeParameters
-          ?.map((t) => t.name + " extends " + t.type?.toString())
+          ?.map((t) => {
+            if (t.type) {
+              return (
+                t.name + " extends " + formatType(t.type, "none", verbosity)
+              );
+            } else {
+              return t.name;
+            }
+          })
           .join(",");
-        return `${symbol.name}${typeParameters ? `<${typeParameters}>` : ""}(${formatParameters(symbol)}):${symbol.type!.toString()}`;
+        return `${symbol.name}${typeParameters ? `<${typeParameters}>` : ""}(${formatParameters(symbol, verbosity)}):${formatType(symbol.type!, "none", verbosity)}`;
       }
       case ReflectionKind.ConstructorSignature:
-        return `constructor(${formatParameters(symbol)}) => ${symbol.type!.toString()}`;
+        return `constructor(${formatParameters(symbol, verbosity)}) => ${symbol.type!.toString()}`;
     }
   }
   return "";
@@ -104,14 +149,18 @@ export function getSignature(symbol: Reflection) {
  * Formats the output to be LLM-friendly by removing metadata like sources.
  *
  * @param symbol - The TypeDoc symbol
+ * @param verbosity - the verbosity to use for the description
  * @returns The simplified symbol info
  */
-export function createSymbolInfo(symbol: DeclarationReflection): SymbolInfo {
+export function createSymbolInfo(
+  symbol: DeclarationReflection,
+  verbosity: Verbosity,
+): SymbolInfo {
   return {
     id: symbol.id,
     name: symbol.name,
     kind: getKindName(symbol.kind),
-    description: getDescription(symbol),
+    description: getDescription(symbol, verbosity),
   };
 }
 

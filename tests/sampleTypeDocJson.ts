@@ -3062,7 +3062,7 @@ export const sampleTypeDocJson = {
             summary: [
               {
                 kind: "text",
-                text: "Represents the status of a ",
+                text: "This is just the summary for the task.\nFollowed by more text\nbefore the actual text appears: Represents the status of a ",
               },
               {
                 kind: "inline-tag",

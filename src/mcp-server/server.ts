@@ -200,9 +200,7 @@ export class TypescribeServer {
               schemas.get_symbol_details.parse(args),
             );
           case "list_members":
-            return handlers.handleListMembers(
-              schemas.list_members_schema.parse(args),
-            );
+            return handlers.handleListMembers(schemas.list_members.parse(args));
           case "get_parameter_info":
             return handlers.handleGetParameterInfo(
               schemas.get_parameter_info.parse(args),
@@ -224,9 +222,7 @@ export class TypescribeServer {
               schemas.get_type_hierarchy.parse(args),
             );
           case "find_usages":
-            return handlers.handleFindUsages(
-              schemas.find_usages_schema.parse(args),
-            );
+            return handlers.handleFindUsages(schemas.find_usages.parse(args));
           default:
         }
       }

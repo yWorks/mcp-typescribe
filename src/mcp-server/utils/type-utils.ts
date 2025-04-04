@@ -2,7 +2,8 @@
  * Utility functions for working with TypeScript types.
  */
 
-import { DeclarationReflection, Reflection, Type } from "typedoc";
+import { DeclarationReflection, Reflection, Type, TypeContext } from "typedoc";
+import { Verbosity } from "../types.js";
 
 export function reflectionIsReferencing(
   symbol: Reflection | undefined,
@@ -109,7 +110,14 @@ export function isReferencing(
  * @param type - The type to format
  * @returns The formatted type string
  */
-export function formatType(type?: Type): string {
+export function formatType(
+  type?: Type,
+  context: TypeContext = "none",
+  verbosity: Verbosity = Verbosity.DETAIL,
+): string {
+  if (verbosity == Verbosity.HIDDEN) {
+    return ": ...";
+  }
   if (!type) return "any";
-  return type.stringify("none");
+  return type.stringify(context);
 }

@@ -1,7 +1,27 @@
 import { beforeAll, describe, expect, it } from "vitest";
-import { TypeScriptApiHandlers } from "../src/mcp-server/core/typescript-api-handlers.js";
 import { sampleTypeDocJson } from "./sampleTypeDocJson.js";
-import { stringify } from "yaml";
+import { Verbosity } from "../src/mcp-server/types.js";
+import {
+  paginateArray,
+  SearchResult,
+} from "../src/mcp-server/utils/format-utils.js";
+import { TypeScriptApiHandlers } from "../src/mcp-server/core/typescript-api-handlers.js";
+
+function expectSearchResult<T>(
+  result: T[] | SearchResult<T> | undefined,
+): asserts result is SearchResult<T> {
+  if (!result || Array.isArray(result)) {
+    expect.fail("SearchResult should not be an array");
+  }
+}
+
+function expectArray<T>(
+  result: T[] | SearchResult<T> | undefined,
+): asserts result is T[] {
+  if (!result || !Array.isArray(result)) {
+    expect.fail("SearchResult should be an array");
+  }
+}
 
 describe("TypeScriptApiHandlers", () => {
   let handlers: TypeScriptApiHandlers;
@@ -57,17 +77,23 @@ describe("TypeScriptApiHandlers", () => {
     it("should get members of a class", () => {
       // First find the class
       const classResults = handlers.searchSymbols("Uffgabe", "Class");
-      expect(classResults.length).toBeGreaterThan(0);
+      expect(classResults.length).toBe(2);
+      expect(classResults[0].name).toBe("UffgabeFaehler");
+      expect(classResults[0].children).not.toBeDefined();
+      expect(classResults[1].name).toBe("UffgabeWechFaehler");
+      expect(classResults[1].children).not.toBeDefined();
 
       // Get the class symbol from the handlers
-      const classSymbol = handlers.getSymbolByName("TaschgInEcht");
-      expect(classSymbol).toBeDefined();
+      const members = handlers.handleListMembers({ name: "TaschgMaenaedscha" });
 
-      // Get members
-      const members = handlers.getMembers(classSymbol!, false);
-
-      expect(members.length).toBeGreaterThan(0);
-      expect(members.some((m) => m.name === "korrigiera")).toBe(true);
+      expect(members.length).toBe(6);
+      const member = members.filter((m) => m.name === "bauWatt");
+      expect(member).toHaveLength(1);
+      expect(member[0].id).toBe(57);
+      expect(member[0].description).toBe(
+        "Creates a new task.\n" +
+          "Signature: bauWatt(title:string,description:string,priority:Priority,options:TaskOptions):TaschgInEcht<T>\n",
+      );
     });
   });
 
@@ -103,7 +129,10 @@ describe("TypeScriptApiHandlers", () => {
       expect(functionSymbol).toBeDefined();
 
       // Get parameters
-      const parameters = handlers.getParameters(functionSymbol!);
+      const parameters = handlers.getParameters(
+        functionSymbol!,
+        Verbosity.DETAIL,
+      );
 
       expect(parameters.length).toBeGreaterThan(0);
       expect(parameters.some((p) => p.name === "tasks")).toBe(true);
@@ -120,6 +149,45 @@ describe("TypeScriptApiHandlers", () => {
       expect(
         results.some((r) => r.description?.toLowerCase().includes("task")),
       ).toBe(true);
+    });
+  });
+
+  describe("paging", () => {
+    it("should support the limit argument", () => {
+      const limit = 3;
+      const offset = 0;
+
+      const allResults = paginateArray(
+        handlers.searchSymbols("task", "any"),
+        {},
+      );
+      expectArray(allResults);
+      expect(allResults.length).toBe(6);
+
+      const firstPage = paginateArray(
+        handlers.searchSymbols("task", "any", 4),
+        { limit, offset: 0 },
+      );
+
+      const secondPage = paginateArray(
+        handlers.searchSymbols("task", "any", 6),
+        { limit, offset: limit },
+      );
+
+      expectSearchResult(firstPage);
+      expectSearchResult(secondPage);
+
+      expect(firstPage.result.length).toBe(limit);
+      expect(secondPage.result.length).toBe(limit);
+      expect(firstPage.result[0].id).toBe(allResults[0].id);
+      expect(secondPage.result[0].id).toBe(allResults[limit].id);
+
+      const thirdPage = paginateArray(
+        handlers.searchSymbols("task", "any", limit + limit + limit + offset),
+        { limit, offset: limit + limit },
+      );
+      expectSearchResult(thirdPage);
+      expect(thirdPage.result.length).toBe(0);
     });
   });
 
@@ -166,6 +234,7 @@ describe("TypeScriptApiHandlers", () => {
     it("should handle search_symbols tool", () => {
       const result = handlers.handleSearchSymbols({ query: "TaskStatus" });
 
+      expectArray(result);
       expect(result.length).toBeGreaterThan(0);
       expect(result[0].name).toBe("TaskStatus");
       expect(result[0].description).toContain(
@@ -194,15 +263,25 @@ describe("TypeScriptApiHandlers", () => {
       expect(result[0].kind).toBe("EnumMember");
       expect(result[0].name).toBe("FERTIG");
     });
+    it("should handle list_symbols tool for modules", () => {
+      const result = handlers.handleListMembers({ name: "types" });
+
+      expect(result.length).toBe(5);
+      expect(result[1].name).toBe("TaskStatus");
+      expect(result[1].description).not.toContain("\n");
+    });
   });
   describe("handleFindUsages", () => {
     it("should handle find_usages tool", () => {
       const result = handlers.handleFindUsages({ name: "TaskStatus" });
 
-      expect(result.length).toBe(7);
-      expect(result.some((r) => r.name === "constructor")).toBe(true);
+      expectArray(result);
+      expect(result.length).toBe(1);
+      const innerResult = result[0];
+      expectArray(innerResult);
+      expect(innerResult.some((r) => r.name === "constructor")).toBe(true);
       expect(
-        result.some((r) =>
+        innerResult.some((r) =>
           r.description
             ?.toLowerCase()
             .includes("creates a new taskimpl instance."),
@@ -212,9 +291,12 @@ describe("TypeScriptApiHandlers", () => {
     it("should handle find_usages tool with subclasses", () => {
       const result = handlers.handleFindUsages({ name: "UffgabeFaehler" });
 
-      expect(result.length).toBe(3);
+      expect(result.length).toBe(1);
+      expectArray(result[0]);
       expect(
-        result.some((r) => r.description?.includes(" => UffgabeWechFaehler")),
+        result[0].some((r) =>
+          r.description?.includes(" => UffgabeWechFaehler"),
+        ),
       ).toBe(true);
     });
   });
@@ -223,15 +305,19 @@ describe("TypeScriptApiHandlers", () => {
     it("should handle get_symbol_details tool for enums", () => {
       const result = handlers.handleGetSymbolDetails({ name: "TaskStatus" });
 
+      expectArray(result);
+
       expect(result.length).toBe(1);
       expect(result[0].kind).toBe("Enum");
       expect(result[0].description).toContain(
         "Represents the status of a [task]",
       );
       expect(result[0]).toHaveProperty("children");
-      expect(result[0].children).toHaveLength(4);
-      expect(result[0].children![0]).not.toHaveProperty("children");
-      expect(result[0].children!.some((c) => c.name === "FERTIG")).toBe(true);
+      const children = result[0].children;
+      expect(children).toHaveLength(4);
+      expectArray(children);
+      expect(children[0]).not.toHaveProperty("children");
+      expect(children!.some((c) => c.name === "FERTIG")).toBe(true);
     });
     it("should show the link in an inline tag", () => {
       const result = handlers.handleGetSymbolDetails({
@@ -253,7 +339,6 @@ describe("TypeScriptApiHandlers", () => {
       const result = handlers.handleGetSymbolDetails({
         names: ["bauWatt"],
       });
-      console.log(stringify(result));
       expect(result).toHaveLength(1);
       expect(result[0].description).toContain("Creates a new task.");
       expect(result[0].description).toContain(
@@ -278,12 +363,12 @@ describe("TypeScriptApiHandlers", () => {
       expect(result[0].kind).toBe("Module");
       expect(result[0].description).toContain("Task Management API");
       expect(result[0]).toHaveProperty("children");
-      expect(result[0].children!.length).toBeGreaterThan(10);
-      expect(result[0].children![0]).not.toHaveProperty("children");
+      const children = result[0].children;
+      expectArray(children);
+      expect(children.length).toBeGreaterThan(10);
+      expect(children[0]).not.toHaveProperty("children");
       expect(
-        result[0].children!.some(
-          (c) => c.name === "calculateEstimatedCompletion",
-        ),
+        children!.some((c) => c.name === "calculateEstimatedCompletion"),
       ).toBe(true);
     });
     it("should handle get_symbol_details tool for inner modules", () => {
@@ -294,11 +379,11 @@ describe("TypeScriptApiHandlers", () => {
       expect(result.length).toBe(1);
       expect(result[0].kind).toBe("Module");
       expect(result[0]).toHaveProperty("children");
-      expect(result[0].children!.length).toBeGreaterThan(3);
-      expect(result[0].children![0]).not.toHaveProperty("children");
-      expect(
-        result[0].children!.some((c) => c.name === "TaschgMaenaedscha"),
-      ).toBe(true);
+      const children = result[0].children;
+      expectArray(children);
+      expect(children.length).toBeGreaterThan(3);
+      expect(children[0]).not.toHaveProperty("children");
+      expect(children!.some((c) => c.name === "TaschgMaenaedscha")).toBe(true);
     });
     it("should handle get_symbol_details for typealias", () => {
       const result = handlers.handleGetSymbolDetails({ name: "TaskOptions" });

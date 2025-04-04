@@ -3,6 +3,7 @@
  */
 
 import { ReflectionKind } from "typedoc";
+import { SearchResult } from "../utils/index.js";
 
 /**
  * Represents a simplified symbol for API responses.
@@ -16,7 +17,7 @@ export interface SymbolInfo {
   parent?: string;
   inherited?: boolean;
   inheritedFrom?: string;
-  children?: SymbolInfo[];
+  children?: SymbolInfo[] | SearchResult<SymbolInfo>;
   relationship?: "extends" | "implements";
 }
 

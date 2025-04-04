@@ -13,6 +13,7 @@ import {
   ReflectionKind,
   SignatureReflection,
 } from "typedoc";
+import { Verbosity } from "../types.js";
 
 /**
  * Searches for symbols by name.
@@ -90,7 +91,7 @@ export function searchSymbolsByDescription(
   const queryLower = query.toLowerCase();
 
   traverseAll(symbols, (symbol) => {
-    const description = getDescription(symbol);
+    const description = getDescription(symbol, Verbosity.SUMMARY);
     if (description?.toLowerCase().includes(queryLower)) {
       results.push(symbol);
     }

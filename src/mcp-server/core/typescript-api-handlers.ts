@@ -28,7 +28,9 @@ import {
   formatTypeHierarchyForLLM,
   getDescription,
   getSymbolsByParams,
+  paginateArray,
   reflectionIsReferencing,
+  SearchResult,
   searchSymbolsByDescription,
   searchSymbolsByName,
 } from "../utils/index.js";
@@ -46,6 +48,7 @@ import {
   Reflection,
   ReflectionKind,
 } from "typedoc";
+import { Verbosity } from "../types.js";
 
 /**
  * Class that provides handlers for TypeScript API queries.
@@ -152,7 +155,7 @@ export class TypeScriptApiHandlers {
    */
   private getTopLevelSymbols(): SymbolInfo[] {
     return (this.project.children ?? []).map((child: DeclarationReflection) =>
-      createSymbolInfo(child),
+      createSymbolInfo(child, Verbosity.SUMMARY),
     );
   }
 
@@ -181,7 +184,13 @@ export class TypeScriptApiHandlers {
       matchingSymbols = searchSymbolsByName(query, this.project, kind, limit);
     }
 
-    return matchingSymbols.map((symbol) => formatSymbolForLLM(symbol));
+    if (matchingSymbols.length === 1) {
+      return [formatSymbolForLLM(matchingSymbols[0], Verbosity.DETAIL)];
+    } else {
+      return matchingSymbols.map((symbol) =>
+        formatSymbolForLLM(symbol, Verbosity.SUMMARY),
+      );
+    }
   }
 
   /**
@@ -194,8 +203,22 @@ export class TypeScriptApiHandlers {
   getMembers(
     symbol: DeclarationReflection,
     includeInherited: boolean,
+    verbosity: Verbosity,
   ): SymbolInfo[] {
     const members: SymbolInfo[] = [];
+
+    if (
+      symbol.kind === ReflectionKind.Module ||
+      symbol.kind === ReflectionKind.Namespace
+    ) {
+      const children = symbol.children || [];
+      for (const child of children) {
+        const memberInfo = formatSymbolForLLM(child, verbosity);
+        memberInfo.inherited = false;
+        members.push(memberInfo);
+      }
+      return members;
+    }
 
     // Add direct members
     if (Array.isArray(symbol.children)) {
@@ -205,7 +228,7 @@ export class TypeScriptApiHandlers {
           child.kind === ReflectionKind.EnumMember ||
           child.kind === ReflectionKind.Method
         ) {
-          const memberInfo = formatSymbolForLLM(child);
+          const memberInfo = formatSymbolForLLM(child, verbosity);
           memberInfo.inherited = false;
           members.push(memberInfo);
         }
@@ -219,7 +242,11 @@ export class TypeScriptApiHandlers {
           extendedType instanceof ReferenceType &&
           extendedType.reflection instanceof DeclarationReflection
         ) {
-          const parentMembers = this.getMembers(extendedType.reflection, true);
+          const parentMembers = this.getMembers(
+            extendedType.reflection,
+            true,
+            verbosity,
+          );
           for (const member of parentMembers) {
             member.inherited = true;
             member.inheritedFrom = extendedType.name;
@@ -238,7 +265,10 @@ export class TypeScriptApiHandlers {
    * @param symbol - The function or method symbol
    * @returns Array of parameters
    */
-  getParameters(symbol: DeclarationReflection): ParameterInfo[] {
+  getParameters(
+    symbol: DeclarationReflection,
+    verbosity: Verbosity.DETAIL,
+  ): ParameterInfo[] {
     const parameters: ParameterInfo[] = [];
 
     // Get signatures
@@ -247,7 +277,7 @@ export class TypeScriptApiHandlers {
     for (const signature of signatures) {
       if (Array.isArray(signature.parameters)) {
         for (const param of signature.parameters) {
-          parameters.push(formatParameterForLLM(param));
+          parameters.push(formatParameterForLLM(param, verbosity));
         }
       }
     }
@@ -266,7 +296,10 @@ export class TypeScriptApiHandlers {
     if (Array.isArray(symbol.extendedBy)) {
       for (const extendedType of symbol.extendedBy) {
         if (extendedType.reflection instanceof DeclarationReflection) {
-          const implInfo = formatSymbolForLLM(extendedType.reflection);
+          const implInfo = formatSymbolForLLM(
+            extendedType.reflection,
+            Verbosity.SUMMARY,
+          );
           implInfo.relationship = "extends";
           implementations.push(implInfo);
         }
@@ -276,7 +309,10 @@ export class TypeScriptApiHandlers {
     if (Array.isArray(symbol.implementedBy)) {
       for (const implementedType of symbol.implementedBy) {
         if (implementedType.reflection instanceof DeclarationReflection) {
-          const implInfo = formatSymbolForLLM(implementedType.reflection);
+          const implInfo = formatSymbolForLLM(
+            implementedType.reflection,
+            Verbosity.SUMMARY,
+          );
           implInfo.relationship = "implements";
           implementations.push(implInfo);
         }
@@ -295,7 +331,7 @@ export class TypeScriptApiHandlers {
     const matchingSymbols = findSymbolsByReturnType(typeName, this.project);
 
     return matchingSymbols.map((symbol) => {
-      return formatSymbolForLLM(symbol);
+      return formatSymbolForLLM(symbol, Verbosity.SUMMARY);
     });
   }
 
@@ -313,7 +349,9 @@ export class TypeScriptApiHandlers {
       limit,
     );
 
-    return matchingSymbols.map((symbol) => formatSymbolForLLM(symbol));
+    return matchingSymbols.map((symbol) =>
+      formatSymbolForLLM(symbol, Verbosity.SUMMARY),
+    );
   }
 
   /**
@@ -332,7 +370,7 @@ export class TypeScriptApiHandlers {
       id: symbol.id,
       name: symbol.name,
       kind: kindName,
-      description: getDescription(symbol),
+      description: getDescription(symbol, Verbosity.SUMMARY),
     };
 
     // Add parent types
@@ -418,7 +456,11 @@ export class TypeScriptApiHandlers {
    * @param symbol - The symbol
    * @returns Array of usages
    */
-  findUsages(symbol: DeclarationReflection): SymbolInfo[] {
+  findUsages(
+    symbol: DeclarationReflection,
+    limit?: number,
+    offset?: number,
+  ): SymbolInfo[] | SearchResult<SymbolInfo> {
     const usages: SymbolInfo[] = [];
     // Check all symbols for references to this symbol
     for (const otherSymbol of this.symbolsById.values()) {
@@ -426,10 +468,10 @@ export class TypeScriptApiHandlers {
       if (otherSymbol.id === symbol.id) continue;
 
       if (reflectionIsReferencing(otherSymbol, symbol.name)) {
-        usages.push(formatSymbolForLLM(otherSymbol));
+        usages.push(formatSymbolForLLM(otherSymbol, Verbosity.SUMMARY));
       }
     }
-    return usages;
+    return paginateArray(usages, { limit, offset });
   }
 
   /**
@@ -439,9 +481,10 @@ export class TypeScriptApiHandlers {
    * @returns The tool response
    */
   handleSearchSymbols(args: SearchSymbolsParams) {
-    const { query, kind, limit } = args;
+    const { query, kind, offset, limit } = args;
+    const maxSearch = (limit ?? 10) + (offset ?? 0);
 
-    return this.searchSymbols(query, kind, limit);
+    return paginateArray(this.searchSymbols(query, kind, maxSearch), args);
   }
 
   /**
@@ -453,7 +496,9 @@ export class TypeScriptApiHandlers {
   handleGetSymbolDetails(args: GetSymbolDetailsParams) {
     const symbols = this.lookupSymbols(args);
 
-    return symbols.map((symbol) => formatDetailSymbols(symbol));
+    return symbols.map((symbol) =>
+      formatDetailSymbols(symbol, Verbosity.DETAIL, args.limit, args.offset),
+    );
   }
 
   private lookupSymbols(args: GetSymbolDetailsParams) {
@@ -502,7 +547,11 @@ export class TypeScriptApiHandlers {
       }
 
       // Get members
-      const members = this.getMembers(symbol, includeInherited);
+      const members = this.getMembers(
+        symbol,
+        includeInherited,
+        Verbosity.SUMMARY,
+      );
       results.push(...members);
     }
 
@@ -516,7 +565,7 @@ export class TypeScriptApiHandlers {
    * @returns The tool response
    */
   handleGetParameterInfo(args: GetParameterInfoParams) {
-    const symbols = this.lookupSymbols(args);
+    const symbols = this.lookupSymbols({ ...args, limit: 100, offset: 0 });
 
     const results: ParameterInfo[] = [];
 
@@ -531,7 +580,7 @@ export class TypeScriptApiHandlers {
       }
 
       // Get parameters
-      const parameters = this.getParameters(symbol);
+      const parameters = this.getParameters(symbol, Verbosity.DETAIL);
       results.push(...parameters);
     }
 
@@ -587,10 +636,13 @@ export class TypeScriptApiHandlers {
    * @returns The tool response
    */
   handleSearchByDescription(args: SearchByDescriptionParams) {
-    const { query, limit } = args;
+    const { query, limit, offset } = args;
 
     // Search in descriptions
-    return this.searchInDescriptions(query, limit);
+    return paginateArray(
+      this.searchInDescriptions(query, offset + limit),
+      args,
+    );
   }
 
   /**
@@ -600,7 +652,7 @@ export class TypeScriptApiHandlers {
    * @returns The tool response
    */
   handleGetTypeHierarchy(args: GetTypeHierarchyParams) {
-    const symbols = this.lookupSymbols(args);
+    const symbols = this.lookupSymbols({ ...args, limit: 100, offset: 0 });
 
     const results: TypeHierarchy[] = [];
 
@@ -619,15 +671,18 @@ export class TypeScriptApiHandlers {
    * @param args - The tool arguments
    * @returns The tool response
    */
-  handleFindUsages(args: FindUsagesParams) {
+  handleFindUsages(
+    args: FindUsagesParams,
+  ): (SymbolInfo[] | SearchResult<SymbolInfo>)[] {
     const symbols = this.lookupSymbols(args);
 
-    const results: SymbolInfo[] = [];
+    const results: (SymbolInfo[] | SearchResult<SymbolInfo>)[] = [];
 
     for (const symbol of symbols) {
       // Find usages
-      const usages = this.findUsages(symbol);
-      results.push(...usages);
+      const usages = this.findUsages(symbol, args.limit, args.offset);
+
+      results.push(usages);
     }
 
     return results;

@@ -36,6 +36,50 @@ const baseHandlerSchema = z
     },
   );
 
+const baseHandlerSchemaWithPagination = z
+  .object({
+    name: z
+      .string()
+      .optional()
+      .describe("The name of the symbol to search for"),
+    id: z.number().optional().describe("The ID# of the symbol to search for"),
+    names: z
+      .array(z.string())
+      .min(1)
+      .optional()
+      .describe("An array of names to search for"),
+    ids: z
+      .array(z.number())
+      .min(1)
+      .optional()
+      .describe("An array of ID#s to search for"),
+    limit: z
+      .number()
+      .default(20)
+      .optional()
+      .describe("The maximum number of results to return. Defaults to 20"),
+    offset: z
+      .number()
+      .default(0)
+      .optional()
+      .describe("The offset of the first result to return. Defaults to 0"),
+  })
+  .refine(
+    (data) => {
+      let setProperties = 0;
+      if (data.name !== undefined) setProperties++;
+      if (data.id !== undefined) setProperties++;
+      if (data.names !== undefined) setProperties++;
+      if (data.ids !== undefined) setProperties++;
+
+      return setProperties === 1;
+    },
+    {
+      message: "Exactly one of 'name', 'id', 'names', or 'ids' must be set.",
+      path: ["name", "id", "names", "ids"], // Specify all paths to highlight errors on all fields
+    },
+  );
+
 // Search symbols schema
 const searchSymbolsSchema = z
   .object({
@@ -58,9 +102,15 @@ const searchSymbolsSchema = z
       ),
     limit: z
       .number()
+      .default(10)
+      .optional()
+      .describe("The maximum number of results to return. Defaults to 10."),
+    offset: z
+      .number()
+      .default(0)
       .optional()
       .describe(
-        "The maximum number of results to return. If not specified, all results will be returned.",
+        "The offset of the first result to return. If not specified, the first result will be returned. ",
       ),
   })
   .describe(
@@ -68,7 +118,7 @@ const searchSymbolsSchema = z
   );
 
 // Get symbol details schema
-const getSymbolDetailsSchema = baseHandlerSchema.describe(
+const getSymbolDetailsSchema = baseHandlerSchemaWithPagination.describe(
   "Gets details about a symbol. This includes the symbol's name, kind, and description. If the symbol is a class, interface, enum, or module, this also includes the members of the symbol. Use this to resolve api://symbol/[id] urls",
 );
 
@@ -83,6 +133,20 @@ const listMembersSchema = baseHandlerSchema
       .describe(
         "Whether to include inherited members. If not specified, only direct members will be returned.",
       ),
+    limit: z
+      .number()
+      .default(20)
+      .optional()
+      .describe(
+        "The maximum number of members to return. If not specified only the first 20 results will be returned. ",
+      ),
+    offset: z
+      .number()
+      .default(0)
+      .optional()
+      .describe(
+        "The offset of the first member to return. If not specified, the first result will be returned. ",
+      ),
   })
   .describe(
     "Lists the members of a class, interface, enum, or module. If includeInherited is true, inherited members will also be returned.",
@@ -94,14 +158,28 @@ const getParameterInfoSchema = baseHandlerSchema.describe(
 );
 
 // Find implementations schema
-const findImplementationsSchema = baseHandlerSchema.describe(
+const findImplementationsSchema = baseHandlerSchemaWithPagination.describe(
   "Lists all known implementations of a given interface or subclasses of a given class. ",
 );
 
 // Search by return type schema
 const searchByReturnTypeSchema = z
   .object({
-    typeName: z.string(),
+    typeName: z.string().describe("the name of the type"),
+    limit: z
+      .number()
+      .optional()
+      .default(10)
+      .describe(
+        "The maximum number of results to return. If not specified only the first 10 results will be returned. ",
+      ),
+    offset: z
+      .number()
+      .optional()
+      .default(0)
+      .describe(
+        "The offset of the first result to return. If not specified, the first result will be returned. ",
+      ),
   })
   .describe(
     "Finds functions and methods with a specific return type. This can be used to find functions and methods that return a specific type, or to find functions and methods that return a type that is a subclass of a given type.",
@@ -118,8 +196,16 @@ const searchByDescriptionSchema = z
     limit: z
       .number()
       .optional()
+      .default(10)
       .describe(
-        "The maximum number of results to return. If not specified, all results will be returned.",
+        "The maximum number of results to return. If not specified only the first 10 results will be returned. ",
+      ),
+    offset: z
+      .number()
+      .optional()
+      .default(0)
+      .describe(
+        "The offset of the first result to return. If not specified, the first result will be returned. ",
       ),
   })
   .describe(
@@ -132,7 +218,7 @@ const getTypeHierarchySchema = baseHandlerSchema.describe(
 );
 
 // Find usages schema
-const findUsagesSchema = baseHandlerSchema.describe(
+const findUsagesSchema = baseHandlerSchemaWithPagination.describe(
   "Finds usages of a symbol in the API. This includes references to the symbol in other symbols.",
 );
 
@@ -153,13 +239,13 @@ export const base_handler_schema = baseHandlerSchema;
 export const schemas = {
   search_symbols: searchSymbolsSchema,
   get_symbol_details: getSymbolDetailsSchema,
-  list_members_schema: listMembersSchema,
+  list_members: listMembersSchema,
   get_parameter_info: getParameterInfoSchema,
   find_implementations: findImplementationsSchema,
   search_by_return_type: searchByReturnTypeSchema,
   search_by_description: searchByDescriptionSchema,
   get_type_hierarchy: getTypeHierarchySchema,
-  find_usages_schema: findUsagesSchema,
+  find_usages: findUsagesSchema,
 } as const;
 
 // Export all types

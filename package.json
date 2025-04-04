@@ -1,8 +1,8 @@
 {
   "name": "mcp-typescribe",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "An MCP server that answers questions about TypeScript APIs using TypeDoc JSON documentation",
-  "main": "dist/index.js",
+  "main": "dist/mcp-server/index.js",
   "type": "module",
   "bin": "dist/mcp-server/index.js",
   "scripts": {
@@ -16,7 +16,7 @@
     "dev": "tsc -w",
     "test": "vitest run",
     "test:watch": "vitest",
-    "inspect": "npx @modelcontextprotocol/inspector node ./dist/mcp-server/index.js -t docs/api.json",
+    "inspect": "npx @modelcontextprotocol/inspector node ./dist/mcp-server/index.js run-server docs/api.json",
     "release": "npm run build && changeset publish",
     "new-version": "changeset version && npm run format:write && npm run build"
   },
