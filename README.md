@@ -1,3 +1,6 @@
+[![npm version](https://img.shields.io/npm/v/mcp-typescribe.svg)](https://www.npmjs.com/package/your-package-name)
+
+
 # MCP-Typescribe - an MCP Server providing LLMs API information
 
 ## The Problem
@@ -35,6 +38,8 @@ Faster onboarding for new or proprietary SDKs.
 A step toward more autonomous, context-aware coding agents.
 
 ## Project Overview
+
+![Image](docs/screenshot.png)
 
 This project provides a way for AI agents to efficiently explore and understand unknown TypeScript APIs. It loads TypeDoc-generated JSON documentation and exposes it through a set of query endpoints that allow agents to search for symbols, get detailed information about specific parts of the API, and understand relationships between different components.
 
@@ -142,22 +147,12 @@ The server provides the following tools for querying the API:
 
 - `src/sample-api/`: A sample TypeScript API for testing - it uses a weird German-like dialect for the API names to test that the LLM does not hallucinate the API
 - `src/mcp-server/`: The MCP server implementation
-  - `types/`: Type definitions
-    - `typedoc-types.ts`: TypeDoc-related types
-    - `api-types.ts`: API-related types
-    - `handler-types.ts`: Handler-related types
-    - `index.ts`: Type exports
   - `utils/`: Utility functions
   - `schemas/`: JSON schemas for the MCP tools
-    - `tool-schemas.ts`: Tool schemas
-    - `index.ts`: Schema exports
   - `core/`: Core functionality
-    - `typescript-api-handlers.ts`: Main handler class
-    - `index.ts`: Core exports
   - `server.ts`: The MCP server implementation
   - `index.ts`: Entry point
-- `tests/`: Tests for the API parsing functionality
-- `docs/`: Generated TypeDoc JSON documentation
+- `tests/`: Tests for the API functionality
 
 ## Development
 
