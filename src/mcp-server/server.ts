@@ -179,7 +179,28 @@ export class TypescribeServer {
               {
                 uri,
                 mimeType: "text", // application/yaml
-                text: "hello world! " + stringify(results),
+                text: stringify(results),
+              },
+            ],
+          };
+        }
+
+        // handle documentation lookup
+        const docSectionMatch =
+          RESOURCE_TEMPLATE_DEFINITIONS[3].uriTemplate.match(uri);
+        if (docSectionMatch) {
+          const { id, pageOffset, section } = docSectionMatch;
+          const results = await handlers.handleGetDocumentation(
+            parseInt((id as string) ?? "-1", 10),
+            parseInt((pageOffset as string) ?? "0", 10),
+            section as string | undefined,
+          );
+          return {
+            contents: [
+              {
+                uri,
+                mimeType: "text", // application/yaml
+                text: stringify(results),
               },
             ],
           };

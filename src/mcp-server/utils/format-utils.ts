@@ -5,6 +5,7 @@
 import { ParameterInfo, SymbolInfo, TypeHierarchy } from "../types/index.js";
 import {
   convertContent,
+  createDocLink,
   createSymbolInfo,
   getDescription,
   getParentName,
@@ -13,8 +14,10 @@ import { formatType } from "./type-utils.js";
 import { getKindName } from "../utils.js";
 
 import {
+  CommentDisplayPart,
   ContainerReflection,
   DeclarationReflection,
+  DocumentReflection,
   ParameterReflection,
   ReferenceReflection,
   Reflection,
@@ -26,6 +29,7 @@ import { isDeclaration } from "./search-utils.js";
 
 import { stringify as yamlStringify } from "yaml";
 import { Verbosity } from "../types.js";
+import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 
 export function stringify(json: unknown) {
   return yamlStringify(json, null, { lineWidth: 0 });
@@ -289,4 +293,154 @@ export function paginateArray<T>(
     };
   }
   return result;
+}
+
+export function extractSection(content: string, section: string) {
+  const breadcrumbs: [title: string, slug: string][] = [];
+  // Function to convert a heading to a slug
+  const toSlug = (text: string): string =>
+    text
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+
+  // Split the markdown content into lines
+  const lines = content.split("\n");
+  let include = false;
+  let filteredContent = "";
+  let nestingDepth = 50;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    // Match headings in markdown (e.g., "# Heading" or "## Subheading")
+    const headingMatch = line.match(/^(#+)\s+(.*)/);
+
+    if (headingMatch) {
+      const [, hashes, headingText] = headingMatch;
+
+      const currentNestingDepth = hashes.length;
+      const currentSlug = toSlug(headingText);
+
+      if (!include) {
+        // we are before the content and need to update the breadcrumbs
+        while (breadcrumbs.length >= currentNestingDepth) {
+          breadcrumbs.pop();
+        }
+        breadcrumbs.push([headingText, currentSlug]);
+      }
+
+      // Determine if this is the section to include
+      if (currentSlug === section) {
+        include = true;
+        nestingDepth = currentNestingDepth;
+        filteredContent += `${line}\n`; // Include the heading line
+        continue;
+      }
+
+      // Stop including when encountering a heading of the same or higher level
+      if (include && currentNestingDepth <= nestingDepth) {
+        break;
+      }
+    }
+
+    // Add the current line to the filtered content if within the target section
+    if (include) {
+      filteredContent += `${line}\n`;
+    }
+  }
+
+  return { filteredContent, breadcrumbs };
+}
+
+export async function extractDocument(
+  offset: number,
+  id: number,
+  frontmatter: Record<string, unknown> | undefined,
+  children: DocumentReflection[] | undefined,
+  name: string,
+  contentParts: CommentDisplayPart[],
+  parent: Reflection | undefined,
+  section: string | undefined,
+) {
+  let finalResult = "";
+
+  //breadcrumbs
+  let walker = parent;
+  while (walker instanceof DocumentReflection) {
+    finalResult += `[${walker.name}](${createDocLink(walker.id)}) > `;
+    walker = walker.parent;
+  }
+
+  if (finalResult.length > 0) {
+    finalResult += "\n\n";
+  }
+
+  if (offset == 0) {
+    finalResult += `# ${name}`;
+
+    if (section) {
+      finalResult += ` (excerpt)\n\nComplete File [here](${createDocLink(id)})`;
+    }
+
+    finalResult += "\n\n";
+
+    if (!section) {
+      if (frontmatter) {
+        if (frontmatter.description) {
+          finalResult += `${frontmatter.description}\n\n`;
+        }
+
+        if (Array.isArray(frontmatter.tags)) {
+          finalResult += `**Tags:** ${frontmatter.tags.join(", ")}\n\n`;
+        }
+      }
+      if (Array.isArray(children) && children.length > 0) {
+        finalResult += "## Child Pages\n\n";
+        finalResult += children
+          .map((child) => `- [${child.name}](${createDocLink(child.id)})`)
+          .join("\n");
+      }
+    }
+  }
+
+  let content = convertContent(contentParts);
+
+  if (section) {
+    const data = extractSection(content, section);
+    if (data.breadcrumbs.length > 0) {
+      finalResult +=
+        "Breadcrumbs: " +
+        data.breadcrumbs
+          .map(([title, slug]) => {
+            return `>> [${title}](${createDocLink(id, undefined, slug)})`;
+          })
+          .join(" ") +
+        "\n";
+    }
+    content = data.filteredContent;
+  }
+
+  if (finalResult.length > 0) {
+    finalResult += "\n---\n\n";
+  }
+
+  if (offset > 0) {
+    finalResult += `[<< Previous Page](${createDocLink(id, offset - 1, section)})\n\n`;
+  }
+
+  const mdSplitter = RecursiveCharacterTextSplitter.fromLanguage("markdown", {
+    chunkSize: 1000,
+    chunkOverlap: 0,
+  });
+  const mdDocs = await mdSplitter.createDocuments([content]);
+
+  if (mdDocs.length > 0 && mdDocs.length > offset) {
+    finalResult += mdDocs[offset].pageContent;
+  }
+  if (mdDocs.length > offset + 1) {
+    finalResult += "\n\n";
+    finalResult += `Page ${offset + 1} of ${mdDocs.length}\n\n[Next Page >>](${createDocLink(id, offset + 1, section)})`;
+  }
+  return finalResult;
 }

@@ -1,6 +1,7 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import { sampleTypeDocJson } from "./sampleTypeDocJson.js";
 import { Verbosity } from "../src/mcp-server/types.js";
+import { extractSection } from "../src/mcp-server/utils/format-utils.js";
 import {
   paginateArray,
   SearchResult,
@@ -36,6 +37,34 @@ describe("mcp-api", () => {
 
     const expanded = uriTemplate.expand({ id: "1", pageOffset: "2" });
     expect(expanded).toBe("api://doc/1?pageOffset=2");
+    const expandedShort = uriTemplate.expand({ id: "1" });
+    expect(expandedShort).toBe("api://doc/1");
+  });
+  it("should parse a section uri", () => {
+    const uriTemplate = RESOURCE_TEMPLATE_DEFINITIONS[3].uriTemplate;
+    const variables = uriTemplate.match("api://doc/1/slug?pageOffset=2");
+
+    expect(variables).toBeDefined();
+    expect(variables).not.toBeNull();
+    expect(variables!.id).toBe("1");
+    expect(variables!.section).toBe("slug");
+    expect(variables!.pageOffset).toBe("2");
+
+    const expanded = uriTemplate.expand({ id: "1", pageOffset: "2" });
+    expect(expanded).toBe("api://doc/1/?pageOffset=2");
+    const expandedShort = uriTemplate.expand({ id: "1", section: "slug" });
+    expect(expandedShort).toBe("api://doc/1/slug");
+    const expandedShortPlusHash = uriTemplate.expand({
+      id: "1",
+      section: "anchor",
+    });
+    expect(expandedShortPlusHash).toBe("api://doc/1/anchor");
+    const expandedPlusHash = uriTemplate.expand({
+      id: "1",
+      pageOffset: "2",
+      section: "anchor",
+    });
+    expect(expandedPlusHash).toBe("api://doc/1/anchor?pageOffset=2");
   });
 });
 
@@ -65,8 +94,67 @@ describe("TypeScriptApiHandlers", () => {
     });
   });
 
+  describe("MarkdownSpliter", () => {
+    it("should split markdown", () => {
+      const markdown = `
+# Header 1
+
+Some text 1
+
+## Header 2
+
+Some text 2
+
+### Header 3
+
+Some text 3
+
+### Header 4
+
+Some text 4
+
+## Header 5
+
+Some text 5
+
+### Header 6
+
+Some text 6
+
+### Header 7
+
+Some text 7
+      `;
+
+      const content = extractSection(markdown, "header-3");
+      expect(content.filteredContent).toContain("Header 3");
+      expect(content.filteredContent).toContain("Some text 3");
+      expect(content.filteredContent).not.toContain("Header 5");
+      expect(content.filteredContent).not.toContain("Some text 5");
+      expect(content.breadcrumbs).toHaveLength(3);
+      expect(content.breadcrumbs[0][1]).toBe("header-1");
+      expect(content.breadcrumbs[0][0]).toBe("Header 1");
+      expect(content.breadcrumbs[1][1]).toBe("header-2");
+      expect(content.breadcrumbs[1][0]).toBe("Header 2");
+    });
+  });
+
   describe("getDocumentation", () => {
     it("should return the documentation page", async () => {
+      const result = await handlers.handleGetDocumentation(
+        19,
+        0,
+        "introduction",
+      );
+      console.log(result);
+      expect(result).toBeDefined();
+      expect(result).toContain("## Introduction");
+      expect(result).toContain("## About the Project");
+      expect(result).not.toContain("# Welcome to Our Project");
+      expect(result).not.toContain("Getting Started");
+      expect(result).not.toContain("# Key Features");
+    });
+    it("should return a documentation page section", async () => {
       const result = await handlers.handleGetDocumentation(19);
       expect(result).toBeDefined();
       expect(result).toContain("# External Markdown");
@@ -82,7 +170,7 @@ describe("TypeScriptApiHandlers", () => {
       expect(result).toBeDefined();
       expect(result[0].kind).toBe("Interface");
       expect(result[0].description).toContain(
-        "To find out more about the API, please see [The getting started guide](api://doc/",
+        "To find out more about the API, please see [The getting started guide](api://doc/1/getting-started",
       );
     });
   });

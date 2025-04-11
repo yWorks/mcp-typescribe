@@ -57,11 +57,18 @@ export const RESOURCE_TEMPLATE_DEFINITIONS = [
     name: "Load Documentation",
     mimeType: "text",
     description:
-      "Loads a documentation page for by ID. `pageOffset` is an optional parameter.",
+      "Loads a documentation page by ID. `pageOffset` is an optional pagination parameter.",
   },
-] satisfies {
+  {
+    uriTemplate: new UriTemplate("api://doc/{id}/{section}{?pageOffset}"),
+    name: "Load a Section of a Documentation",
+    mimeType: "text",
+    description:
+      "Loads a a section from a documentation page by ID. `pageOffset` is an optional pagination parameter . Section is the slug of the header.",
+  },
+] satisfies ReadonlyArray<{
   uriTemplate: UriTemplate;
   name: string;
   mimeType: "text";
   description: string;
-}[];
+}>;

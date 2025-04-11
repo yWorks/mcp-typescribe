@@ -24,18 +24,30 @@ import { UriTemplate } from "@modelcontextprotocol/sdk/shared/uriTemplate.js";
  *
  * @param id - The documentation ID
  * @param offset - Optional offset parameter
+ * @param section an optional anchor slug
  * @returns A formatted documentation API link
  */
-export function createDocLink(id: number, offset?: number): string {
+export function createDocLink(
+  id: number,
+  offset?: number,
+  section: string = "",
+): string {
   const variables: Record<string, string> = {
     id: String(id),
   };
   if (offset !== undefined) {
     variables.pageOffset = String(offset);
   }
-  return RESOURCE_TEMPLATE_DEFINITIONS[2].uriTemplate
-    .expand(variables)
-    .toString();
+  if (section && section.length > 0) {
+    variables.section = section;
+    return RESOURCE_TEMPLATE_DEFINITIONS[3].uriTemplate
+      .expand(variables)
+      .toString();
+  } else {
+    return RESOURCE_TEMPLATE_DEFINITIONS[2].uriTemplate
+      .expand(variables)
+      .toString();
+  }
 }
 
 const apiUrTemplate = new UriTemplate("api://symbol/{id}");
@@ -65,14 +77,14 @@ export function convertContent(
             part.target instanceof DocumentReflection &&
             typeof part.target.id === "number"
           ) {
-            return `[${part.text}](${createDocLink(part.target.id)})`;
+            return `[${part.text.trim()}](${createDocLink(part.target.id)})`;
           }
           if (part.target instanceof DeclarationReflection && part.target.id) {
-            return createMdApiLink(part.text, part.target.id);
+            return createMdApiLink(part.text.trim(), part.target.id);
           }
         } else if (part.kind === "relative-link") {
           if (typeof part.target === "number") {
-            return `${createDocLink(part.target)}`;
+            return `${createDocLink(part.target, undefined, part.targetAnchor)}`;
           }
         } else if (part.kind === "text") {
           if (summaryOnly) {

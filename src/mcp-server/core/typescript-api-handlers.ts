@@ -3,7 +3,6 @@
  */
 
 import { ErrorCode, McpError } from "@modelcontextprotocol/sdk/types.js";
-import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import {
   ApiOverview,
   base_handler_schema,
@@ -25,6 +24,7 @@ import {
   createDocLink,
   createMdApiLink,
   createSymbolInfo,
+  extractDocument,
   findSymbolsByReturnType,
   formatDetailSymbols,
   formatParameterForLLM,
@@ -40,7 +40,6 @@ import {
 } from "../utils/index.js";
 import { getKindName } from "../utils.js";
 import {
-  CommentDisplayPart,
   ConsoleLogger,
   ContainerReflection,
   DeclarationReflection,
@@ -55,74 +54,6 @@ import {
   ReflectionKind,
 } from "typedoc";
 import { Verbosity } from "../types.js";
-
-async function extractDocument(
-  offset: number,
-  id: number,
-  frontmatter: Record<string, unknown> | undefined,
-  children: DocumentReflection[] | undefined,
-  name: string,
-  contentParts: CommentDisplayPart[],
-  parent: Reflection | undefined,
-) {
-  let finalResult = "";
-
-  //breadcrumbs
-  let walker = parent;
-  while (walker instanceof DocumentReflection) {
-    finalResult += `[${walker.name}](${createDocLink(walker.id)}) > `;
-    walker = walker.parent;
-  }
-
-  if (finalResult.length > 0) {
-    finalResult += "\n\n";
-  }
-
-  if (offset == 0) {
-    finalResult += `# ${name}\n\n`;
-    if (frontmatter) {
-      if (frontmatter.description) {
-        finalResult += `${frontmatter.description}\n\n`;
-      }
-
-      if (Array.isArray(frontmatter.tags)) {
-        finalResult += `**Tags:** ${frontmatter.tags.join(", ")}\n\n`;
-      }
-    }
-
-    if (Array.isArray(children) && children.length > 0) {
-      finalResult += "## Child Pages\n\n";
-      finalResult += children
-        .map((child) => `- [${child.name}](${createDocLink(child.id)})`)
-        .join("\n");
-    }
-  }
-
-  if (finalResult.length > 0) {
-    finalResult += "\n---\n";
-  }
-
-  if (offset > 0) {
-    finalResult += `[<< Previous Page](${createDocLink(id, offset - 1)})\n\n`;
-  }
-
-  const content = convertContent(contentParts);
-
-  const mdSplitter = RecursiveCharacterTextSplitter.fromLanguage("markdown", {
-    chunkSize: 1000,
-    chunkOverlap: 0,
-  });
-  const mdDocs = await mdSplitter.createDocuments([content]);
-
-  if (mdDocs.length > 0 && mdDocs.length > offset) {
-    finalResult += mdDocs[offset].pageContent;
-  }
-  if (mdDocs.length > offset + 1) {
-    finalResult += "\n\n";
-    finalResult += `Page ${offset + 1} of ${mdDocs.length}\n\n[Next Page >>](${createDocLink(id, offset + 1)})`;
-  }
-  return finalResult;
-}
 
 /**
  * Class that provides handlers for TypeScript API queries.
@@ -173,7 +104,8 @@ export class TypeScriptApiHandlers {
       ReflectionKind.TypeParameter,
       ReflectionKind.Variable,
     ];
-    const allResults = kinds
+
+    return kinds
       .map((kind) =>
         this.project
           .getReflectionsByKind(kind)
@@ -185,8 +117,6 @@ export class TypeScriptApiHandlers {
           ),
       )
       .reduce((a, b) => a.concat(b));
-
-    return allResults;
   }
 
   /**
@@ -902,6 +832,7 @@ export class TypeScriptApiHandlers {
   async handleGetDocumentation(
     id: number,
     offset: number = 0,
+    section?: string,
   ): Promise<string> {
     const result = this.project.getReflectionById(id);
     if (result instanceof ProjectReflection && result.readme) {
@@ -913,6 +844,7 @@ export class TypeScriptApiHandlers {
         "README",
         result.readme,
         undefined,
+        section,
       );
     }
     if (result instanceof DocumentReflection) {
@@ -924,6 +856,7 @@ export class TypeScriptApiHandlers {
         result.name,
         result.content,
         result.parent,
+        section,
       );
     }
 
