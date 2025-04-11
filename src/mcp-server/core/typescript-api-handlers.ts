@@ -3,6 +3,7 @@
  */
 
 import { ErrorCode, McpError } from "@modelcontextprotocol/sdk/types.js";
+import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import {
   ApiOverview,
   base_handler_schema,
@@ -20,6 +21,8 @@ import {
   TypeHierarchy,
 } from "../types/index.js";
 import {
+  convertContent,
+  createDocLink,
   createSymbolInfo,
   findSymbolsByReturnType,
   formatDetailSymbols,
@@ -36,10 +39,12 @@ import {
 } from "../utils/index.js";
 import { getKindName } from "../utils.js";
 import {
+  CommentDisplayPart,
   ConsoleLogger,
   ContainerReflection,
   DeclarationReflection,
   Deserializer,
+  DocumentReflection,
   FileRegistry,
   JSONOutput,
   ProjectReflection,
@@ -50,12 +55,79 @@ import {
 } from "typedoc";
 import { Verbosity } from "../types.js";
 
+async function extractDocument(
+  offset: number,
+  id: number,
+  frontmatter: Record<string, unknown> | undefined,
+  children: DocumentReflection[] | undefined,
+  name: string,
+  contentParts: CommentDisplayPart[],
+  parent: Reflection | undefined,
+) {
+  let finalResult = "";
+
+  //breadcrumbs
+  let walker = parent;
+  while (walker instanceof DocumentReflection) {
+    finalResult += `[${walker.name}](${createDocLink(walker.id)}) > `;
+    walker = walker.parent;
+  }
+
+  if (finalResult.length > 0) {
+    finalResult += "\n\n";
+  }
+
+  if (offset == 0) {
+    finalResult += `# ${name}\n\n`;
+    if (frontmatter) {
+      if (frontmatter.description) {
+        finalResult += `${frontmatter.description}\n\n`;
+      }
+
+      if (Array.isArray(frontmatter.tags)) {
+        finalResult += `**Tags:** ${frontmatter.tags.join(", ")}\n\n`;
+      }
+    }
+
+    if (Array.isArray(children) && children.length > 0) {
+      finalResult += "## Child Pages\n\n";
+      finalResult += children
+        .map((child) => `- [${child.name}](${createDocLink(child.id)})`)
+        .join("\n");
+    }
+  }
+
+  if (finalResult.length > 0) {
+    finalResult += "\n---\n";
+  }
+
+  if (offset > 0) {
+    finalResult += `[<< Previous Page](${createDocLink(id, offset - 1)})\n\n`;
+  }
+
+  const content = convertContent(contentParts);
+
+  const mdSplitter = RecursiveCharacterTextSplitter.fromLanguage("markdown", {
+    chunkSize: 1000,
+    chunkOverlap: 0,
+  });
+  const mdDocs = await mdSplitter.createDocuments([content]);
+
+  if (mdDocs.length > 0 && mdDocs.length > offset) {
+    finalResult += mdDocs[offset].pageContent;
+  }
+  if (mdDocs.length > offset + 1) {
+    finalResult += "\n\n";
+    finalResult += `Page ${offset + 1} of ${mdDocs.length}\n\n[Next Page >>](${createDocLink(id, offset + 1)})`;
+  }
+  return finalResult;
+}
+
 /**
  * Class that provides handlers for TypeScript API queries.
  */
 export class TypeScriptApiHandlers {
   private symbolsById: Map<number, Reflection> = new Map();
-  private symbolsByName: Map<string, Reflection> = new Map();
   private symbolsByKind: Map<number, Reflection[]> = new Map();
   private readonly project: ProjectReflection;
 
@@ -78,12 +150,38 @@ export class TypeScriptApiHandlers {
   /**
    * Get a symbol by name
    */
-  getSymbolByName(name: string): DeclarationReflection | undefined {
-    const result = this.symbolsByName.get(name);
-    if (result instanceof ReferenceReflection) {
-      return result.getTargetReflectionDeep() as DeclarationReflection;
-    }
-    return result as DeclarationReflection;
+  getSymbolByName(name: string): DeclarationReflection[] {
+    const kinds = [
+      ReflectionKind.Class,
+      ReflectionKind.Interface,
+      ReflectionKind.TypeAlias,
+      ReflectionKind.Enum,
+      ReflectionKind.Namespace,
+      ReflectionKind.Function,
+      ReflectionKind.Method,
+      ReflectionKind.EnumMember,
+      ReflectionKind.Property,
+      ReflectionKind.Module,
+      ReflectionKind.Variable,
+      ReflectionKind.Constructor,
+      ReflectionKind.Document,
+      ReflectionKind.TypeParameter,
+      ReflectionKind.Variable,
+    ];
+    const allResults = kinds
+      .map((kind) =>
+        this.project
+          .getReflectionsByKind(kind)
+          .filter((result) => result.name === name)
+          .map((value) =>
+            value instanceof ReferenceReflection
+              ? (value.getTargetReflectionDeep() as DeclarationReflection)
+              : (value as DeclarationReflection),
+          ),
+      )
+      .reduce((a, b) => a.concat(b));
+
+    return allResults;
   }
 
   /**
@@ -102,11 +200,6 @@ export class TypeScriptApiHandlers {
       // Index the current node if it has an id
       if (node.id !== undefined) {
         this.symbolsById.set(node.id, node);
-
-        // Index by name if available
-        if (node.name) {
-          this.symbolsByName.set(node.name, node);
-        }
 
         // Index by kind
         if (node.kind !== undefined) {
@@ -140,10 +233,25 @@ export class TypeScriptApiHandlers {
       countByKind[getKindName(kind)] = symbols.length;
     }
 
+    let documentation: string | undefined = undefined;
+    if (
+      Array.isArray(this.project.documents) &&
+      this.project.documents.length > 0
+    ) {
+      documentation = this.project.documents
+        .filter((doc) => !(doc.parent instanceof DocumentReflection))
+        .map((doc) => `[${doc.name}](${createDocLink(doc.id)})`)
+        .join("\n\n");
+    }
+    if (this.project.readme) {
+      documentation += convertContent(this.project.readme);
+    }
+
     return {
       name: this.project.name,
       totalSymbols: this.symbolsById.size,
       countByKind,
+      documentation,
       topLevelSymbols: this.getTopLevelSymbols(),
     };
   }
@@ -178,7 +286,7 @@ export class TypeScriptApiHandlers {
       matchingSymbols = getSymbolsByParams(
         { id: Number(query) },
         this.project,
-        this.symbolsByName,
+        this.getSymbolByName.bind(this),
       );
     } else {
       matchingSymbols = searchSymbolsByName(query, this.project, kind, limit);
@@ -507,7 +615,7 @@ export class TypeScriptApiHandlers {
     const symbols = getSymbolsByParams(
       params,
       this.project,
-      this.symbolsByName,
+      this.getSymbolByName.bind(this),
     );
 
     if (symbols.length === 0) {
@@ -538,11 +646,13 @@ export class TypeScriptApiHandlers {
         symbol.kind !== ReflectionKind.Class &&
         symbol.kind !== ReflectionKind.Interface &&
         symbol.kind !== ReflectionKind.Enum &&
-        symbol.kind !== ReflectionKind.Module
+        symbol.kind !== ReflectionKind.Module &&
+        symbol.kind !== ReflectionKind.Namespace &&
+        symbol.kind !== ReflectionKind.TypeAlias
       ) {
         throw new McpError(
           ErrorCode.InvalidParams,
-          `Symbol is not a class, interface, enum, or module: ${symbol.name} (${getKindName(symbol.kind)})`,
+          `Symbol is not a class, interface, enum, namespace, type, or module: ${symbol.name} (${getKindName(symbol.kind)})`,
         );
       }
 
@@ -678,7 +788,12 @@ export class TypeScriptApiHandlers {
 
     const results: (SymbolInfo[] | SearchResult<SymbolInfo>)[] = [];
 
-    for (const symbol of symbols) {
+    for (const symbol of symbols.filter(
+      (value) =>
+        value.kind !== ReflectionKind.Namespace &&
+        value.kind !== ReflectionKind.Module &&
+        value.kind !== ReflectionKind.Document,
+    )) {
       // Find usages
       const usages = this.findUsages(symbol, args.limit, args.offset);
 
@@ -686,5 +801,43 @@ export class TypeScriptApiHandlers {
     }
 
     return results;
+  }
+
+  /**
+   * Handles getting documentation for a specific item.
+   *
+   * @param id - The ID of the documentation item to retrieve
+   * @param offset - Optional offset for pagination
+   * @returns Documentation content as a string
+   */
+  async handleGetDocumentation(
+    id: number,
+    offset: number = 0,
+  ): Promise<string> {
+    const result = this.project.getReflectionById(id);
+    if (result instanceof ProjectReflection && result.readme) {
+      return await extractDocument(
+        offset,
+        id,
+        undefined,
+        undefined,
+        "README",
+        result.readme,
+        undefined,
+      );
+    }
+    if (result instanceof DocumentReflection) {
+      return await extractDocument(
+        offset,
+        id,
+        result.frontmatter,
+        result.children,
+        result.name,
+        result.content,
+        result.parent,
+      );
+    }
+
+    return "No page found";
   }
 }

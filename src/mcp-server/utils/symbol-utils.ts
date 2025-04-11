@@ -8,6 +8,7 @@ import { getKindName } from "../utils.js";
 import {
   CommentDisplayPart,
   DeclarationReflection,
+  DocumentReflection,
   ProjectReflection,
   Reflection,
   ReflectionKind,
@@ -15,27 +16,55 @@ import {
 } from "typedoc";
 import { Verbosity } from "../types.js";
 import { formatType } from "./type-utils.js";
+import { RESOURCE_TEMPLATE_DEFINITIONS } from "../schemas/index.js";
 
-function convertContent(
-  summary: CommentDisplayPart[] | undefined,
+/**
+ * Creates a documentation API link.
+ *
+ * @param id - The documentation ID
+ * @param offset - Optional offset parameter
+ * @returns A formatted documentation API link
+ */
+export function createDocLink(id: number, offset?: number): string {
+  const variables: Record<string, string> = {
+    id: String(id),
+  };
+  if (offset !== undefined) {
+    variables.pageOffset = String(offset);
+  }
+  return RESOURCE_TEMPLATE_DEFINITIONS[2].uriTemplate
+    .expand(variables)
+    .toString();
+}
+
+export function convertContent(
+  parts: CommentDisplayPart[] | undefined,
   summaryOnly = false,
 ): string {
   let stop = false;
   return (
-    summary
+    parts
       ?.map((part) => {
         if (stop) return "";
         if (part.kind === "code") {
           return "`" + part.text + "`";
         }
-        if (
-          part.kind === "inline-tag" &&
-          part.target instanceof DeclarationReflection &&
-          part.target.id
-        ) {
-          return `[${part.text}](api://symbol/${part.target.id})`;
-        } else {
-          if (part.kind === "text" && summaryOnly) {
+        if (part.kind === "inline-tag") {
+          if (
+            part.target instanceof DocumentReflection &&
+            typeof part.target.id === "number"
+          ) {
+            return `[${part.text}](${createDocLink(part.target.id)})`;
+          }
+          if (part.target instanceof DeclarationReflection && part.target.id) {
+            return `[${part.text}](api://symbol/${part.target.id})`;
+          }
+        } else if (part.kind === "relative-link") {
+          if (typeof part.target === "number") {
+            return `${createDocLink(part.target)}`;
+          }
+        } else if (part.kind === "text") {
+          if (summaryOnly) {
             if (part.text.includes(".\n")) {
               const trimmedText = part.text.substring(
                 0,
@@ -49,8 +78,8 @@ function convertContent(
               return part.text;
             }
           }
-          return part.text;
         }
+        return part.text;
       })
       ?.join("")
       ?.replace(/(\r)?\n/g, "\n")
@@ -175,16 +204,14 @@ export function createSymbolInfo(
 export function getSymbolsByParams(
   params: { name?: string; id?: number; names?: string[]; ids?: number[] },
   project: ProjectReflection,
-  symbolsByName: Map<string, Reflection>,
+  symbolsByName: (name: string) => DeclarationReflection[],
 ) {
   const symbols: DeclarationReflection[] = [];
 
   // Handle single name
   if (params.name) {
-    const symbol = symbolsByName.get(params.name);
-    if (symbol instanceof DeclarationReflection) {
-      symbols.push(symbol);
-    }
+    const symbol = symbolsByName(params.name);
+    symbol.forEach((s) => symbols.push(s));
   }
 
   // Handle single ID
@@ -198,10 +225,8 @@ export function getSymbolsByParams(
   // Handle array of names
   if (params.names) {
     for (const name of params.names) {
-      const symbol = symbolsByName.get(name);
-      if (symbol instanceof DeclarationReflection) {
-        symbols.push(symbol);
-      }
+      const symbol = symbolsByName(name);
+      symbol.forEach((s) => symbols.push(s));
     }
   }
 

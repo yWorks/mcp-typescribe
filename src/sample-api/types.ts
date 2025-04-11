@@ -40,8 +40,63 @@ export enum Priority {
   UI_UI_UI = 4,
 }
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
+export namespace TaskStatus {
+  /**
+   * Converts a {@link TaskStatus} value to a human-readable string with docs.
+   *
+   * @param status - The {@link TaskStatus} to pretty-print.
+   * @returns A string describing the purpose and value of the enum.
+   */
+  export function prettyPrintTaskStatus(status: TaskStatus): string {
+    switch (status) {
+      case TaskStatus.PENDING:
+        return "Task has not been started yet (PENDING)";
+      case TaskStatus.LAEUFT:
+        return "Task is currently in progress (In Progress)";
+      case TaskStatus.FERTIG:
+        return "Task has been completed successfully (Done)";
+      case TaskStatus.MIST:
+        return "Task has failed or been cancelled (Failed)";
+      default:
+        return "Unknown TaskStatus";
+    }
+  }
+}
+
+TaskStatus.prettyPrintTaskStatus(TaskStatus.FERTIG);
+
+/**
+ * Contains helper functions for {@link Priority}
+ */
+// eslint-disable-next-line @typescript-eslint/no-namespace
+export namespace Priority {
+  /**
+   * Converts a {@link Priority} value to a human-readable string with docs.
+   *
+   * @param priority - The {@link Priority} to pretty-print.
+   * @returns A string describing the purpose and value of the enum.
+   */
+  export function prettyPrintPriority(priority: Priority): string {
+    switch (priority) {
+      case Priority.WENIG:
+        return "Low Priority (1)";
+      case Priority.GEHT_SO:
+        return "Medium Priority (2)";
+      case Priority.SCHNELL:
+        return "High Priority (3)";
+      case Priority.UI_UI_UI:
+        return "Critical (4)";
+      default:
+        return "Unknown Priority";
+    }
+  }
+}
+
 /**
  * Represents a user in the system.
+ *
+ * To find out more about the API, please see [The getting started guide](./docs/intro.md#getting-started).
  *
  * @example
  * ```typescript
@@ -62,6 +117,35 @@ export interface Kerle {
   internet_brief: string;
   /** Role of the user in the system */
   role: string;
+}
+
+/**
+ * Namespace Kerle provides functionalities to create  {@link Kerle} objects.
+ *
+ * @document docs/intro.md
+ */
+// eslint-disable-next-line @typescript-eslint/no-namespace
+export namespace Kerle {
+  /**
+   * Creates a new instance.
+   * @example
+   * ```
+   * Kerle.create('123', 'John Doe', 'john@example.com', 'developer');
+   * ```
+   */
+  export function create(
+    id: string,
+    name: string,
+    email: string,
+    role: string,
+  ): Kerle {
+    return {
+      id,
+      soi_name: name,
+      internet_brief: email,
+      role,
+    };
+  }
 }
 
 /**

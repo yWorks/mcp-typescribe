@@ -4,6 +4,7 @@
  */
 import { schemas } from "../types/index.js";
 import { JsonSchema7Type, zodToJsonSchema } from "zod-to-json-schema";
+import { UriTemplate } from "@modelcontextprotocol/sdk/shared/uriTemplate.js";
 
 /**
  * All tool definitions for the TypeScript API MCP server.
@@ -40,15 +41,27 @@ export const RESOURCE_DEFINITIONS = [
  */
 export const RESOURCE_TEMPLATE_DEFINITIONS = [
   {
-    uriTemplate: "api://symbol/{symbolNameOrId}",
+    uriTemplate: new UriTemplate("api://symbol/{symbolNameOrId}"),
     name: "Symbol Details",
     mimeType: "text",
     description: "Details about a specific symbol (by name or ID) in the API",
   },
   {
-    uriTemplate: "api://search/{query}",
+    uriTemplate: new UriTemplate("api://search/{query}"),
     name: "Search Results",
     mimeType: "text",
     description: "Search results for a query",
   },
-];
+  {
+    uriTemplate: new UriTemplate("api://doc/{id}{?pageOffset}"),
+    name: "Load Documentation",
+    mimeType: "text",
+    description:
+      "Loads a documentation page for by ID. `pageOffset` is an optional parameter.",
+  },
+] satisfies {
+  uriTemplate: UriTemplate;
+  name: string;
+  mimeType: "text";
+  description: string;
+}[];

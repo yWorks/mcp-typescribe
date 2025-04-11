@@ -1,15 +1,16 @@
 // Sample TypeDoc JSON for testing
-import { JSONOutput, ReflectionId } from "typedoc";
+import { JSONOutput } from "typedoc";
 
 export const sampleTypeDocJson = {
-  id: 0 as ReflectionId,
-  name: "typescript-api-mcp",
+  schemaVersion: "2.0",
+  id: 0,
+  name: "mcp-typescribe",
   variant: "project",
   kind: 1,
   flags: {},
   children: [
     {
-      id: 1 as ReflectionId,
+      id: 1,
       name: "index",
       variant: "declaration",
       kind: 2,
@@ -18,13 +19,43 @@ export const sampleTypeDocJson = {
         summary: [
           {
             kind: "text",
-            text: "Task Management API\r\n\r\nA simple API for managing tasks, users, and task assignments.",
+            text: "Task Management API\n\nA simple API for managing ",
+          },
+          {
+            kind: "inline-tag",
+            tag: "@link",
+            text: "tasks",
+            target: 141,
+          },
+          {
+            kind: "text",
+            text: ", ",
+          },
+          {
+            kind: "inline-tag",
+            tag: "@link",
+            text: "users",
+            target: 125,
+          },
+          {
+            kind: "text",
+            text: ", and task assignments.\n\nPlease see [the documentation](",
+          },
+          {
+            kind: "relative-link",
+            text: "./docs/intro.md#getting-started",
+            target: 1,
+            targetAnchor: "getting-started",
+          },
+          {
+            kind: "text",
+            text: ") on how to get started",
           },
         ],
       },
       children: [
         {
-          id: 199 as ReflectionId,
+          id: 222,
           name: "calculateEstimatedCompletion",
           variant: "reference",
           kind: 4194304,
@@ -32,14 +63,14 @@ export const sampleTypeDocJson = {
           sources: [
             {
               fileName: "src/sample-api/utils.ts",
-              line: 176,
+              line: 196,
               character: 16,
             },
           ],
-          target: 179,
+          target: 202,
         },
         {
-          id: 194 as ReflectionId,
+          id: 217,
           name: "filterTasks",
           variant: "reference",
           kind: 4194304,
@@ -51,10 +82,10 @@ export const sampleTypeDocJson = {
               character: 16,
             },
           ],
-          target: 142,
+          target: 165,
         },
         {
-          id: 197 as ReflectionId,
+          id: 220,
           name: "formatTask",
           variant: "reference",
           kind: 4194304,
@@ -62,29 +93,29 @@ export const sampleTypeDocJson = {
           sources: [
             {
               fileName: "src/sample-api/utils.ts",
-              line: 118,
+              line: 132,
               character: 16,
             },
             {
               fileName: "src/sample-api/utils.ts",
-              line: 127,
+              line: 143,
               character: 16,
             },
             {
               fileName: "src/sample-api/utils.ts",
-              line: 136,
+              line: 154,
               character: 16,
             },
             {
               fileName: "src/sample-api/utils.ts",
-              line: 144,
+              line: 164,
               character: 16,
             },
           ],
-          target: 161,
+          target: 184,
         },
         {
-          id: 198 as ReflectionId,
+          id: 221,
           name: "isAdmin",
           variant: "reference",
           kind: 4194304,
@@ -92,14 +123,14 @@ export const sampleTypeDocJson = {
           sources: [
             {
               fileName: "src/sample-api/utils.ts",
-              line: 165,
+              line: 185,
               character: 16,
             },
           ],
-          target: 174,
+          target: 197,
         },
         {
-          id: 185 as ReflectionId,
+          id: 208,
           name: "Kerle",
           variant: "reference",
           kind: 4194304,
@@ -107,14 +138,19 @@ export const sampleTypeDocJson = {
           sources: [
             {
               fileName: "src/sample-api/types.ts",
-              line: 56,
+              line: 111,
+              character: 17,
+            },
+            {
+              fileName: "src/sample-api/types.ts",
+              line: 128,
               character: 17,
             },
           ],
-          target: 113,
+          target: 125,
         },
         {
-          id: 196 as ReflectionId,
+          id: 219,
           name: "kopiera",
           variant: "reference",
           kind: 4194304,
@@ -122,14 +158,14 @@ export const sampleTypeDocJson = {
           sources: [
             {
               fileName: "src/sample-api/utils.ts",
-              line: 98,
+              line: 112,
               character: 16,
             },
           ],
-          target: 157,
+          target: 180,
         },
         {
-          id: 184 as ReflectionId,
+          id: 207,
           name: "Priority",
           variant: "reference",
           kind: 4194304,
@@ -140,11 +176,16 @@ export const sampleTypeDocJson = {
               line: 24,
               character: 12,
             },
+            {
+              fileName: "src/sample-api/types.ts",
+              line: 73,
+              character: 17,
+            },
           ],
-          target: 108,
+          target: 116,
         },
         {
-          id: 193 as ReflectionId,
+          id: 216,
           name: "sortByDueDate",
           variant: "reference",
           kind: 4194304,
@@ -156,10 +197,10 @@ export const sampleTypeDocJson = {
               character: 16,
             },
           ],
-          target: 138,
+          target: 161,
         },
         {
-          id: 192 as ReflectionId,
+          id: 215,
           name: "sortByPriority",
           variant: "reference",
           kind: 4194304,
@@ -171,10 +212,10 @@ export const sampleTypeDocJson = {
               character: 16,
             },
           ],
-          target: 134,
+          target: 157,
         },
         {
-          id: 195 as ReflectionId,
+          id: 218,
           name: "summarizeTasksByStatus",
           variant: "reference",
           kind: 4194304,
@@ -182,14 +223,14 @@ export const sampleTypeDocJson = {
           sources: [
             {
               fileName: "src/sample-api/utils.ts",
-              line: 77,
+              line: 89,
               character: 16,
             },
           ],
-          target: 153,
+          target: 176,
         },
         {
-          id: 190 as ReflectionId,
+          id: 213,
           name: "TaschgInEcht",
           variant: "reference",
           kind: 4194304,
@@ -197,14 +238,14 @@ export const sampleTypeDocJson = {
           sources: [
             {
               fileName: "src/sample-api/taschg-maenaedscha.ts",
-              line: 38,
+              line: 39,
               character: 13,
             },
           ],
-          target: 38,
+          target: 42,
         },
         {
-          id: 191 as ReflectionId,
+          id: 214,
           name: "TaschgMaenaedscha",
           variant: "reference",
           kind: 4194304,
@@ -212,14 +253,14 @@ export const sampleTypeDocJson = {
           sources: [
             {
               fileName: "src/sample-api/taschg-maenaedscha.ts",
-              line: 143,
+              line: 145,
               character: 13,
             },
           ],
-          target: 75,
+          target: 79,
         },
         {
-          id: 187 as ReflectionId,
+          id: 210,
           name: "TaskOptions",
           variant: "reference",
           kind: 4194304,
@@ -227,14 +268,14 @@ export const sampleTypeDocJson = {
           sources: [
             {
               fileName: "src/sample-api/types.ts",
-              line: 94,
+              line: 178,
               character: 12,
             },
           ],
-          target: 128,
+          target: 151,
         },
         {
-          id: 183 as ReflectionId,
+          id: 206,
           name: "TaskStatus",
           variant: "reference",
           kind: 4194304,
@@ -245,11 +286,16 @@ export const sampleTypeDocJson = {
               line: 7,
               character: 12,
             },
+            {
+              fileName: "src/sample-api/types.ts",
+              line: 44,
+              character: 17,
+            },
           ],
-          target: 103,
+          target: 107,
         },
         {
-          id: 186 as ReflectionId,
+          id: 209,
           name: "Uffgabe",
           variant: "reference",
           kind: 4194304,
@@ -257,14 +303,14 @@ export const sampleTypeDocJson = {
           sources: [
             {
               fileName: "src/sample-api/types.ts",
-              line: 72,
+              line: 156,
               character: 17,
             },
           ],
-          target: 118,
+          target: 141,
         },
         {
-          id: 188 as ReflectionId,
+          id: 211,
           name: "UffgabeFaehler",
           variant: "reference",
           kind: 4194304,
@@ -276,10 +322,10 @@ export const sampleTypeDocJson = {
               character: 13,
             },
           ],
-          target: 3,
+          target: 7,
         },
         {
-          id: 189 as ReflectionId,
+          id: 212,
           name: "UffgabeWechFaehler",
           variant: "reference",
           kind: 4194304,
@@ -291,16 +337,197 @@ export const sampleTypeDocJson = {
               character: 13,
             },
           ],
-          target: 20,
+          target: 24,
         },
+      ],
+      documents: [
+        {
+          id: 2,
+          name: "External Markdown",
+          variant: "document",
+          kind: 8388608,
+          flags: {},
+          content: [
+            {
+              kind: "text",
+              text: "# Welcome to Our Project\n\n## Introduction\n\nThis is a sample introduction text created for testing purposes. This document provides an overview of our project, its features, and how to get started.\n\nHere are some [links](",
+            },
+            {
+              kind: "relative-link",
+              text: "./links.md",
+              target: 3,
+            },
+            {
+              kind: "text",
+              text: ")\n\nCheck out ",
+            },
+            {
+              kind: "inline-tag",
+              tag: "@link",
+              text: " Kerle",
+              target: 125,
+            },
+            {
+              kind: "text",
+              text: "\n\n### About the Project\n\nOur project aims to simplify complex workflows and improve productivity through intuitive interfaces and powerful automation tools.\n\n## Key Features\n\n- **Easy to Use**: Simple and intuitive interface\n- **Customizable**: Adapt to your specific needs\n- **Scalable**: Grows with your requirements\n- **Well Documented**: Comprehensive guides and tutorials\n\n## Getting Started\n\nTo get started with our project, please refer to the [installation guide](",
+            },
+            {
+              kind: "relative-link",
+              text: "./installation.md",
+              target: 4,
+            },
+            {
+              kind: "text",
+              text: ") and [documentation](",
+            },
+            {
+              kind: "relative-link",
+              text: "./documentation.md",
+              target: 5,
+            },
+            {
+              kind: "text",
+              text: ").\n\nThank you for your interest in our project!\n\n---\n\n*This is a testing document. The content is for demonstration purposes only.*",
+            },
+          ],
+          frontmatter: {
+            group: "Documents",
+            category: "Guides",
+          },
+          children: [
+            {
+              id: 3,
+              name: "Installation",
+              variant: "document",
+              kind: 8388608,
+              flags: {},
+              content: [
+                {
+                  kind: "text",
+                  text: "# Installation Guide\n\n## Welcome to the EXTREME Installation Experience™ (v2.2.7)\n\nThank you for choosing our software! This guide will walk you through the **intensely straightforward** process of installing our application. Put on your configuration helmet and prepare for an XML adventure like it's 2002!\n\n## System Requirements\n\n- A computer (preferably one that turns on)\n- At least 256MB RAM (yes, MEGA bytes!)\n- 50MB of free hard disk space (we know, it's massive)\n- Internet Explorer 6.0 or Netscape Navigator 4.7\n- Windows 98SE, ME, or the ultra-modern XP\n- A CD-ROM drive for our exciting 3-disk installation set!\n\n## Installation Steps\n\n1. Insert Disk 1 into your CD-ROM drive\n2. Wait for the autorun dialog (this could take up to 4 minutes)\n3. Click \"INSTALL NOW!!!\" in the flashy animated GIF button\n4. When prompted, create your ",
+                },
+                {
+                  kind: "code",
+                  text: "`config.xml`",
+                },
+                {
+                  kind: "text",
+                  text: " file as follows:\n\n",
+                },
+                {
+                  kind: "code",
+                  text: '```xml\n<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<!DOCTYPE configuration SYSTEM "http://www.ourproduct.com/dtd/config-2002.dtd">\n<CONFIGURATION>\n  <APP_SETTINGS>\n    <SERVER host="localhost" port="8080" timeout="30000" />\n    <LOGGING level="ERROR" path="C:\\Program Files\\OurApp\\Logs\\" />\n    <UI theme="BlueWave" showSplash="true" animationSpeed="slow" />\n  </APP_SETTINGS>\n  <USER_PREFERENCES>\n    <OPTION name="AutoSave" value="true" />\n    <OPTION name="CheckForUpdates" value="daily" />\n    <OPTION name="PlayStartupSound" value="true" />\n  </USER_PREFERENCES>\n  <ADVANCED>\n    <MEMORY initialHeapSize="64m" maxHeapSize="128m" />\n    <PLUGINS enabled="true" scanOnStartup="true" />\n  </ADVANCED>\n</CONFIGURATION>\n```',
+                },
+                {
+                  kind: "text",
+                  text: '\n\n5. Insert Disk 2 when prompted\n6. Configure your database settings and wait for the progress bar to complete (approximately 17 minutes)\n7. When the "DLL Registration Success!" message appears, insert Disk 3\n8. Print out your 16-digit registration code and keep it in a safe place!\n\n## Troubleshooting\n\nIf you see the error message ',
+                },
+                {
+                  kind: "code",
+                  text: "`ERROR: INSUFFICIENT SYSTEM RESOURCES`",
+                },
+                {
+                  kind: "text",
+                  text: ", try closing your other application.\n\nIf installation fails with ",
+                },
+                {
+                  kind: "code",
+                  text: "`XML PARSING ERROR 0x8700542`",
+                },
+                {
+                  kind: "text",
+                  text: ", ensure you have copied EXACTLY 3 spaces (not tabs) before each XML element.\n\n## Support\n\nNeed help? Contact our support team via:\n- Email: help@ourcompany.com\n- Fax: 555-XML-HELP\n- BBS: dial-in available between 11pm-6am EST\n\nThank you for embarking on this installation journey! Remember to register your product within 30 days or face persistent popup reminders every 45 minutes!",
+                },
+              ],
+              frontmatter: {
+                group: "Documents",
+                category: "Guides",
+              },
+            },
+            {
+              id: 4,
+              name: "Helpful Docs",
+              variant: "document",
+              kind: 8388608,
+              flags: {},
+              content: [
+                {
+                  kind: "text",
+                  text: "# Official Documentation\n\n## Version 1.0.3.7.2.9-alpha-preview-SNAPSHOT\n\nWelcome to the *comprehensive* documentation for our product.\n\n## Getting Started\n\nTo get started, simply... um... start?\n\n## Features\n\nOur product has several amazing features:\n- It exists\n- It does things (sometimes)\n- It rarely crashes more than twice per hour\n- Compatible with most computers that have electricity\n\n## Troubleshooting\n\nHaving problems? Here's our complete troubleshooting guide:\n\n1. Try turning it off and on again\n2. ¯\\\\\\_(ツ)_/¯\n\n## FAQ\n\n**Q: How do I use this product?**  \nA: Very carefully.\n\n**Q: Is there a tutorial?**  \nA: We believe in learning through exploration and random clicking.\n\n**Q: Where can I find more detailed documentation?**  \nA: This is it. This is all of it. We spent upwards of 14 minutes creating this document.\n\n**Q: What does error code 0x7B3912FF mean?**  \nA: It means you've discovered a feature we didn't know existed. Congratulations!\n\n## Advanced Configuration\n\n\nGo [back](",
+                },
+                {
+                  kind: "relative-link",
+                  text: "intro.md",
+                  target: 1,
+                },
+                {
+                  kind: "text",
+                  text: ")",
+                },
+              ],
+              frontmatter: {
+                group: "Documents",
+                category: "Guides",
+              },
+            },
+            {
+              id: 5,
+              name: "Testing Links",
+              variant: "document",
+              kind: 8388608,
+              flags: {},
+              content: [
+                {
+                  kind: "text",
+                  text: "Here is some text to link to ",
+                },
+                {
+                  kind: "inline-tag",
+                  tag: "@link",
+                  text: "the user",
+                  target: 125,
+                },
+                {
+                  kind: "text",
+                  text: "!",
+                },
+              ],
+              frontmatter: {
+                group: "Documents",
+                category: "Guides",
+              },
+            },
+          ],
+        },
+      ],
+      childrenIncludingDocuments: [
+        2, 222, 217, 220, 221, 208, 219, 207, 216, 215, 218, 213, 214, 210, 206,
+        209, 211, 212,
       ],
       groups: [
         {
+          title: "Documents",
+          children: [2],
+        },
+        {
           title: "References",
           children: [
-            199, 194, 197, 198, 185, 196, 184, 193, 192, 195, 190, 191, 187,
-            183, 186, 188, 189,
-          ] as ReflectionId[],
+            222, 217, 220, 221, 208, 219, 207, 216, 215, 218, 213, 214, 210,
+            206, 209, 211, 212,
+          ],
+        },
+      ],
+      categories: [
+        {
+          title: "Guides",
+          children: [2],
+        },
+        {
+          title: "Other",
+          children: [
+            222, 217, 220, 221, 208, 219, 207, 216, 215, 218, 213, 214, 210,
+            206, 209, 211, 212,
+          ],
         },
       ],
       sources: [
@@ -312,14 +539,14 @@ export const sampleTypeDocJson = {
       ],
     },
     {
-      id: 2 as ReflectionId,
+      id: 6,
       name: "taschg-maenaedscha",
       variant: "declaration",
       kind: 2,
       flags: {},
       children: [
         {
-          id: 38 as ReflectionId,
+          id: 42,
           name: "TaschgInEcht",
           variant: "declaration",
           kind: 128,
@@ -334,7 +561,7 @@ export const sampleTypeDocJson = {
           },
           children: [
             {
-              id: 39 as ReflectionId,
+              id: 43,
               name: "constructor",
               variant: "declaration",
               kind: 512,
@@ -342,13 +569,13 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/taschg-maenaedscha.ts",
-                  line: 67,
+                  line: 68,
                   character: 2,
                 },
               ],
               signatures: [
                 {
-                  id: 40 as ReflectionId,
+                  id: 44,
                   name: "TaschgInEcht",
                   variant: "signature",
                   kind: 16384,
@@ -364,13 +591,13 @@ export const sampleTypeDocJson = {
                   sources: [
                     {
                       fileName: "src/sample-api/taschg-maenaedscha.ts",
-                      line: 67,
+                      line: 68,
                       character: 2,
                     },
                   ],
                   typeParameters: [
                     {
-                      id: 41 as ReflectionId,
+                      id: 45,
                       name: "T",
                       variant: "typeParam",
                       kind: 131072,
@@ -383,7 +610,7 @@ export const sampleTypeDocJson = {
                   ],
                   parameters: [
                     {
-                      id: 42 as ReflectionId,
+                      id: 46,
                       name: "task",
                       variant: "param",
                       kind: 32768,
@@ -402,24 +629,26 @@ export const sampleTypeDocJson = {
                           {
                             type: "reference",
                             target: {
+                              packageName: "typescript",
+                              packagePath: "lib/lib.es5.d.ts",
                               qualifiedName: "Omit",
                             },
                             typeArguments: [
                               {
                                 type: "reference",
-                                target: 118,
+                                target: 141,
                                 typeArguments: [
                                   {
                                     type: "reference",
-                                    target: 41,
+                                    target: 45,
                                     name: "T",
-                                    package: "typescript-api-mcp",
+                                    package: "mcp-typescribe",
                                     qualifiedName: "TaschgInEcht.T",
                                     refersToTypeParameter: true,
                                   },
                                 ],
                                 name: "Uffgabe",
-                                package: "typescript-api-mcp",
+                                package: "mcp-typescribe",
                               },
                               {
                                 type: "literal",
@@ -432,14 +661,14 @@ export const sampleTypeDocJson = {
                           {
                             type: "reflection",
                             declaration: {
-                              id: 43 as ReflectionId,
+                              id: 47,
                               name: "__type",
                               variant: "declaration",
                               kind: 65536,
                               flags: {},
                               children: [
                                 {
-                                  id: 44 as ReflectionId,
+                                  id: 48,
                                   name: "status",
                                   variant: "declaration",
                                   kind: 1024,
@@ -450,29 +679,29 @@ export const sampleTypeDocJson = {
                                     {
                                       fileName:
                                         "src/sample-api/taschg-maenaedscha.ts",
-                                      line: 67,
+                                      line: 68,
                                       character: 51,
                                     },
                                   ],
                                   type: {
                                     type: "reference",
-                                    target: 103,
+                                    target: 107,
                                     name: "TaskStatus",
-                                    package: "typescript-api-mcp",
+                                    package: "mcp-typescribe",
                                   },
                                 },
                               ],
                               groups: [
                                 {
                                   title: "Properties",
-                                  children: [44],
+                                  children: [48],
                                 },
                               ],
                               sources: [
                                 {
                                   fileName:
                                     "src/sample-api/taschg-maenaedscha.ts",
-                                  line: 67,
+                                  line: 68,
                                   character: 49,
                                 },
                               ],
@@ -484,25 +713,25 @@ export const sampleTypeDocJson = {
                   ],
                   type: {
                     type: "reference",
-                    target: 38,
+                    target: 42,
                     typeArguments: [
                       {
                         type: "reference",
-                        target: 41,
+                        target: 45,
                         name: "T",
-                        package: "typescript-api-mcp",
+                        package: "mcp-typescribe",
                         qualifiedName: "TaschgInEcht.T",
                         refersToTypeParameter: true,
                       },
                     ],
                     name: "TaschgInEcht",
-                    package: "typescript-api-mcp",
+                    package: "mcp-typescribe",
                   },
                 },
               ],
             },
             {
-              id: 50 as ReflectionId,
+              id: 54,
               name: "assignee",
               variant: "declaration",
               kind: 1024,
@@ -520,24 +749,24 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/taschg-maenaedscha.ts",
-                  line: 50,
+                  line: 51,
                   character: 2,
                 },
               ],
               type: {
                 type: "reference",
-                target: 113,
+                target: 125,
                 name: "Kerle",
-                package: "typescript-api-mcp",
+                package: "mcp-typescribe",
               },
               implementationOf: {
                 type: "reference",
-                target: 124,
+                target: 147,
                 name: "Uffgabe.assignee",
               },
             },
             {
-              id: 53 as ReflectionId,
+              id: 57,
               name: "createdAt",
               variant: "declaration",
               kind: 1024,
@@ -555,13 +784,15 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/taschg-maenaedscha.ts",
-                  line: 56,
+                  line: 57,
                   character: 11,
                 },
               ],
               type: {
                 type: "reference",
                 target: {
+                  packageName: "typescript",
+                  packagePath: "lib/lib.es5.d.ts",
                   qualifiedName: "Date",
                 },
                 name: "Date",
@@ -569,7 +800,7 @@ export const sampleTypeDocJson = {
               },
             },
             {
-              id: 52 as ReflectionId,
+              id: 56,
               name: "data",
               variant: "declaration",
               kind: 1024,
@@ -587,26 +818,26 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/taschg-maenaedscha.ts",
-                  line: 54,
+                  line: 55,
                   character: 2,
                 },
               ],
               type: {
                 type: "reference",
-                target: 41,
+                target: 45,
                 name: "T",
-                package: "typescript-api-mcp",
+                package: "mcp-typescribe",
                 qualifiedName: "TaschgInEcht.T",
                 refersToTypeParameter: true,
               },
               implementationOf: {
                 type: "reference",
-                target: 126,
+                target: 149,
                 name: "Uffgabe.data",
               },
             },
             {
-              id: 46 as ReflectionId,
+              id: 50,
               name: "do_Tittel",
               variant: "declaration",
               kind: 1024,
@@ -622,7 +853,7 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/taschg-maenaedscha.ts",
-                  line: 42,
+                  line: 43,
                   character: 2,
                 },
               ],
@@ -632,12 +863,12 @@ export const sampleTypeDocJson = {
               },
               implementationOf: {
                 type: "reference",
-                target: 120,
+                target: 143,
                 name: "Uffgabe.do_Tittel",
               },
             },
             {
-              id: 51 as ReflectionId,
+              id: 55,
               name: "dueDate",
               variant: "declaration",
               kind: 1024,
@@ -655,13 +886,15 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/taschg-maenaedscha.ts",
-                  line: 52,
+                  line: 53,
                   character: 2,
                 },
               ],
               type: {
                 type: "reference",
                 target: {
+                  packageName: "typescript",
+                  packagePath: "lib/lib.es5.d.ts",
                   qualifiedName: "Date",
                 },
                 name: "Date",
@@ -669,12 +902,12 @@ export const sampleTypeDocJson = {
               },
               implementationOf: {
                 type: "reference",
-                target: 125,
+                target: 148,
                 name: "Uffgabe.dueDate",
               },
             },
             {
-              id: 45 as ReflectionId,
+              id: 49,
               name: "id",
               variant: "declaration",
               kind: 1024,
@@ -690,7 +923,7 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/taschg-maenaedscha.ts",
-                  line: 40,
+                  line: 41,
                   character: 2,
                 },
               ],
@@ -700,12 +933,12 @@ export const sampleTypeDocJson = {
               },
               implementationOf: {
                 type: "reference",
-                target: 119,
+                target: 142,
                 name: "Uffgabe.id",
               },
             },
             {
-              id: 49 as ReflectionId,
+              id: 53,
               name: "priority",
               variant: "declaration",
               kind: 1024,
@@ -721,24 +954,24 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/taschg-maenaedscha.ts",
-                  line: 48,
+                  line: 49,
                   character: 2,
                 },
               ],
               type: {
                 type: "reference",
-                target: 108,
+                target: 116,
                 name: "Priority",
-                package: "typescript-api-mcp",
+                package: "mcp-typescribe",
               },
               implementationOf: {
                 type: "reference",
-                target: 123,
+                target: 146,
                 name: "Uffgabe.priority",
               },
             },
             {
-              id: 48 as ReflectionId,
+              id: 52,
               name: "status",
               variant: "declaration",
               kind: 1024,
@@ -754,24 +987,24 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/taschg-maenaedscha.ts",
-                  line: 46,
+                  line: 47,
                   character: 2,
                 },
               ],
               type: {
                 type: "reference",
-                target: 103,
+                target: 107,
                 name: "TaskStatus",
-                package: "typescript-api-mcp",
+                package: "mcp-typescribe",
               },
               implementationOf: {
                 type: "reference",
-                target: 122,
+                target: 145,
                 name: "Uffgabe.status",
               },
             },
             {
-              id: 47 as ReflectionId,
+              id: 51,
               name: "umWosGoots",
               variant: "declaration",
               kind: 1024,
@@ -787,7 +1020,7 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/taschg-maenaedscha.ts",
-                  line: 44,
+                  line: 45,
                   character: 2,
                 },
               ],
@@ -797,12 +1030,12 @@ export const sampleTypeDocJson = {
               },
               implementationOf: {
                 type: "reference",
-                target: 121,
+                target: 144,
                 name: "Uffgabe.umWosGoots",
               },
             },
             {
-              id: 54 as ReflectionId,
+              id: 58,
               name: "updatedAt",
               variant: "declaration",
               kind: 1024,
@@ -818,13 +1051,15 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/taschg-maenaedscha.ts",
-                  line: 58,
+                  line: 59,
                   character: 2,
                 },
               ],
               type: {
                 type: "reference",
                 target: {
+                  packageName: "typescript",
+                  packagePath: "lib/lib.es5.d.ts",
                   qualifiedName: "Date",
                 },
                 name: "Date",
@@ -832,7 +1067,7 @@ export const sampleTypeDocJson = {
               },
             },
             {
-              id: 62 as ReflectionId,
+              id: 66,
               name: "delegiera",
               variant: "declaration",
               kind: 2048,
@@ -840,13 +1075,13 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/taschg-maenaedscha.ts",
-                  line: 102,
+                  line: 103,
                   character: 2,
                 },
               ],
               signatures: [
                 {
-                  id: 63 as ReflectionId,
+                  id: 67,
                   name: "delegiera",
                   variant: "signature",
                   kind: 4096,
@@ -873,13 +1108,13 @@ export const sampleTypeDocJson = {
                   sources: [
                     {
                       fileName: "src/sample-api/taschg-maenaedscha.ts",
-                      line: 102,
+                      line: 103,
                       character: 2,
                     },
                   ],
                   parameters: [
                     {
-                      id: 64 as ReflectionId,
+                      id: 68,
                       name: "user",
                       variant: "param",
                       kind: 32768,
@@ -894,9 +1129,9 @@ export const sampleTypeDocJson = {
                       },
                       type: {
                         type: "reference",
-                        target: 113,
+                        target: 125,
                         name: "Kerle",
-                        package: "typescript-api-mcp",
+                        package: "mcp-typescribe",
                       },
                     },
                   ],
@@ -908,7 +1143,7 @@ export const sampleTypeDocJson = {
               ],
             },
             {
-              id: 59 as ReflectionId,
+              id: 63,
               name: "korrigiera",
               variant: "declaration",
               kind: 2048,
@@ -916,13 +1151,13 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/taschg-maenaedscha.ts",
-                  line: 87,
+                  line: 88,
                   character: 2,
                 },
               ],
               signatures: [
                 {
-                  id: 60 as ReflectionId,
+                  id: 64,
                   name: "korrigiera",
                   variant: "signature",
                   kind: 4096,
@@ -949,13 +1184,13 @@ export const sampleTypeDocJson = {
                   sources: [
                     {
                       fileName: "src/sample-api/taschg-maenaedscha.ts",
-                      line: 87,
+                      line: 88,
                       character: 2,
                     },
                   ],
                   parameters: [
                     {
-                      id: 61 as ReflectionId,
+                      id: 65,
                       name: "status",
                       variant: "param",
                       kind: 32768,
@@ -970,9 +1205,9 @@ export const sampleTypeDocJson = {
                       },
                       type: {
                         type: "reference",
-                        target: 103,
+                        target: 107,
                         name: "TaskStatus",
-                        package: "typescript-api-mcp",
+                        package: "mcp-typescribe",
                       },
                     },
                   ],
@@ -984,7 +1219,7 @@ export const sampleTypeDocJson = {
               ],
             },
             {
-              id: 70 as ReflectionId,
+              id: 74,
               name: "ojeZuSpaet",
               variant: "declaration",
               kind: 2048,
@@ -992,13 +1227,13 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/taschg-maenaedscha.ts",
-                  line: 122,
+                  line: 123,
                   character: 2,
                 },
               ],
               signatures: [
                 {
-                  id: 71 as ReflectionId,
+                  id: 75,
                   name: "ojeZuSpaet",
                   variant: "signature",
                   kind: 4096,
@@ -1025,7 +1260,7 @@ export const sampleTypeDocJson = {
                   sources: [
                     {
                       fileName: "src/sample-api/taschg-maenaedscha.ts",
-                      line: 122,
+                      line: 123,
                       character: 2,
                     },
                   ],
@@ -1037,7 +1272,7 @@ export const sampleTypeDocJson = {
               ],
             },
             {
-              id: 72 as ReflectionId,
+              id: 76,
               name: "toString",
               variant: "declaration",
               kind: 2048,
@@ -1045,13 +1280,13 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/taschg-maenaedscha.ts",
-                  line: 133,
+                  line: 134,
                   character: 2,
                 },
               ],
               signatures: [
                 {
-                  id: 73 as ReflectionId,
+                  id: 77,
                   name: "toString",
                   variant: "signature",
                   kind: 4096,
@@ -1078,7 +1313,7 @@ export const sampleTypeDocJson = {
                   sources: [
                     {
                       fileName: "src/sample-api/taschg-maenaedscha.ts",
-                      line: 133,
+                      line: 134,
                       character: 2,
                     },
                   ],
@@ -1090,7 +1325,7 @@ export const sampleTypeDocJson = {
               ],
             },
             {
-              id: 65 as ReflectionId,
+              id: 69,
               name: "wasWarDavor",
               variant: "declaration",
               kind: 2048,
@@ -1098,13 +1333,13 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/taschg-maenaedscha.ts",
-                  line: 113,
+                  line: 114,
                   character: 2,
                 },
               ],
               signatures: [
                 {
-                  id: 66 as ReflectionId,
+                  id: 70,
                   name: "wasWarDavor",
                   variant: "signature",
                   kind: 4096,
@@ -1131,7 +1366,7 @@ export const sampleTypeDocJson = {
                   sources: [
                     {
                       fileName: "src/sample-api/taschg-maenaedscha.ts",
-                      line: 113,
+                      line: 114,
                       character: 2,
                     },
                   ],
@@ -1143,14 +1378,14 @@ export const sampleTypeDocJson = {
                       elementType: {
                         type: "reflection",
                         declaration: {
-                          id: 67 as ReflectionId,
+                          id: 71,
                           name: "__type",
                           variant: "declaration",
                           kind: 65536,
                           flags: {},
                           children: [
                             {
-                              id: 68 as ReflectionId,
+                              id: 72,
                               name: "status",
                               variant: "declaration",
                               kind: 1024,
@@ -1159,19 +1394,19 @@ export const sampleTypeDocJson = {
                                 {
                                   fileName:
                                     "src/sample-api/taschg-maenaedscha.ts",
-                                  line: 113,
+                                  line: 114,
                                   character: 33,
                                 },
                               ],
                               type: {
                                 type: "reference",
-                                target: 103,
+                                target: 107,
                                 name: "TaskStatus",
-                                package: "typescript-api-mcp",
+                                package: "mcp-typescribe",
                               },
                             },
                             {
-                              id: 69 as ReflectionId,
+                              id: 73,
                               name: "timestamp",
                               variant: "declaration",
                               kind: 1024,
@@ -1180,13 +1415,15 @@ export const sampleTypeDocJson = {
                                 {
                                   fileName:
                                     "src/sample-api/taschg-maenaedscha.ts",
-                                  line: 113,
+                                  line: 114,
                                   character: 53,
                                 },
                               ],
                               type: {
                                 type: "reference",
                                 target: {
+                                  packageName: "typescript",
+                                  packagePath: "lib/lib.es5.d.ts",
                                   qualifiedName: "Date",
                                 },
                                 name: "Date",
@@ -1197,13 +1434,13 @@ export const sampleTypeDocJson = {
                           groups: [
                             {
                               title: "Properties",
-                              children: [68, 69],
+                              children: [72, 73],
                             },
                           ],
                           sources: [
                             {
                               fileName: "src/sample-api/taschg-maenaedscha.ts",
-                              line: 113,
+                              line: 114,
                               character: 31,
                             },
                           ],
@@ -1218,27 +1455,27 @@ export const sampleTypeDocJson = {
           groups: [
             {
               title: "Constructors",
-              children: [39],
+              children: [43],
             },
             {
               title: "Properties",
-              children: [50, 53, 52, 46, 51, 45, 49, 48, 47, 54],
+              children: [54, 57, 56, 50, 55, 49, 53, 52, 51, 58],
             },
             {
               title: "Methods",
-              children: [62, 59, 70, 72, 65],
+              children: [66, 63, 74, 76, 69],
             },
           ],
           sources: [
             {
               fileName: "src/sample-api/taschg-maenaedscha.ts",
-              line: 38,
+              line: 39,
               character: 13,
             },
           ],
           typeParameters: [
             {
-              id: 74 as ReflectionId,
+              id: 78,
               name: "T",
               variant: "typeParam",
               kind: 131072,
@@ -1260,24 +1497,24 @@ export const sampleTypeDocJson = {
           implementedTypes: [
             {
               type: "reference",
-              target: 118,
+              target: 141,
               typeArguments: [
                 {
                   type: "reference",
-                  target: 41,
+                  target: 45,
                   name: "T",
-                  package: "typescript-api-mcp",
+                  package: "mcp-typescribe",
                   qualifiedName: "TaschgInEcht.T",
                   refersToTypeParameter: true,
                 },
               ],
               name: "Uffgabe",
-              package: "typescript-api-mcp",
+              package: "mcp-typescribe",
             },
           ],
         },
         {
-          id: 75 as ReflectionId,
+          id: 79,
           name: "TaschgMaenaedscha",
           variant: "declaration",
           kind: 128,
@@ -1292,21 +1529,21 @@ export const sampleTypeDocJson = {
           },
           children: [
             {
-              id: 76 as ReflectionId,
+              id: 80,
               name: "constructor",
               variant: "declaration",
               kind: 512,
               flags: {},
               signatures: [
                 {
-                  id: 77 as ReflectionId,
+                  id: 81,
                   name: "TaschgMaenaedscha",
                   variant: "signature",
                   kind: 16384,
                   flags: {},
                   typeParameters: [
                     {
-                      id: 78 as ReflectionId,
+                      id: 82,
                       name: "T",
                       variant: "typeParam",
                       kind: 131072,
@@ -1319,25 +1556,25 @@ export const sampleTypeDocJson = {
                   ],
                   type: {
                     type: "reference",
-                    target: 75,
+                    target: 79,
                     typeArguments: [
                       {
                         type: "reference",
-                        target: 78,
+                        target: 82,
                         name: "T",
-                        package: "typescript-api-mcp",
+                        package: "mcp-typescribe",
                         qualifiedName: "TaschgMaenaedscha.T",
                         refersToTypeParameter: true,
                       },
                     ],
                     name: "TaschgMaenaedscha",
-                    package: "typescript-api-mcp",
+                    package: "mcp-typescribe",
                   },
                 },
               ],
             },
             {
-              id: 81 as ReflectionId,
+              id: 85,
               name: "bauWatt",
               variant: "declaration",
               kind: 2048,
@@ -1345,13 +1582,13 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/taschg-maenaedscha.ts",
-                  line: 166,
+                  line: 168,
                   character: 2,
                 },
               ],
               signatures: [
                 {
-                  id: 82 as ReflectionId,
+                  id: 86,
                   name: "bauWatt",
                   variant: "signature",
                   kind: 4096,
@@ -1378,7 +1615,7 @@ export const sampleTypeDocJson = {
                         content: [
                           {
                             kind: "code",
-                            text: "```typescript\r\nconst taskManager = new TaskManager();\r\nconst task = taskManager.createTask(\r\n  'Implement feature',\r\n  'Implement the new login feature',\r\n  Priority.HIGH\r\n);\r\n```",
+                            text: "```typescript\nconst taskManager = new TaskManager();\nconst task = taskManager.createTask(\n  'Implement feature',\n  'Implement the new login feature',\n  Priority.HIGH\n);\n```",
                           },
                         ],
                       },
@@ -1387,13 +1624,13 @@ export const sampleTypeDocJson = {
                   sources: [
                     {
                       fileName: "src/sample-api/taschg-maenaedscha.ts",
-                      line: 166,
+                      line: 168,
                       character: 2,
                     },
                   ],
                   parameters: [
                     {
-                      id: 83 as ReflectionId,
+                      id: 87,
                       name: "title",
                       variant: "param",
                       kind: 32768,
@@ -1412,7 +1649,7 @@ export const sampleTypeDocJson = {
                       },
                     },
                     {
-                      id: 84 as ReflectionId,
+                      id: 88,
                       name: "description",
                       variant: "param",
                       kind: 32768,
@@ -1431,7 +1668,7 @@ export const sampleTypeDocJson = {
                       },
                     },
                     {
-                      id: 85 as ReflectionId,
+                      id: 89,
                       name: "priority",
                       variant: "param",
                       kind: 32768,
@@ -1446,13 +1683,13 @@ export const sampleTypeDocJson = {
                       },
                       type: {
                         type: "reference",
-                        target: 108,
+                        target: 116,
                         name: "Priority",
-                        package: "typescript-api-mcp",
+                        package: "mcp-typescribe",
                       },
                     },
                     {
-                      id: 86 as ReflectionId,
+                      id: 90,
                       name: "options",
                       variant: "param",
                       kind: 32768,
@@ -1469,33 +1706,33 @@ export const sampleTypeDocJson = {
                       },
                       type: {
                         type: "reference",
-                        target: 128,
+                        target: 151,
                         name: "TaskOptions",
-                        package: "typescript-api-mcp",
+                        package: "mcp-typescribe",
                       },
                     },
                   ],
                   type: {
                     type: "reference",
-                    target: 38,
+                    target: 42,
                     typeArguments: [
                       {
                         type: "reference",
-                        target: 78,
+                        target: 82,
                         name: "T",
-                        package: "typescript-api-mcp",
+                        package: "mcp-typescribe",
                         qualifiedName: "TaschgMaenaedscha.T",
                         refersToTypeParameter: true,
                       },
                     ],
                     name: "TaschgInEcht",
-                    package: "typescript-api-mcp",
+                    package: "mcp-typescribe",
                   },
                 },
               ],
             },
             {
-              id: 95 as ReflectionId,
+              id: 99,
               name: "holsFuerEnKerle",
               variant: "declaration",
               kind: 2048,
@@ -1503,13 +1740,13 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/taschg-maenaedscha.ts",
-                  line: 225,
+                  line: 228,
                   character: 2,
                 },
               ],
               signatures: [
                 {
-                  id: 96 as ReflectionId,
+                  id: 100,
                   name: "holsFuerEnKerle",
                   variant: "signature",
                   kind: 4096,
@@ -1536,13 +1773,13 @@ export const sampleTypeDocJson = {
                   sources: [
                     {
                       fileName: "src/sample-api/taschg-maenaedscha.ts",
-                      line: 225,
+                      line: 228,
                       character: 2,
                     },
                   ],
                   parameters: [
                     {
-                      id: 97 as ReflectionId,
+                      id: 101,
                       name: "userId",
                       variant: "param",
                       kind: 32768,
@@ -1565,26 +1802,26 @@ export const sampleTypeDocJson = {
                     type: "array",
                     elementType: {
                       type: "reference",
-                      target: 38,
+                      target: 42,
                       typeArguments: [
                         {
                           type: "reference",
-                          target: 78,
+                          target: 82,
                           name: "T",
-                          package: "typescript-api-mcp",
+                          package: "mcp-typescribe",
                           qualifiedName: "TaschgMaenaedscha.T",
                           refersToTypeParameter: true,
                         },
                       ],
                       name: "TaschgInEcht",
-                      package: "typescript-api-mcp",
+                      package: "mcp-typescribe",
                     },
                   },
                 },
               ],
             },
             {
-              id: 92 as ReflectionId,
+              id: 96,
               name: "holsMir",
               variant: "declaration",
               kind: 2048,
@@ -1592,13 +1829,13 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/taschg-maenaedscha.ts",
-                  line: 215,
+                  line: 218,
                   character: 2,
                 },
               ],
               signatures: [
                 {
-                  id: 93 as ReflectionId,
+                  id: 97,
                   name: "holsMir",
                   variant: "signature",
                   kind: 4096,
@@ -1625,13 +1862,13 @@ export const sampleTypeDocJson = {
                   sources: [
                     {
                       fileName: "src/sample-api/taschg-maenaedscha.ts",
-                      line: 215,
+                      line: 218,
                       character: 2,
                     },
                   ],
                   parameters: [
                     {
-                      id: 94 as ReflectionId,
+                      id: 98,
                       name: "status",
                       variant: "param",
                       kind: 32768,
@@ -1646,9 +1883,9 @@ export const sampleTypeDocJson = {
                       },
                       type: {
                         type: "reference",
-                        target: 103,
+                        target: 107,
                         name: "TaskStatus",
-                        package: "typescript-api-mcp",
+                        package: "mcp-typescribe",
                       },
                     },
                   ],
@@ -1656,26 +1893,26 @@ export const sampleTypeDocJson = {
                     type: "array",
                     elementType: {
                       type: "reference",
-                      target: 38,
+                      target: 42,
                       typeArguments: [
                         {
                           type: "reference",
-                          target: 78,
+                          target: 82,
                           name: "T",
-                          package: "typescript-api-mcp",
+                          package: "mcp-typescribe",
                           qualifiedName: "TaschgMaenaedscha.T",
                           refersToTypeParameter: true,
                         },
                       ],
                       name: "TaschgInEcht",
-                      package: "typescript-api-mcp",
+                      package: "mcp-typescribe",
                     },
                   },
                 },
               ],
             },
             {
-              id: 90 as ReflectionId,
+              id: 94,
               name: "iWillAelles",
               variant: "declaration",
               kind: 2048,
@@ -1683,13 +1920,13 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/taschg-maenaedscha.ts",
-                  line: 205,
+                  line: 208,
                   character: 2,
                 },
               ],
               signatures: [
                 {
-                  id: 91 as ReflectionId,
+                  id: 95,
                   name: "iWillAelles",
                   variant: "signature",
                   kind: 4096,
@@ -1716,7 +1953,7 @@ export const sampleTypeDocJson = {
                   sources: [
                     {
                       fileName: "src/sample-api/taschg-maenaedscha.ts",
-                      line: 205,
+                      line: 208,
                       character: 2,
                     },
                   ],
@@ -1724,26 +1961,26 @@ export const sampleTypeDocJson = {
                     type: "array",
                     elementType: {
                       type: "reference",
-                      target: 38,
+                      target: 42,
                       typeArguments: [
                         {
                           type: "reference",
-                          target: 78,
+                          target: 82,
                           name: "T",
-                          package: "typescript-api-mcp",
+                          package: "mcp-typescribe",
                           qualifiedName: "TaschgMaenaedscha.T",
                           refersToTypeParameter: true,
                         },
                       ],
                       name: "TaschgInEcht",
-                      package: "typescript-api-mcp",
+                      package: "mcp-typescribe",
                     },
                   },
                 },
               ],
             },
             {
-              id: 87 as ReflectionId,
+              id: 91,
               name: "suchs",
               variant: "declaration",
               kind: 2048,
@@ -1751,13 +1988,13 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/taschg-maenaedscha.ts",
-                  line: 192,
+                  line: 195,
                   character: 2,
                 },
               ],
               signatures: [
                 {
-                  id: 88 as ReflectionId,
+                  id: 92,
                   name: "suchs",
                   variant: "signature",
                   kind: 4096,
@@ -1793,13 +2030,13 @@ export const sampleTypeDocJson = {
                   sources: [
                     {
                       fileName: "src/sample-api/taschg-maenaedscha.ts",
-                      line: 192,
+                      line: 195,
                       character: 2,
                     },
                   ],
                   parameters: [
                     {
-                      id: 89 as ReflectionId,
+                      id: 93,
                       name: "id",
                       variant: "param",
                       kind: 32768,
@@ -1820,25 +2057,25 @@ export const sampleTypeDocJson = {
                   ],
                   type: {
                     type: "reference",
-                    target: 38,
+                    target: 42,
                     typeArguments: [
                       {
                         type: "reference",
-                        target: 78,
+                        target: 82,
                         name: "T",
-                        package: "typescript-api-mcp",
+                        package: "mcp-typescribe",
                         qualifiedName: "TaschgMaenaedscha.T",
                         refersToTypeParameter: true,
                       },
                     ],
                     name: "TaschgInEcht",
-                    package: "typescript-api-mcp",
+                    package: "mcp-typescribe",
                   },
                 },
               ],
             },
             {
-              id: 98 as ReflectionId,
+              id: 102,
               name: "wechDamit",
               variant: "declaration",
               kind: 2048,
@@ -1846,13 +2083,13 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/taschg-maenaedscha.ts",
-                  line: 235,
+                  line: 238,
                   character: 2,
                 },
               ],
               signatures: [
                 {
-                  id: 99 as ReflectionId,
+                  id: 103,
                   name: "wechDamit",
                   variant: "signature",
                   kind: 4096,
@@ -1879,13 +2116,13 @@ export const sampleTypeDocJson = {
                   sources: [
                     {
                       fileName: "src/sample-api/taschg-maenaedscha.ts",
-                      line: 235,
+                      line: 238,
                       character: 2,
                     },
                   ],
                   parameters: [
                     {
-                      id: 100 as ReflectionId,
+                      id: 104,
                       name: "id",
                       variant: "param",
                       kind: 32768,
@@ -1915,23 +2152,23 @@ export const sampleTypeDocJson = {
           groups: [
             {
               title: "Constructors",
-              children: [76],
+              children: [80],
             },
             {
               title: "Methods",
-              children: [81, 95, 92, 90, 87, 98],
+              children: [85, 99, 96, 94, 91, 102],
             },
           ],
           sources: [
             {
               fileName: "src/sample-api/taschg-maenaedscha.ts",
-              line: 143,
+              line: 145,
               character: 13,
             },
           ],
           typeParameters: [
             {
-              id: 101 as ReflectionId,
+              id: 105,
               name: "T",
               variant: "typeParam",
               kind: 131072,
@@ -1952,7 +2189,7 @@ export const sampleTypeDocJson = {
           ],
         },
         {
-          id: 3 as ReflectionId,
+          id: 7,
           name: "UffgabeFaehler",
           variant: "declaration",
           kind: 128,
@@ -1967,7 +2204,7 @@ export const sampleTypeDocJson = {
           },
           children: [
             {
-              id: 14 as ReflectionId,
+              id: 18,
               name: "constructor",
               variant: "declaration",
               kind: 512,
@@ -1981,7 +2218,7 @@ export const sampleTypeDocJson = {
               ],
               signatures: [
                 {
-                  id: 15 as ReflectionId,
+                  id: 19,
                   name: "UffgabeFaehler",
                   variant: "signature",
                   kind: 16384,
@@ -2003,7 +2240,7 @@ export const sampleTypeDocJson = {
                   ],
                   parameters: [
                     {
-                      id: 16 as ReflectionId,
+                      id: 20,
                       name: "message",
                       variant: "param",
                       kind: 32768,
@@ -2024,9 +2261,9 @@ export const sampleTypeDocJson = {
                   ],
                   type: {
                     type: "reference",
-                    target: 3,
+                    target: 7,
                     name: "UffgabeFaehler",
-                    package: "typescript-api-mcp",
+                    package: "mcp-typescribe",
                   },
                   overwrites: {
                     type: "reference",
@@ -2042,7 +2279,7 @@ export const sampleTypeDocJson = {
               },
             },
             {
-              id: 18 as ReflectionId,
+              id: 22,
               name: "message",
               variant: "declaration",
               kind: 1024,
@@ -2068,7 +2305,7 @@ export const sampleTypeDocJson = {
               },
             },
             {
-              id: 17 as ReflectionId,
+              id: 21,
               name: "name",
               variant: "declaration",
               kind: 1024,
@@ -2094,7 +2331,7 @@ export const sampleTypeDocJson = {
               },
             },
             {
-              id: 19 as ReflectionId,
+              id: 23,
               name: "stack",
               variant: "declaration",
               kind: 1024,
@@ -2121,7 +2358,7 @@ export const sampleTypeDocJson = {
               },
             },
             {
-              id: 8 as ReflectionId,
+              id: 12,
               name: "prepareStackTrace",
               variant: "declaration",
               kind: 1024,
@@ -2160,7 +2397,7 @@ export const sampleTypeDocJson = {
               type: {
                 type: "reflection",
                 declaration: {
-                  id: 9 as ReflectionId,
+                  id: 13,
                   name: "__type",
                   variant: "declaration",
                   kind: 65536,
@@ -2176,7 +2413,7 @@ export const sampleTypeDocJson = {
                   ],
                   signatures: [
                     {
-                      id: 10 as ReflectionId,
+                      id: 14,
                       name: "__type",
                       variant: "signature",
                       kind: 4096,
@@ -2192,7 +2429,7 @@ export const sampleTypeDocJson = {
                       ],
                       parameters: [
                         {
-                          id: 11 as ReflectionId,
+                          id: 15,
                           name: "err",
                           variant: "param",
                           kind: 32768,
@@ -2202,6 +2439,8 @@ export const sampleTypeDocJson = {
                           type: {
                             type: "reference",
                             target: {
+                              packageName: "typescript",
+                              packagePath: "lib/lib.es5.d.ts",
                               qualifiedName: "Error",
                             },
                             name: "Error",
@@ -2209,7 +2448,7 @@ export const sampleTypeDocJson = {
                           },
                         },
                         {
-                          id: 12 as ReflectionId,
+                          id: 16,
                           name: "stackTraces",
                           variant: "param",
                           kind: 32768,
@@ -2221,6 +2460,8 @@ export const sampleTypeDocJson = {
                             elementType: {
                               type: "reference",
                               target: {
+                                packageName: "@types/node",
+                                packagePath: "globals.d.ts",
                                 qualifiedName: "__global.NodeJS.CallSite",
                               },
                               name: "CallSite",
@@ -2245,7 +2486,7 @@ export const sampleTypeDocJson = {
               },
             },
             {
-              id: 13 as ReflectionId,
+              id: 17,
               name: "stackTraceLimit",
               variant: "declaration",
               kind: 1024,
@@ -2272,7 +2513,7 @@ export const sampleTypeDocJson = {
               },
             },
             {
-              id: 4 as ReflectionId,
+              id: 8,
               name: "captureStackTrace",
               variant: "declaration",
               kind: 2048,
@@ -2290,7 +2531,7 @@ export const sampleTypeDocJson = {
               ],
               signatures: [
                 {
-                  id: 5 as ReflectionId,
+                  id: 9,
                   name: "captureStackTrace",
                   variant: "signature",
                   kind: 4096,
@@ -2315,7 +2556,7 @@ export const sampleTypeDocJson = {
                   ],
                   parameters: [
                     {
-                      id: 6 as ReflectionId,
+                      id: 10,
                       name: "targetObject",
                       variant: "param",
                       kind: 32768,
@@ -2328,7 +2569,7 @@ export const sampleTypeDocJson = {
                       },
                     },
                     {
-                      id: 7 as ReflectionId,
+                      id: 11,
                       name: "constructorOpt",
                       variant: "param",
                       kind: 32768,
@@ -2339,6 +2580,8 @@ export const sampleTypeDocJson = {
                       type: {
                         type: "reference",
                         target: {
+                          packageName: "typescript",
+                          packagePath: "lib/lib.es5.d.ts",
                           qualifiedName: "Function",
                         },
                         name: "Function",
@@ -2367,15 +2610,15 @@ export const sampleTypeDocJson = {
           groups: [
             {
               title: "Constructors",
-              children: [14],
+              children: [18],
             },
             {
               title: "Properties",
-              children: [18, 17, 19, 8, 13],
+              children: [22, 21, 23, 12, 17],
             },
             {
               title: "Methods",
-              children: [4],
+              children: [8],
             },
           ],
           sources: [
@@ -2389,6 +2632,8 @@ export const sampleTypeDocJson = {
             {
               type: "reference",
               target: {
+                packageName: "typescript",
+                packagePath: "lib/lib.es5.d.ts",
                 qualifiedName: "Error",
               },
               name: "Error",
@@ -2398,13 +2643,13 @@ export const sampleTypeDocJson = {
           extendedBy: [
             {
               type: "reference",
-              target: 20,
+              target: 24,
               name: "UffgabeWechFaehler",
             },
           ],
         },
         {
-          id: 20 as ReflectionId,
+          id: 24,
           name: "UffgabeWechFaehler",
           variant: "declaration",
           kind: 128,
@@ -2419,7 +2664,7 @@ export const sampleTypeDocJson = {
           },
           children: [
             {
-              id: 31 as ReflectionId,
+              id: 35,
               name: "constructor",
               variant: "declaration",
               kind: 512,
@@ -2433,7 +2678,7 @@ export const sampleTypeDocJson = {
               ],
               signatures: [
                 {
-                  id: 32 as ReflectionId,
+                  id: 36,
                   name: "UffgabeWechFaehler",
                   variant: "signature",
                   kind: 16384,
@@ -2455,7 +2700,7 @@ export const sampleTypeDocJson = {
                   ],
                   parameters: [
                     {
-                      id: 33 as ReflectionId,
+                      id: 37,
                       name: "taskId",
                       variant: "param",
                       kind: 32768,
@@ -2476,25 +2721,25 @@ export const sampleTypeDocJson = {
                   ],
                   type: {
                     type: "reference",
-                    target: 20,
+                    target: 24,
                     name: "UffgabeWechFaehler",
-                    package: "typescript-api-mcp",
+                    package: "mcp-typescribe",
                   },
                   overwrites: {
                     type: "reference",
-                    target: 15,
+                    target: 19,
                     name: "UffgabeFaehler.constructor",
                   },
                 },
               ],
               overwrites: {
                 type: "reference",
-                target: 14,
+                target: 18,
                 name: "UffgabeFaehler.constructor",
               },
             },
             {
-              id: 36 as ReflectionId,
+              id: 40,
               name: "message",
               variant: "declaration",
               kind: 1024,
@@ -2515,12 +2760,12 @@ export const sampleTypeDocJson = {
               },
               inheritedFrom: {
                 type: "reference",
-                target: 18,
+                target: 22,
                 name: "UffgabeFaehler.message",
               },
             },
             {
-              id: 35 as ReflectionId,
+              id: 39,
               name: "name",
               variant: "declaration",
               kind: 1024,
@@ -2541,12 +2786,12 @@ export const sampleTypeDocJson = {
               },
               inheritedFrom: {
                 type: "reference",
-                target: 17,
+                target: 21,
                 name: "UffgabeFaehler.name",
               },
             },
             {
-              id: 37 as ReflectionId,
+              id: 41,
               name: "stack",
               variant: "declaration",
               kind: 1024,
@@ -2568,12 +2813,12 @@ export const sampleTypeDocJson = {
               },
               inheritedFrom: {
                 type: "reference",
-                target: 19,
+                target: 23,
                 name: "UffgabeFaehler.stack",
               },
             },
             {
-              id: 34 as ReflectionId,
+              id: 38,
               name: "taskId",
               variant: "declaration",
               kind: 1024,
@@ -2601,7 +2846,7 @@ export const sampleTypeDocJson = {
               },
             },
             {
-              id: 25 as ReflectionId,
+              id: 29,
               name: "prepareStackTrace",
               variant: "declaration",
               kind: 1024,
@@ -2640,7 +2885,7 @@ export const sampleTypeDocJson = {
               type: {
                 type: "reflection",
                 declaration: {
-                  id: 26 as ReflectionId,
+                  id: 30,
                   name: "__type",
                   variant: "declaration",
                   kind: 65536,
@@ -2656,7 +2901,7 @@ export const sampleTypeDocJson = {
                   ],
                   signatures: [
                     {
-                      id: 27 as ReflectionId,
+                      id: 31,
                       name: "__type",
                       variant: "signature",
                       kind: 4096,
@@ -2672,7 +2917,7 @@ export const sampleTypeDocJson = {
                       ],
                       parameters: [
                         {
-                          id: 28 as ReflectionId,
+                          id: 32,
                           name: "err",
                           variant: "param",
                           kind: 32768,
@@ -2682,6 +2927,8 @@ export const sampleTypeDocJson = {
                           type: {
                             type: "reference",
                             target: {
+                              packageName: "typescript",
+                              packagePath: "lib/lib.es5.d.ts",
                               qualifiedName: "Error",
                             },
                             name: "Error",
@@ -2689,7 +2936,7 @@ export const sampleTypeDocJson = {
                           },
                         },
                         {
-                          id: 29 as ReflectionId,
+                          id: 33,
                           name: "stackTraces",
                           variant: "param",
                           kind: 32768,
@@ -2701,6 +2948,8 @@ export const sampleTypeDocJson = {
                             elementType: {
                               type: "reference",
                               target: {
+                                packageName: "@types/node",
+                                packagePath: "globals.d.ts",
                                 qualifiedName: "__global.NodeJS.CallSite",
                               },
                               name: "CallSite",
@@ -2720,12 +2969,12 @@ export const sampleTypeDocJson = {
               },
               inheritedFrom: {
                 type: "reference",
-                target: 8,
+                target: 12,
                 name: "UffgabeFaehler.prepareStackTrace",
               },
             },
             {
-              id: 30 as ReflectionId,
+              id: 34,
               name: "stackTraceLimit",
               variant: "declaration",
               kind: 1024,
@@ -2747,12 +2996,12 @@ export const sampleTypeDocJson = {
               },
               inheritedFrom: {
                 type: "reference",
-                target: 13,
+                target: 17,
                 name: "UffgabeFaehler.stackTraceLimit",
               },
             },
             {
-              id: 21 as ReflectionId,
+              id: 25,
               name: "captureStackTrace",
               variant: "declaration",
               kind: 2048,
@@ -2770,7 +3019,7 @@ export const sampleTypeDocJson = {
               ],
               signatures: [
                 {
-                  id: 22 as ReflectionId,
+                  id: 26,
                   name: "captureStackTrace",
                   variant: "signature",
                   kind: 4096,
@@ -2795,7 +3044,7 @@ export const sampleTypeDocJson = {
                   ],
                   parameters: [
                     {
-                      id: 23 as ReflectionId,
+                      id: 27,
                       name: "targetObject",
                       variant: "param",
                       kind: 32768,
@@ -2808,7 +3057,7 @@ export const sampleTypeDocJson = {
                       },
                     },
                     {
-                      id: 24 as ReflectionId,
+                      id: 28,
                       name: "constructorOpt",
                       variant: "param",
                       kind: 32768,
@@ -2819,6 +3068,8 @@ export const sampleTypeDocJson = {
                       type: {
                         type: "reference",
                         target: {
+                          packageName: "typescript",
+                          packagePath: "lib/lib.es5.d.ts",
                           qualifiedName: "Function",
                         },
                         name: "Function",
@@ -2832,14 +3083,14 @@ export const sampleTypeDocJson = {
                   },
                   inheritedFrom: {
                     type: "reference",
-                    target: 5,
+                    target: 9,
                     name: "UffgabeFaehler.captureStackTrace",
                   },
                 },
               ],
               inheritedFrom: {
                 type: "reference",
-                target: 4,
+                target: 8,
                 name: "UffgabeFaehler.captureStackTrace",
               },
             },
@@ -2847,15 +3098,15 @@ export const sampleTypeDocJson = {
           groups: [
             {
               title: "Constructors",
-              children: [31],
+              children: [35],
             },
             {
               title: "Properties",
-              children: [36, 35, 37, 34, 25, 30],
+              children: [40, 39, 41, 38, 29, 34],
             },
             {
               title: "Methods",
-              children: [21],
+              children: [25],
             },
           ],
           sources: [
@@ -2868,9 +3119,9 @@ export const sampleTypeDocJson = {
           extendedTypes: [
             {
               type: "reference",
-              target: 3,
+              target: 7,
               name: "UffgabeFaehler",
-              package: "typescript-api-mcp",
+              package: "mcp-typescribe",
             },
           ],
         },
@@ -2878,7 +3129,7 @@ export const sampleTypeDocJson = {
       groups: [
         {
           title: "Classes",
-          children: [38, 75, 3, 20],
+          children: [42, 79, 7, 24],
         },
       ],
       sources: [
@@ -2890,14 +3141,595 @@ export const sampleTypeDocJson = {
       ],
     },
     {
-      id: 102 as ReflectionId,
+      id: 106,
       name: "types",
       variant: "declaration",
       kind: 2,
       flags: {},
       children: [
         {
-          id: 108 as ReflectionId,
+          id: 130,
+          name: "Kerle",
+          variant: "declaration",
+          kind: 4,
+          flags: {},
+          comment: {
+            summary: [
+              {
+                kind: "text",
+                text: "Namespace Kerle provides functionalities to create  ",
+              },
+              {
+                kind: "inline-tag",
+                tag: "@link",
+                text: "Kerle",
+                target: 125,
+              },
+              {
+                kind: "text",
+                text: " objects.",
+              },
+            ],
+          },
+          children: [
+            {
+              id: 135,
+              name: "create",
+              variant: "declaration",
+              kind: 64,
+              flags: {},
+              sources: [
+                {
+                  fileName: "src/sample-api/types.ts",
+                  line: 136,
+                  character: 18,
+                },
+              ],
+              signatures: [
+                {
+                  id: 136,
+                  name: "create",
+                  variant: "signature",
+                  kind: 4096,
+                  flags: {},
+                  comment: {
+                    summary: [
+                      {
+                        kind: "text",
+                        text: "Creates a new instance.",
+                      },
+                    ],
+                    blockTags: [
+                      {
+                        tag: "@example",
+                        content: [
+                          {
+                            kind: "code",
+                            text: "```\nKerle.create('123', 'John Doe', 'john@example.com', 'developer');\n```",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                  sources: [
+                    {
+                      fileName: "src/sample-api/types.ts",
+                      line: 136,
+                      character: 18,
+                    },
+                  ],
+                  parameters: [
+                    {
+                      id: 137,
+                      name: "id",
+                      variant: "param",
+                      kind: 32768,
+                      flags: {},
+                      type: {
+                        type: "intrinsic",
+                        name: "string",
+                      },
+                    },
+                    {
+                      id: 138,
+                      name: "name",
+                      variant: "param",
+                      kind: 32768,
+                      flags: {},
+                      type: {
+                        type: "intrinsic",
+                        name: "string",
+                      },
+                    },
+                    {
+                      id: 139,
+                      name: "email",
+                      variant: "param",
+                      kind: 32768,
+                      flags: {},
+                      type: {
+                        type: "intrinsic",
+                        name: "string",
+                      },
+                    },
+                    {
+                      id: 140,
+                      name: "role",
+                      variant: "param",
+                      kind: 32768,
+                      flags: {},
+                      type: {
+                        type: "intrinsic",
+                        name: "string",
+                      },
+                    },
+                  ],
+                  type: {
+                    type: "reference",
+                    target: 125,
+                    name: "Kerle",
+                    package: "mcp-typescribe",
+                  },
+                },
+              ],
+            },
+          ],
+          documents: [
+            {
+              id: 131,
+              name: "External Markdown",
+              variant: "document",
+              kind: 8388608,
+              flags: {},
+              content: [
+                {
+                  kind: "text",
+                  text: "# Welcome to Our Project\n\n## Introduction\n\nThis is a sample introduction text created for testing purposes. This document provides an overview of our project, its features, and how to get started.\n\nHere are some [links](",
+                },
+                {
+                  kind: "relative-link",
+                  text: "./links.md",
+                  target: 3,
+                },
+                {
+                  kind: "text",
+                  text: ")\n\nCheck out ",
+                },
+                {
+                  kind: "inline-tag",
+                  tag: "@link",
+                  text: " Kerle",
+                  target: 130,
+                },
+                {
+                  kind: "text",
+                  text: "\n\n### About the Project\n\nOur project aims to simplify complex workflows and improve productivity through intuitive interfaces and powerful automation tools.\n\n## Key Features\n\n- **Easy to Use**: Simple and intuitive interface\n- **Customizable**: Adapt to your specific needs\n- **Scalable**: Grows with your requirements\n- **Well Documented**: Comprehensive guides and tutorials\n\n## Getting Started\n\nTo get started with our project, please refer to the [installation guide](",
+                },
+                {
+                  kind: "relative-link",
+                  text: "./installation.md",
+                  target: 4,
+                },
+                {
+                  kind: "text",
+                  text: ") and [documentation](",
+                },
+                {
+                  kind: "relative-link",
+                  text: "./documentation.md",
+                  target: 5,
+                },
+                {
+                  kind: "text",
+                  text: ").\n\nThank you for your interest in our project!\n\n---\n\n*This is a testing document. The content is for demonstration purposes only.*",
+                },
+              ],
+              frontmatter: {
+                group: "Documents",
+                category: "Guides",
+              },
+              children: [
+                {
+                  id: 132,
+                  name: "Installation",
+                  variant: "document",
+                  kind: 8388608,
+                  flags: {},
+                  content: [
+                    {
+                      kind: "text",
+                      text: "# Installation Guide\n\n## Welcome to the EXTREME Installation Experience™ (v2.2.7)\n\nThank you for choosing our software! This guide will walk you through the **intensely straightforward** process of installing our application. Put on your configuration helmet and prepare for an XML adventure like it's 2002!\n\n## System Requirements\n\n- A computer (preferably one that turns on)\n- At least 256MB RAM (yes, MEGA bytes!)\n- 50MB of free hard disk space (we know, it's massive)\n- Internet Explorer 6.0 or Netscape Navigator 4.7\n- Windows 98SE, ME, or the ultra-modern XP\n- A CD-ROM drive for our exciting 3-disk installation set!\n\n## Installation Steps\n\n1. Insert Disk 1 into your CD-ROM drive\n2. Wait for the autorun dialog (this could take up to 4 minutes)\n3. Click \"INSTALL NOW!!!\" in the flashy animated GIF button\n4. When prompted, create your ",
+                    },
+                    {
+                      kind: "code",
+                      text: "`config.xml`",
+                    },
+                    {
+                      kind: "text",
+                      text: " file as follows:\n\n",
+                    },
+                    {
+                      kind: "code",
+                      text: '```xml\n<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<!DOCTYPE configuration SYSTEM "http://www.ourproduct.com/dtd/config-2002.dtd">\n<CONFIGURATION>\n  <APP_SETTINGS>\n    <SERVER host="localhost" port="8080" timeout="30000" />\n    <LOGGING level="ERROR" path="C:\\Program Files\\OurApp\\Logs\\" />\n    <UI theme="BlueWave" showSplash="true" animationSpeed="slow" />\n  </APP_SETTINGS>\n  <USER_PREFERENCES>\n    <OPTION name="AutoSave" value="true" />\n    <OPTION name="CheckForUpdates" value="daily" />\n    <OPTION name="PlayStartupSound" value="true" />\n  </USER_PREFERENCES>\n  <ADVANCED>\n    <MEMORY initialHeapSize="64m" maxHeapSize="128m" />\n    <PLUGINS enabled="true" scanOnStartup="true" />\n  </ADVANCED>\n</CONFIGURATION>\n```',
+                    },
+                    {
+                      kind: "text",
+                      text: '\n\n5. Insert Disk 2 when prompted\n6. Configure your database settings and wait for the progress bar to complete (approximately 17 minutes)\n7. When the "DLL Registration Success!" message appears, insert Disk 3\n8. Print out your 16-digit registration code and keep it in a safe place!\n\n## Troubleshooting\n\nIf you see the error message ',
+                    },
+                    {
+                      kind: "code",
+                      text: "`ERROR: INSUFFICIENT SYSTEM RESOURCES`",
+                    },
+                    {
+                      kind: "text",
+                      text: ", try closing your other application.\n\nIf installation fails with ",
+                    },
+                    {
+                      kind: "code",
+                      text: "`XML PARSING ERROR 0x8700542`",
+                    },
+                    {
+                      kind: "text",
+                      text: ", ensure you have copied EXACTLY 3 spaces (not tabs) before each XML element.\n\n## Support\n\nNeed help? Contact our support team via:\n- Email: help@ourcompany.com\n- Fax: 555-XML-HELP\n- BBS: dial-in available between 11pm-6am EST\n\nThank you for embarking on this installation journey! Remember to register your product within 30 days or face persistent popup reminders every 45 minutes!",
+                    },
+                  ],
+                  frontmatter: {
+                    group: "Documents",
+                    category: "Guides",
+                  },
+                },
+                {
+                  id: 133,
+                  name: "Helpful Docs",
+                  variant: "document",
+                  kind: 8388608,
+                  flags: {},
+                  content: [
+                    {
+                      kind: "text",
+                      text: "# Official Documentation\n\n## Version 1.0.3.7.2.9-alpha-preview-SNAPSHOT\n\nWelcome to the *comprehensive* documentation for our product.\n\n## Getting Started\n\nTo get started, simply... um... start?\n\n## Features\n\nOur product has several amazing features:\n- It exists\n- It does things (sometimes)\n- It rarely crashes more than twice per hour\n- Compatible with most computers that have electricity\n\n## Troubleshooting\n\nHaving problems? Here's our complete troubleshooting guide:\n\n1. Try turning it off and on again\n2. ¯\\\\\\_(ツ)_/¯\n\n## FAQ\n\n**Q: How do I use this product?**  \nA: Very carefully.\n\n**Q: Is there a tutorial?**  \nA: We believe in learning through exploration and random clicking.\n\n**Q: Where can I find more detailed documentation?**  \nA: This is it. This is all of it. We spent upwards of 14 minutes creating this document.\n\n**Q: What does error code 0x7B3912FF mean?**  \nA: It means you've discovered a feature we didn't know existed. Congratulations!\n\n## Advanced Configuration\n\n\nGo [back](",
+                    },
+                    {
+                      kind: "relative-link",
+                      text: "intro.md",
+                      target: 1,
+                    },
+                    {
+                      kind: "text",
+                      text: ")",
+                    },
+                  ],
+                  frontmatter: {
+                    group: "Documents",
+                    category: "Guides",
+                  },
+                },
+                {
+                  id: 134,
+                  name: "Testing Links",
+                  variant: "document",
+                  kind: 8388608,
+                  flags: {},
+                  content: [
+                    {
+                      kind: "text",
+                      text: "Here is some text to link to ",
+                    },
+                    {
+                      kind: "inline-tag",
+                      tag: "@link",
+                      text: "the user",
+                      target: 130,
+                    },
+                    {
+                      kind: "text",
+                      text: "!",
+                    },
+                  ],
+                  frontmatter: {
+                    group: "Documents",
+                    category: "Guides",
+                  },
+                },
+              ],
+            },
+          ],
+          childrenIncludingDocuments: [131, 135],
+          groups: [
+            {
+              title: "Documents",
+              children: [131],
+            },
+            {
+              title: "Functions",
+              children: [135],
+            },
+          ],
+          categories: [
+            {
+              title: "Guides",
+              children: [131],
+            },
+            {
+              title: "Other",
+              children: [135],
+            },
+          ],
+          sources: [
+            {
+              fileName: "src/sample-api/types.ts",
+              line: 111,
+              character: 17,
+            },
+            {
+              fileName: "src/sample-api/types.ts",
+              line: 128,
+              character: 17,
+            },
+          ],
+        },
+        {
+          id: 121,
+          name: "Priority",
+          variant: "declaration",
+          kind: 4,
+          flags: {},
+          comment: {
+            summary: [
+              {
+                kind: "text",
+                text: "Contains helper functions for ",
+              },
+              {
+                kind: "inline-tag",
+                tag: "@link",
+                text: "Priority",
+                target: 116,
+              },
+            ],
+          },
+          children: [
+            {
+              id: 122,
+              name: "prettyPrintPriority",
+              variant: "declaration",
+              kind: 64,
+              flags: {},
+              sources: [
+                {
+                  fileName: "src/sample-api/types.ts",
+                  line: 80,
+                  character: 18,
+                },
+              ],
+              signatures: [
+                {
+                  id: 123,
+                  name: "prettyPrintPriority",
+                  variant: "signature",
+                  kind: 4096,
+                  flags: {},
+                  comment: {
+                    summary: [
+                      {
+                        kind: "text",
+                        text: "Converts a ",
+                      },
+                      {
+                        kind: "inline-tag",
+                        tag: "@link",
+                        text: "Priority",
+                        target: 116,
+                      },
+                      {
+                        kind: "text",
+                        text: " value to a human-readable string with docs.",
+                      },
+                    ],
+                    blockTags: [
+                      {
+                        tag: "@returns",
+                        content: [
+                          {
+                            kind: "text",
+                            text: "A string describing the purpose and value of the enum.",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                  sources: [
+                    {
+                      fileName: "src/sample-api/types.ts",
+                      line: 80,
+                      character: 18,
+                    },
+                  ],
+                  parameters: [
+                    {
+                      id: 124,
+                      name: "priority",
+                      variant: "param",
+                      kind: 32768,
+                      flags: {},
+                      comment: {
+                        summary: [
+                          {
+                            kind: "text",
+                            text: "The ",
+                          },
+                          {
+                            kind: "inline-tag",
+                            tag: "@link",
+                            text: "Priority",
+                            target: 116,
+                          },
+                          {
+                            kind: "text",
+                            text: " to pretty-print.",
+                          },
+                        ],
+                      },
+                      type: {
+                        type: "reference",
+                        target: 116,
+                        name: "Priority",
+                        package: "mcp-typescribe",
+                      },
+                    },
+                  ],
+                  type: {
+                    type: "intrinsic",
+                    name: "string",
+                  },
+                },
+              ],
+            },
+          ],
+          groups: [
+            {
+              title: "Functions",
+              children: [122],
+            },
+          ],
+          sources: [
+            {
+              fileName: "src/sample-api/types.ts",
+              line: 24,
+              character: 12,
+            },
+            {
+              fileName: "src/sample-api/types.ts",
+              line: 73,
+              character: 17,
+            },
+          ],
+        },
+        {
+          id: 112,
+          name: "TaskStatus",
+          variant: "declaration",
+          kind: 4,
+          flags: {},
+          children: [
+            {
+              id: 113,
+              name: "prettyPrintTaskStatus",
+              variant: "declaration",
+              kind: 64,
+              flags: {},
+              sources: [
+                {
+                  fileName: "src/sample-api/types.ts",
+                  line: 51,
+                  character: 18,
+                },
+              ],
+              signatures: [
+                {
+                  id: 114,
+                  name: "prettyPrintTaskStatus",
+                  variant: "signature",
+                  kind: 4096,
+                  flags: {},
+                  comment: {
+                    summary: [
+                      {
+                        kind: "text",
+                        text: "Converts a ",
+                      },
+                      {
+                        kind: "inline-tag",
+                        tag: "@link",
+                        text: "TaskStatus",
+                        target: 107,
+                      },
+                      {
+                        kind: "text",
+                        text: " value to a human-readable string with docs.",
+                      },
+                    ],
+                    blockTags: [
+                      {
+                        tag: "@returns",
+                        content: [
+                          {
+                            kind: "text",
+                            text: "A string describing the purpose and value of the enum.",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                  sources: [
+                    {
+                      fileName: "src/sample-api/types.ts",
+                      line: 51,
+                      character: 18,
+                    },
+                  ],
+                  parameters: [
+                    {
+                      id: 115,
+                      name: "status",
+                      variant: "param",
+                      kind: 32768,
+                      flags: {},
+                      comment: {
+                        summary: [
+                          {
+                            kind: "text",
+                            text: "The ",
+                          },
+                          {
+                            kind: "inline-tag",
+                            tag: "@link",
+                            text: "TaskStatus",
+                            target: 107,
+                          },
+                          {
+                            kind: "text",
+                            text: " to pretty-print.",
+                          },
+                        ],
+                      },
+                      type: {
+                        type: "reference",
+                        target: 107,
+                        name: "TaskStatus",
+                        package: "mcp-typescribe",
+                      },
+                    },
+                  ],
+                  type: {
+                    type: "intrinsic",
+                    name: "string",
+                  },
+                },
+              ],
+            },
+          ],
+          groups: [
+            {
+              title: "Functions",
+              children: [113],
+            },
+          ],
+          sources: [
+            {
+              fileName: "src/sample-api/types.ts",
+              line: 7,
+              character: 12,
+            },
+            {
+              fileName: "src/sample-api/types.ts",
+              line: 44,
+              character: 17,
+            },
+          ],
+        },
+        {
+          id: 116,
           name: "Priority",
           variant: "declaration",
           kind: 8,
@@ -2912,7 +3744,7 @@ export const sampleTypeDocJson = {
                 kind: "inline-tag",
                 tag: "@link",
                 text: "tasks",
-                target: 118,
+                target: 141,
                 tsLinkText: "tasks",
               },
               {
@@ -2934,7 +3766,7 @@ export const sampleTypeDocJson = {
           },
           children: [
             {
-              id: 110 as ReflectionId,
+              id: 118,
               name: "GEHT_SO",
               variant: "declaration",
               kind: 16,
@@ -2960,7 +3792,7 @@ export const sampleTypeDocJson = {
               },
             },
             {
-              id: 111 as ReflectionId,
+              id: 119,
               name: "SCHNELL",
               variant: "declaration",
               kind: 16,
@@ -2986,7 +3818,7 @@ export const sampleTypeDocJson = {
               },
             },
             {
-              id: 112 as ReflectionId,
+              id: 120,
               name: "UI_UI_UI",
               variant: "declaration",
               kind: 16,
@@ -3012,7 +3844,7 @@ export const sampleTypeDocJson = {
               },
             },
             {
-              id: 109 as ReflectionId,
+              id: 117,
               name: "WENIG",
               variant: "declaration",
               kind: 16,
@@ -3041,7 +3873,7 @@ export const sampleTypeDocJson = {
           groups: [
             {
               title: "Enumeration Members",
-              children: [110, 111, 112, 109],
+              children: [118, 119, 120, 117],
             },
           ],
           sources: [
@@ -3050,10 +3882,15 @@ export const sampleTypeDocJson = {
               line: 24,
               character: 12,
             },
+            {
+              fileName: "src/sample-api/types.ts",
+              line: 73,
+              character: 17,
+            },
           ],
         },
         {
-          id: 103 as ReflectionId,
+          id: 107,
           name: "TaskStatus",
           variant: "declaration",
           kind: 8,
@@ -3062,13 +3899,13 @@ export const sampleTypeDocJson = {
             summary: [
               {
                 kind: "text",
-                text: "This is just the summary for the task.\nFollowed by more text\nbefore the actual text appears: Represents the status of a ",
+                text: "Represents the status of a ",
               },
               {
                 kind: "inline-tag",
                 tag: "@link",
                 text: "task",
-                target: 118,
+                target: 141,
                 tsLinkText: "task",
               },
               {
@@ -3088,7 +3925,7 @@ export const sampleTypeDocJson = {
                     kind: "inline-tag",
                     tag: "@link",
                     text: "task",
-                    target: 118,
+                    target: 141,
                     tsLinkText: "task",
                   },
                   {
@@ -3101,7 +3938,7 @@ export const sampleTypeDocJson = {
           },
           children: [
             {
-              id: 106 as ReflectionId,
+              id: 110,
               name: "FERTIG",
               variant: "declaration",
               kind: 16,
@@ -3127,7 +3964,7 @@ export const sampleTypeDocJson = {
               },
             },
             {
-              id: 105 as ReflectionId,
+              id: 109,
               name: "LAEUFT",
               variant: "declaration",
               kind: 16,
@@ -3153,7 +3990,7 @@ export const sampleTypeDocJson = {
               },
             },
             {
-              id: 107 as ReflectionId,
+              id: 111,
               name: "MIST",
               variant: "declaration",
               kind: 16,
@@ -3179,7 +4016,7 @@ export const sampleTypeDocJson = {
               },
             },
             {
-              id: 104 as ReflectionId,
+              id: 108,
               name: "PENDING",
               variant: "declaration",
               kind: 16,
@@ -3208,7 +4045,7 @@ export const sampleTypeDocJson = {
           groups: [
             {
               title: "Enumeration Members",
-              children: [106, 105, 107, 104],
+              children: [110, 109, 111, 108],
             },
           ],
           sources: [
@@ -3217,10 +4054,15 @@ export const sampleTypeDocJson = {
               line: 7,
               character: 12,
             },
+            {
+              fileName: "src/sample-api/types.ts",
+              line: 44,
+              character: 17,
+            },
           ],
         },
         {
-          id: 113 as ReflectionId,
+          id: 125,
           name: "Kerle",
           variant: "declaration",
           kind: 256,
@@ -3229,7 +4071,17 @@ export const sampleTypeDocJson = {
             summary: [
               {
                 kind: "text",
-                text: "Represents a user in the system.",
+                text: "Represents a user in the system.\n\nTo find out more about the API, please see [The getting started guide](",
+              },
+              {
+                kind: "relative-link",
+                text: "./docs/intro.md#getting-started",
+                target: 1,
+                targetAnchor: "getting-started",
+              },
+              {
+                kind: "text",
+                text: ").",
               },
             ],
             blockTags: [
@@ -3238,7 +4090,7 @@ export const sampleTypeDocJson = {
                 content: [
                   {
                     kind: "code",
-                    text: "```typescript\r\nconst user: Kerle = {\r\n  id: '123',\r\n  soi_name: 'John Doe',\r\n  internet_brief: 'john@example.com',\r\n  role: 'developer'\r\n};\r\n```",
+                    text: "```typescript\nconst user: Kerle = {\n  id: '123',\n  soi_name: 'John Doe',\n  internet_brief: 'john@example.com',\n  role: 'developer'\n};\n```",
                   },
                 ],
               },
@@ -3246,7 +4098,7 @@ export const sampleTypeDocJson = {
           },
           children: [
             {
-              id: 114 as ReflectionId,
+              id: 126,
               name: "id",
               variant: "declaration",
               kind: 1024,
@@ -3262,7 +4114,7 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/types.ts",
-                  line: 58,
+                  line: 113,
                   character: 2,
                 },
               ],
@@ -3272,7 +4124,7 @@ export const sampleTypeDocJson = {
               },
             },
             {
-              id: 116 as ReflectionId,
+              id: 128,
               name: "internet_brief",
               variant: "declaration",
               kind: 1024,
@@ -3288,7 +4140,7 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/types.ts",
-                  line: 62,
+                  line: 117,
                   character: 2,
                 },
               ],
@@ -3298,7 +4150,7 @@ export const sampleTypeDocJson = {
               },
             },
             {
-              id: 117 as ReflectionId,
+              id: 129,
               name: "role",
               variant: "declaration",
               kind: 1024,
@@ -3314,7 +4166,7 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/types.ts",
-                  line: 64,
+                  line: 119,
                   character: 2,
                 },
               ],
@@ -3324,7 +4176,7 @@ export const sampleTypeDocJson = {
               },
             },
             {
-              id: 115 as ReflectionId,
+              id: 127,
               name: "soi_name",
               variant: "declaration",
               kind: 1024,
@@ -3340,7 +4192,7 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/types.ts",
-                  line: 60,
+                  line: 115,
                   character: 2,
                 },
               ],
@@ -3353,19 +4205,24 @@ export const sampleTypeDocJson = {
           groups: [
             {
               title: "Properties",
-              children: [114, 116, 117, 115],
+              children: [126, 128, 129, 127],
             },
           ],
           sources: [
             {
               fileName: "src/sample-api/types.ts",
-              line: 56,
+              line: 111,
+              character: 17,
+            },
+            {
+              fileName: "src/sample-api/types.ts",
+              line: 128,
               character: 17,
             },
           ],
         },
         {
-          id: 118 as ReflectionId,
+          id: 141,
           name: "Uffgabe",
           variant: "declaration",
           kind: 256,
@@ -3380,7 +4237,7 @@ export const sampleTypeDocJson = {
                 kind: "inline-tag",
                 tag: "@link",
                 text: "user",
-                target: 113,
+                target: 125,
                 tsLinkText: "user",
               },
               {
@@ -3391,7 +4248,7 @@ export const sampleTypeDocJson = {
           },
           children: [
             {
-              id: 124 as ReflectionId,
+              id: 147,
               name: "assignee",
               variant: "declaration",
               kind: 1024,
@@ -3409,19 +4266,19 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/types.ts",
-                  line: 84,
+                  line: 168,
                   character: 2,
                 },
               ],
               type: {
                 type: "reference",
-                target: 113,
+                target: 125,
                 name: "Kerle",
-                package: "typescript-api-mcp",
+                package: "mcp-typescribe",
               },
             },
             {
-              id: 126 as ReflectionId,
+              id: 149,
               name: "data",
               variant: "declaration",
               kind: 1024,
@@ -3439,21 +4296,21 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/types.ts",
-                  line: 88,
+                  line: 172,
                   character: 2,
                 },
               ],
               type: {
                 type: "reference",
-                target: 127,
+                target: 150,
                 name: "T",
-                package: "typescript-api-mcp",
+                package: "mcp-typescribe",
                 qualifiedName: "Uffgabe.T",
                 refersToTypeParameter: true,
               },
             },
             {
-              id: 120 as ReflectionId,
+              id: 143,
               name: "do_Tittel",
               variant: "declaration",
               kind: 1024,
@@ -3469,7 +4326,7 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/types.ts",
-                  line: 76,
+                  line: 160,
                   character: 2,
                 },
               ],
@@ -3479,7 +4336,7 @@ export const sampleTypeDocJson = {
               },
             },
             {
-              id: 125 as ReflectionId,
+              id: 148,
               name: "dueDate",
               variant: "declaration",
               kind: 1024,
@@ -3497,13 +4354,15 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/types.ts",
-                  line: 86,
+                  line: 170,
                   character: 2,
                 },
               ],
               type: {
                 type: "reference",
                 target: {
+                  packageName: "typescript",
+                  packagePath: "lib/lib.es5.d.ts",
                   qualifiedName: "Date",
                 },
                 name: "Date",
@@ -3511,7 +4370,7 @@ export const sampleTypeDocJson = {
               },
             },
             {
-              id: 119 as ReflectionId,
+              id: 142,
               name: "id",
               variant: "declaration",
               kind: 1024,
@@ -3527,7 +4386,7 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/types.ts",
-                  line: 74,
+                  line: 158,
                   character: 2,
                 },
               ],
@@ -3537,7 +4396,7 @@ export const sampleTypeDocJson = {
               },
             },
             {
-              id: 123 as ReflectionId,
+              id: 146,
               name: "priority",
               variant: "declaration",
               kind: 1024,
@@ -3553,19 +4412,19 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/types.ts",
-                  line: 82,
+                  line: 166,
                   character: 2,
                 },
               ],
               type: {
                 type: "reference",
-                target: 108,
+                target: 116,
                 name: "Priority",
-                package: "typescript-api-mcp",
+                package: "mcp-typescribe",
               },
             },
             {
-              id: 122 as ReflectionId,
+              id: 145,
               name: "status",
               variant: "declaration",
               kind: 1024,
@@ -3581,19 +4440,19 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/types.ts",
-                  line: 80,
+                  line: 164,
                   character: 2,
                 },
               ],
               type: {
                 type: "reference",
-                target: 103,
+                target: 107,
                 name: "TaskStatus",
-                package: "typescript-api-mcp",
+                package: "mcp-typescribe",
               },
             },
             {
-              id: 121 as ReflectionId,
+              id: 144,
               name: "umWosGoots",
               variant: "declaration",
               kind: 1024,
@@ -3609,7 +4468,7 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/types.ts",
-                  line: 78,
+                  line: 162,
                   character: 2,
                 },
               ],
@@ -3622,19 +4481,19 @@ export const sampleTypeDocJson = {
           groups: [
             {
               title: "Properties",
-              children: [124, 126, 120, 125, 119, 123, 122, 121],
+              children: [147, 149, 143, 148, 142, 146, 145, 144],
             },
           ],
           sources: [
             {
               fileName: "src/sample-api/types.ts",
-              line: 72,
+              line: 156,
               character: 17,
             },
           ],
           typeParameters: [
             {
-              id: 127 as ReflectionId,
+              id: 150,
               name: "T",
               variant: "typeParam",
               kind: 131072,
@@ -3649,20 +4508,20 @@ export const sampleTypeDocJson = {
               },
               default: {
                 type: "intrinsic",
-                name: "any",
+                name: "unknown",
               },
             },
           ],
           implementedBy: [
             {
               type: "reference",
-              target: 38,
+              target: 42,
               name: "TaschgInEcht",
             },
           ],
         },
         {
-          id: 128 as ReflectionId,
+          id: 151,
           name: "TaskOptions",
           variant: "declaration",
           kind: 2097152,
@@ -3675,141 +4534,128 @@ export const sampleTypeDocJson = {
               },
             ],
           },
-          sources: [
+          children: [
             {
-              fileName: "src/sample-api/types.ts",
-              line: 94,
-              character: 12,
-            },
-          ],
-          type: {
-            type: "reflection",
-            declaration: {
-              id: 129 as ReflectionId,
-              name: "__type",
+              id: 153,
+              name: "autoAssign",
               variant: "declaration",
-              kind: 65536,
-              flags: {},
-              children: [
-                {
-                  id: 130 as ReflectionId,
-                  name: "autoAssign",
-                  variant: "declaration",
-                  kind: 1024,
-                  flags: {
-                    isOptional: true,
+              kind: 1024,
+              flags: {
+                isOptional: true,
+              },
+              comment: {
+                summary: [
+                  {
+                    kind: "text",
+                    text: "Whether to automatically assign the task",
                   },
-                  comment: {
-                    summary: [
-                      {
-                        kind: "text",
-                        text: "Whether to automatically assign the task",
-                      },
-                    ],
-                  },
-                  sources: [
-                    {
-                      fileName: "src/sample-api/types.ts",
-                      line: 96,
-                      character: 2,
-                    },
-                  ],
-                  type: {
-                    type: "intrinsic",
-                    name: "boolean",
-                  },
-                },
-                {
-                  id: 131 as ReflectionId,
-                  name: "defaultPriority",
-                  variant: "declaration",
-                  kind: 1024,
-                  flags: {
-                    isOptional: true,
-                  },
-                  comment: {
-                    summary: [
-                      {
-                        kind: "text",
-                        text: "Default priority if not specified",
-                      },
-                    ],
-                  },
-                  sources: [
-                    {
-                      fileName: "src/sample-api/types.ts",
-                      line: 98,
-                      character: 2,
-                    },
-                  ],
-                  type: {
-                    type: "reference",
-                    target: 108,
-                    name: "Priority",
-                    package: "typescript-api-mcp",
-                  },
-                },
-                {
-                  id: 132 as ReflectionId,
-                  name: "tags",
-                  variant: "declaration",
-                  kind: 1024,
-                  flags: {
-                    isOptional: true,
-                  },
-                  comment: {
-                    summary: [
-                      {
-                        kind: "text",
-                        text: "Tags to associate with the task",
-                      },
-                    ],
-                  },
-                  sources: [
-                    {
-                      fileName: "src/sample-api/types.ts",
-                      line: 100,
-                      character: 2,
-                    },
-                  ],
-                  type: {
-                    type: "array",
-                    elementType: {
-                      type: "intrinsic",
-                      name: "string",
-                    },
-                  },
-                },
-              ],
-              groups: [
-                {
-                  title: "Properties",
-                  children: [130, 131, 132],
-                },
-              ],
+                ],
+              },
               sources: [
                 {
                   fileName: "src/sample-api/types.ts",
-                  line: 94,
-                  character: 26,
+                  line: 180,
+                  character: 2,
                 },
               ],
+              type: {
+                type: "intrinsic",
+                name: "boolean",
+              },
             },
-          },
+            {
+              id: 154,
+              name: "defaultPriority",
+              variant: "declaration",
+              kind: 1024,
+              flags: {
+                isOptional: true,
+              },
+              comment: {
+                summary: [
+                  {
+                    kind: "text",
+                    text: "Default priority if not specified",
+                  },
+                ],
+              },
+              sources: [
+                {
+                  fileName: "src/sample-api/types.ts",
+                  line: 182,
+                  character: 2,
+                },
+              ],
+              type: {
+                type: "reference",
+                target: 116,
+                name: "Priority",
+                package: "mcp-typescribe",
+              },
+            },
+            {
+              id: 155,
+              name: "tags",
+              variant: "declaration",
+              kind: 1024,
+              flags: {
+                isOptional: true,
+              },
+              comment: {
+                summary: [
+                  {
+                    kind: "text",
+                    text: "Tags to associate with the task",
+                  },
+                ],
+              },
+              sources: [
+                {
+                  fileName: "src/sample-api/types.ts",
+                  line: 184,
+                  character: 2,
+                },
+              ],
+              type: {
+                type: "array",
+                elementType: {
+                  type: "intrinsic",
+                  name: "string",
+                },
+              },
+            },
+          ],
+          groups: [
+            {
+              title: "Properties",
+              children: [153, 154, 155],
+            },
+          ],
+          sources: [
+            {
+              fileName: "src/sample-api/types.ts",
+              line: 178,
+              character: 12,
+            },
+          ],
         },
       ],
       groups: [
         {
+          title: "Namespaces",
+          children: [130, 121, 112],
+        },
+        {
           title: "Enumerations",
-          children: [108, 103],
+          children: [116, 107],
         },
         {
           title: "Interfaces",
-          children: [113, 118],
+          children: [125, 141],
         },
         {
           title: "Type Aliases",
-          children: [128],
+          children: [151],
         },
       ],
       sources: [
@@ -3821,14 +4667,14 @@ export const sampleTypeDocJson = {
       ],
     },
     {
-      id: 133 as ReflectionId,
+      id: 156,
       name: "utils",
       variant: "declaration",
       kind: 2,
       flags: {},
       children: [
         {
-          id: 179 as ReflectionId,
+          id: 202,
           name: "calculateEstimatedCompletion",
           variant: "declaration",
           kind: 64,
@@ -3836,13 +4682,13 @@ export const sampleTypeDocJson = {
           sources: [
             {
               fileName: "src/sample-api/utils.ts",
-              line: 176,
+              line: 196,
               character: 16,
             },
           ],
           signatures: [
             {
-              id: 180 as ReflectionId,
+              id: 203,
               name: "calculateEstimatedCompletion",
               variant: "signature",
               kind: 4096,
@@ -3869,13 +4715,13 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/utils.ts",
-                  line: 176,
+                  line: 196,
                   character: 16,
                 },
               ],
               parameters: [
                 {
-                  id: 181 as ReflectionId,
+                  id: 204,
                   name: "task",
                   variant: "param",
                   kind: 32768,
@@ -3890,13 +4736,13 @@ export const sampleTypeDocJson = {
                   },
                   type: {
                     type: "reference",
-                    target: 118,
+                    target: 141,
                     name: "Uffgabe",
-                    package: "typescript-api-mcp",
+                    package: "mcp-typescribe",
                   },
                 },
                 {
-                  id: 182 as ReflectionId,
+                  id: 205,
                   name: "estimatedHoursPerPriority",
                   variant: "param",
                   kind: 32768,
@@ -3912,14 +4758,16 @@ export const sampleTypeDocJson = {
                   type: {
                     type: "reference",
                     target: {
+                      packageName: "typescript",
+                      packagePath: "lib/lib.es2015.collection.d.ts",
                       qualifiedName: "Map",
                     },
                     typeArguments: [
                       {
                         type: "reference",
-                        target: 108,
+                        target: 116,
                         name: "Priority",
-                        package: "typescript-api-mcp",
+                        package: "mcp-typescribe",
                       },
                       {
                         type: "intrinsic",
@@ -3942,6 +4790,8 @@ export const sampleTypeDocJson = {
                   {
                     type: "reference",
                     target: {
+                      packageName: "typescript",
+                      packagePath: "lib/lib.es5.d.ts",
                       qualifiedName: "Date",
                     },
                     name: "Date",
@@ -3953,7 +4803,7 @@ export const sampleTypeDocJson = {
           ],
         },
         {
-          id: 142 as ReflectionId,
+          id: 165,
           name: "filterTasks",
           variant: "declaration",
           kind: 64,
@@ -3967,7 +4817,7 @@ export const sampleTypeDocJson = {
           ],
           signatures: [
             {
-              id: 143 as ReflectionId,
+              id: 166,
               name: "filterTasks",
               variant: "signature",
               kind: 4096,
@@ -4000,28 +4850,28 @@ export const sampleTypeDocJson = {
               ],
               typeParameters: [
                 {
-                  id: 144 as ReflectionId,
+                  id: 167,
                   name: "T",
                   variant: "typeParam",
                   kind: 131072,
                   flags: {},
                   type: {
                     type: "reference",
-                    target: 118,
+                    target: 141,
                     typeArguments: [
                       {
                         type: "intrinsic",
-                        name: "any",
+                        name: "unknown",
                       },
                     ],
                     name: "Uffgabe",
-                    package: "typescript-api-mcp",
+                    package: "mcp-typescribe",
                   },
                 },
               ],
               parameters: [
                 {
-                  id: 145 as ReflectionId,
+                  id: 168,
                   name: "tasks",
                   variant: "param",
                   kind: 32768,
@@ -4038,15 +4888,15 @@ export const sampleTypeDocJson = {
                     type: "array",
                     elementType: {
                       type: "reference",
-                      target: 144,
+                      target: 167,
                       name: "T",
-                      package: "typescript-api-mcp",
+                      package: "mcp-typescribe",
                       refersToTypeParameter: true,
                     },
                   },
                 },
                 {
-                  id: 146 as ReflectionId,
+                  id: 169,
                   name: "criteria",
                   variant: "param",
                   kind: 32768,
@@ -4062,14 +4912,14 @@ export const sampleTypeDocJson = {
                   type: {
                     type: "reflection",
                     declaration: {
-                      id: 147 as ReflectionId,
+                      id: 170,
                       name: "__type",
                       variant: "declaration",
                       kind: 65536,
                       flags: {},
                       children: [
                         {
-                          id: 150 as ReflectionId,
+                          id: 173,
                           name: "assigneeId",
                           variant: "declaration",
                           kind: 1024,
@@ -4089,7 +4939,7 @@ export const sampleTypeDocJson = {
                           },
                         },
                         {
-                          id: 152 as ReflectionId,
+                          id: 175,
                           name: "dueAfter",
                           variant: "declaration",
                           kind: 1024,
@@ -4106,6 +4956,8 @@ export const sampleTypeDocJson = {
                           type: {
                             type: "reference",
                             target: {
+                              packageName: "typescript",
+                              packagePath: "lib/lib.es5.d.ts",
                               qualifiedName: "Date",
                             },
                             name: "Date",
@@ -4113,7 +4965,7 @@ export const sampleTypeDocJson = {
                           },
                         },
                         {
-                          id: 151 as ReflectionId,
+                          id: 174,
                           name: "dueBefore",
                           variant: "declaration",
                           kind: 1024,
@@ -4130,6 +4982,8 @@ export const sampleTypeDocJson = {
                           type: {
                             type: "reference",
                             target: {
+                              packageName: "typescript",
+                              packagePath: "lib/lib.es5.d.ts",
                               qualifiedName: "Date",
                             },
                             name: "Date",
@@ -4137,7 +4991,7 @@ export const sampleTypeDocJson = {
                           },
                         },
                         {
-                          id: 149 as ReflectionId,
+                          id: 172,
                           name: "priority",
                           variant: "declaration",
                           kind: 1024,
@@ -4153,13 +5007,13 @@ export const sampleTypeDocJson = {
                           ],
                           type: {
                             type: "reference",
-                            target: 108,
+                            target: 116,
                             name: "Priority",
-                            package: "typescript-api-mcp",
+                            package: "mcp-typescribe",
                           },
                         },
                         {
-                          id: 148 as ReflectionId,
+                          id: 171,
                           name: "status",
                           variant: "declaration",
                           kind: 1024,
@@ -4175,16 +5029,16 @@ export const sampleTypeDocJson = {
                           ],
                           type: {
                             type: "reference",
-                            target: 103,
+                            target: 107,
                             name: "TaskStatus",
-                            package: "typescript-api-mcp",
+                            package: "mcp-typescribe",
                           },
                         },
                       ],
                       groups: [
                         {
                           title: "Properties",
-                          children: [150, 152, 151, 149, 148],
+                          children: [173, 175, 174, 172, 171],
                         },
                       ],
                       sources: [
@@ -4202,9 +5056,9 @@ export const sampleTypeDocJson = {
                 type: "array",
                 elementType: {
                   type: "reference",
-                  target: 144,
+                  target: 167,
                   name: "T",
-                  package: "typescript-api-mcp",
+                  package: "mcp-typescribe",
                   refersToTypeParameter: true,
                 },
               },
@@ -4212,7 +5066,7 @@ export const sampleTypeDocJson = {
           ],
         },
         {
-          id: 161 as ReflectionId,
+          id: 184,
           name: "formatTask",
           variant: "declaration",
           kind: 64,
@@ -4249,28 +5103,28 @@ export const sampleTypeDocJson = {
           sources: [
             {
               fileName: "src/sample-api/utils.ts",
-              line: 118,
+              line: 132,
               character: 16,
             },
             {
               fileName: "src/sample-api/utils.ts",
-              line: 127,
+              line: 143,
               character: 16,
             },
             {
               fileName: "src/sample-api/utils.ts",
-              line: 136,
+              line: 154,
               character: 16,
             },
             {
               fileName: "src/sample-api/utils.ts",
-              line: 144,
+              line: 164,
               character: 16,
             },
           ],
           signatures: [
             {
-              id: 162 as ReflectionId,
+              id: 185,
               name: "formatTask",
               variant: "signature",
               kind: 4096,
@@ -4279,7 +5133,7 @@ export const sampleTypeDocJson = {
                 summary: [
                   {
                     kind: "text",
-                    text: "Function overload for creating a formatted task string.\r\nReturns a simple string with just the title for PENDING tasks.",
+                    text: "Function overload for creating a formatted task string.\nReturns a simple string with just the title for PENDING tasks.",
                   },
                 ],
                 blockTags: [
@@ -4297,13 +5151,13 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/utils.ts",
-                  line: 118,
+                  line: 132,
                   character: 16,
                 },
               ],
               parameters: [
                 {
-                  id: 163 as ReflectionId,
+                  id: 186,
                   name: "task",
                   variant: "param",
                   kind: 32768,
@@ -4321,27 +5175,27 @@ export const sampleTypeDocJson = {
                     types: [
                       {
                         type: "reference",
-                        target: 118,
+                        target: 141,
                         typeArguments: [
                           {
                             type: "intrinsic",
-                            name: "any",
+                            name: "unknown",
                           },
                         ],
                         name: "Uffgabe",
-                        package: "typescript-api-mcp",
+                        package: "mcp-typescribe",
                       },
                       {
                         type: "reflection",
                         declaration: {
-                          id: 164 as ReflectionId,
+                          id: 187,
                           name: "__type",
                           variant: "declaration",
                           kind: 65536,
                           flags: {},
                           children: [
                             {
-                              id: 165 as ReflectionId,
+                              id: 188,
                               name: "status",
                               variant: "declaration",
                               kind: 1024,
@@ -4349,15 +5203,15 @@ export const sampleTypeDocJson = {
                               sources: [
                                 {
                                   fileName: "src/sample-api/utils.ts",
-                                  line: 118,
-                                  character: 45,
+                                  line: 133,
+                                  character: 20,
                                 },
                               ],
                               type: {
                                 type: "reference",
-                                target: 104,
+                                target: 108,
                                 name: "PENDING",
-                                package: "typescript-api-mcp",
+                                package: "mcp-typescribe",
                                 qualifiedName: "TaskStatus.PENDING",
                               },
                             },
@@ -4365,14 +5219,14 @@ export const sampleTypeDocJson = {
                           groups: [
                             {
                               title: "Properties",
-                              children: [165],
+                              children: [188],
                             },
                           ],
                           sources: [
                             {
                               fileName: "src/sample-api/utils.ts",
-                              line: 118,
-                              character: 43,
+                              line: 133,
+                              character: 18,
                             },
                           ],
                         },
@@ -4387,7 +5241,7 @@ export const sampleTypeDocJson = {
               },
             },
             {
-              id: 166 as ReflectionId,
+              id: 189,
               name: "formatTask",
               variant: "signature",
               kind: 4096,
@@ -4396,7 +5250,7 @@ export const sampleTypeDocJson = {
                 summary: [
                   {
                     kind: "text",
-                    text: "Function overload for creating a formatted task string.\r\nReturns a string with title and assignee for IN_PROGRESS tasks.",
+                    text: "Function overload for creating a formatted task string.\nReturns a string with title and assignee for IN_PROGRESS tasks.",
                   },
                 ],
                 blockTags: [
@@ -4414,13 +5268,13 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/utils.ts",
-                  line: 127,
+                  line: 143,
                   character: 16,
                 },
               ],
               parameters: [
                 {
-                  id: 167 as ReflectionId,
+                  id: 190,
                   name: "task",
                   variant: "param",
                   kind: 32768,
@@ -4438,27 +5292,27 @@ export const sampleTypeDocJson = {
                     types: [
                       {
                         type: "reference",
-                        target: 118,
+                        target: 141,
                         typeArguments: [
                           {
                             type: "intrinsic",
-                            name: "any",
+                            name: "unknown",
                           },
                         ],
                         name: "Uffgabe",
-                        package: "typescript-api-mcp",
+                        package: "mcp-typescribe",
                       },
                       {
                         type: "reflection",
                         declaration: {
-                          id: 168 as ReflectionId,
+                          id: 191,
                           name: "__type",
                           variant: "declaration",
                           kind: 65536,
                           flags: {},
                           children: [
                             {
-                              id: 169 as ReflectionId,
+                              id: 192,
                               name: "status",
                               variant: "declaration",
                               kind: 1024,
@@ -4466,15 +5320,15 @@ export const sampleTypeDocJson = {
                               sources: [
                                 {
                                   fileName: "src/sample-api/utils.ts",
-                                  line: 127,
-                                  character: 45,
+                                  line: 144,
+                                  character: 20,
                                 },
                               ],
                               type: {
                                 type: "reference",
-                                target: 105,
+                                target: 109,
                                 name: "LAEUFT",
-                                package: "typescript-api-mcp",
+                                package: "mcp-typescribe",
                                 qualifiedName: "TaskStatus.LAEUFT",
                               },
                             },
@@ -4482,14 +5336,14 @@ export const sampleTypeDocJson = {
                           groups: [
                             {
                               title: "Properties",
-                              children: [169],
+                              children: [192],
                             },
                           ],
                           sources: [
                             {
                               fileName: "src/sample-api/utils.ts",
-                              line: 127,
-                              character: 43,
+                              line: 144,
+                              character: 18,
                             },
                           ],
                         },
@@ -4504,7 +5358,7 @@ export const sampleTypeDocJson = {
               },
             },
             {
-              id: 170 as ReflectionId,
+              id: 193,
               name: "formatTask",
               variant: "signature",
               kind: 4096,
@@ -4513,7 +5367,7 @@ export const sampleTypeDocJson = {
                 summary: [
                   {
                     kind: "text",
-                    text: "Function overload for creating a formatted task string.\r\nReturns a detailed string for COMPLETED or FAILED tasks.",
+                    text: "Function overload for creating a formatted task string.\nReturns a detailed string for COMPLETED or FAILED tasks.",
                   },
                 ],
                 blockTags: [
@@ -4531,13 +5385,13 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/utils.ts",
-                  line: 136,
+                  line: 154,
                   character: 16,
                 },
               ],
               parameters: [
                 {
-                  id: 171 as ReflectionId,
+                  id: 194,
                   name: "task",
                   variant: "param",
                   kind: 32768,
@@ -4555,27 +5409,27 @@ export const sampleTypeDocJson = {
                     types: [
                       {
                         type: "reference",
-                        target: 118,
+                        target: 141,
                         typeArguments: [
                           {
                             type: "intrinsic",
-                            name: "any",
+                            name: "unknown",
                           },
                         ],
                         name: "Uffgabe",
-                        package: "typescript-api-mcp",
+                        package: "mcp-typescribe",
                       },
                       {
                         type: "reflection",
                         declaration: {
-                          id: 172 as ReflectionId,
+                          id: 195,
                           name: "__type",
                           variant: "declaration",
                           kind: 65536,
                           flags: {},
                           children: [
                             {
-                              id: 173 as ReflectionId,
+                              id: 196,
                               name: "status",
                               variant: "declaration",
                               kind: 1024,
@@ -4583,8 +5437,8 @@ export const sampleTypeDocJson = {
                               sources: [
                                 {
                                   fileName: "src/sample-api/utils.ts",
-                                  line: 136,
-                                  character: 45,
+                                  line: 155,
+                                  character: 20,
                                 },
                               ],
                               type: {
@@ -4592,16 +5446,16 @@ export const sampleTypeDocJson = {
                                 types: [
                                   {
                                     type: "reference",
-                                    target: 106,
+                                    target: 110,
                                     name: "FERTIG",
-                                    package: "typescript-api-mcp",
+                                    package: "mcp-typescribe",
                                     qualifiedName: "TaskStatus.FERTIG",
                                   },
                                   {
                                     type: "reference",
-                                    target: 107,
+                                    target: 111,
                                     name: "MIST",
-                                    package: "typescript-api-mcp",
+                                    package: "mcp-typescribe",
                                     qualifiedName: "TaskStatus.MIST",
                                   },
                                 ],
@@ -4611,14 +5465,14 @@ export const sampleTypeDocJson = {
                           groups: [
                             {
                               title: "Properties",
-                              children: [173],
+                              children: [196],
                             },
                           ],
                           sources: [
                             {
                               fileName: "src/sample-api/utils.ts",
-                              line: 136,
-                              character: 43,
+                              line: 155,
+                              character: 18,
                             },
                           ],
                         },
@@ -4635,7 +5489,7 @@ export const sampleTypeDocJson = {
           ],
         },
         {
-          id: 174 as ReflectionId,
+          id: 197,
           name: "isAdmin",
           variant: "declaration",
           kind: 64,
@@ -4643,13 +5497,13 @@ export const sampleTypeDocJson = {
           sources: [
             {
               fileName: "src/sample-api/utils.ts",
-              line: 165,
+              line: 185,
               character: 16,
             },
           ],
           signatures: [
             {
-              id: 175 as ReflectionId,
+              id: 198,
               name: "isAdmin",
               variant: "signature",
               kind: 4096,
@@ -4676,13 +5530,13 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/utils.ts",
-                  line: 165,
+                  line: 185,
                   character: 16,
                 },
               ],
               parameters: [
                 {
-                  id: 176 as ReflectionId,
+                  id: 199,
                   name: "user",
                   variant: "param",
                   kind: 32768,
@@ -4697,9 +5551,9 @@ export const sampleTypeDocJson = {
                   },
                   type: {
                     type: "reference",
-                    target: 113,
+                    target: 125,
                     name: "Kerle",
-                    package: "typescript-api-mcp",
+                    package: "mcp-typescribe",
                   },
                 },
               ],
@@ -4712,21 +5566,21 @@ export const sampleTypeDocJson = {
                   types: [
                     {
                       type: "reference",
-                      target: 113,
+                      target: 125,
                       name: "Kerle",
-                      package: "typescript-api-mcp",
+                      package: "mcp-typescribe",
                     },
                     {
                       type: "reflection",
                       declaration: {
-                        id: 177 as ReflectionId,
+                        id: 200,
                         name: "__type",
                         variant: "declaration",
                         kind: 65536,
                         flags: {},
                         children: [
                           {
-                            id: 178 as ReflectionId,
+                            id: 201,
                             name: "role",
                             variant: "declaration",
                             kind: 1024,
@@ -4734,7 +5588,7 @@ export const sampleTypeDocJson = {
                             sources: [
                               {
                                 fileName: "src/sample-api/utils.ts",
-                                line: 165,
+                                line: 185,
                                 character: 56,
                               },
                             ],
@@ -4747,13 +5601,13 @@ export const sampleTypeDocJson = {
                         groups: [
                           {
                             title: "Properties",
-                            children: [178],
+                            children: [201],
                           },
                         ],
                         sources: [
                           {
                             fileName: "src/sample-api/utils.ts",
-                            line: 165,
+                            line: 185,
                             character: 54,
                           },
                         ],
@@ -4766,7 +5620,7 @@ export const sampleTypeDocJson = {
           ],
         },
         {
-          id: 157 as ReflectionId,
+          id: 180,
           name: "kopiera",
           variant: "declaration",
           kind: 64,
@@ -4774,13 +5628,13 @@ export const sampleTypeDocJson = {
           sources: [
             {
               fileName: "src/sample-api/utils.ts",
-              line: 98,
+              line: 112,
               character: 16,
             },
           ],
           signatures: [
             {
-              id: 158 as ReflectionId,
+              id: 181,
               name: "kopiera",
               variant: "signature",
               kind: 4096,
@@ -4795,7 +5649,7 @@ export const sampleTypeDocJson = {
                     kind: "inline-tag",
                     tag: "@link",
                     text: "task",
-                    target: 118,
+                    target: 141,
                     tsLinkText: "task",
                   },
                   {
@@ -4818,13 +5672,13 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/utils.ts",
-                  line: 98,
+                  line: 112,
                   character: 16,
                 },
               ],
               typeParameters: [
                 {
-                  id: 159 as ReflectionId,
+                  id: 182,
                   name: "T",
                   variant: "typeParam",
                   kind: 131072,
@@ -4833,7 +5687,7 @@ export const sampleTypeDocJson = {
               ],
               parameters: [
                 {
-                  id: 160 as ReflectionId,
+                  id: 183,
                   name: "task",
                   variant: "param",
                   kind: 32768,
@@ -4844,7 +5698,7 @@ export const sampleTypeDocJson = {
                         kind: "inline-tag",
                         tag: "@link",
                         text: "task",
-                        target: 118,
+                        target: 141,
                         tsLinkText: "task",
                       },
                       {
@@ -4855,41 +5709,41 @@ export const sampleTypeDocJson = {
                   },
                   type: {
                     type: "reference",
-                    target: 118,
+                    target: 141,
                     typeArguments: [
                       {
                         type: "reference",
-                        target: 159,
+                        target: 182,
                         name: "T",
-                        package: "typescript-api-mcp",
+                        package: "mcp-typescribe",
                         refersToTypeParameter: true,
                       },
                     ],
                     name: "Uffgabe",
-                    package: "typescript-api-mcp",
+                    package: "mcp-typescribe",
                   },
                 },
               ],
               type: {
                 type: "reference",
-                target: 38,
+                target: 42,
                 typeArguments: [
                   {
                     type: "reference",
-                    target: 159,
+                    target: 182,
                     name: "T",
-                    package: "typescript-api-mcp",
+                    package: "mcp-typescribe",
                     refersToTypeParameter: true,
                   },
                 ],
                 name: "TaschgInEcht",
-                package: "typescript-api-mcp",
+                package: "mcp-typescribe",
               },
             },
           ],
         },
         {
-          id: 138 as ReflectionId,
+          id: 161,
           name: "sortByDueDate",
           variant: "declaration",
           kind: 64,
@@ -4903,7 +5757,7 @@ export const sampleTypeDocJson = {
           ],
           signatures: [
             {
-              id: 139 as ReflectionId,
+              id: 162,
               name: "sortByDueDate",
               variant: "signature",
               kind: 4096,
@@ -4936,28 +5790,28 @@ export const sampleTypeDocJson = {
               ],
               typeParameters: [
                 {
-                  id: 140 as ReflectionId,
+                  id: 163,
                   name: "T",
                   variant: "typeParam",
                   kind: 131072,
                   flags: {},
                   type: {
                     type: "reference",
-                    target: 118,
+                    target: 141,
                     typeArguments: [
                       {
                         type: "intrinsic",
-                        name: "any",
+                        name: "unknown",
                       },
                     ],
                     name: "Uffgabe",
-                    package: "typescript-api-mcp",
+                    package: "mcp-typescribe",
                   },
                 },
               ],
               parameters: [
                 {
-                  id: 141 as ReflectionId,
+                  id: 164,
                   name: "tasks",
                   variant: "param",
                   kind: 32768,
@@ -4974,9 +5828,9 @@ export const sampleTypeDocJson = {
                     type: "array",
                     elementType: {
                       type: "reference",
-                      target: 140,
+                      target: 163,
                       name: "T",
-                      package: "typescript-api-mcp",
+                      package: "mcp-typescribe",
                       refersToTypeParameter: true,
                     },
                   },
@@ -4986,9 +5840,9 @@ export const sampleTypeDocJson = {
                 type: "array",
                 elementType: {
                   type: "reference",
-                  target: 140,
+                  target: 163,
                   name: "T",
-                  package: "typescript-api-mcp",
+                  package: "mcp-typescribe",
                   refersToTypeParameter: true,
                 },
               },
@@ -4996,7 +5850,7 @@ export const sampleTypeDocJson = {
           ],
         },
         {
-          id: 134 as ReflectionId,
+          id: 157,
           name: "sortByPriority",
           variant: "declaration",
           kind: 64,
@@ -5010,7 +5864,7 @@ export const sampleTypeDocJson = {
           ],
           signatures: [
             {
-              id: 135 as ReflectionId,
+              id: 158,
               name: "sortByPriority",
               variant: "signature",
               kind: 4096,
@@ -5025,7 +5879,7 @@ export const sampleTypeDocJson = {
                     kind: "inline-tag",
                     tag: "@link",
                     text: "tasks",
-                    target: 118,
+                    target: 141,
                     tsLinkText: "tasks",
                   },
                   {
@@ -5054,28 +5908,28 @@ export const sampleTypeDocJson = {
               ],
               typeParameters: [
                 {
-                  id: 136 as ReflectionId,
+                  id: 159,
                   name: "T",
                   variant: "typeParam",
                   kind: 131072,
                   flags: {},
                   type: {
                     type: "reference",
-                    target: 118,
+                    target: 141,
                     typeArguments: [
                       {
                         type: "intrinsic",
-                        name: "any",
+                        name: "unknown",
                       },
                     ],
                     name: "Uffgabe",
-                    package: "typescript-api-mcp",
+                    package: "mcp-typescribe",
                   },
                 },
               ],
               parameters: [
                 {
-                  id: 137 as ReflectionId,
+                  id: 160,
                   name: "tasks",
                   variant: "param",
                   kind: 32768,
@@ -5092,9 +5946,9 @@ export const sampleTypeDocJson = {
                     type: "array",
                     elementType: {
                       type: "reference",
-                      target: 136,
+                      target: 159,
                       name: "T",
-                      package: "typescript-api-mcp",
+                      package: "mcp-typescribe",
                       refersToTypeParameter: true,
                     },
                   },
@@ -5104,9 +5958,9 @@ export const sampleTypeDocJson = {
                 type: "array",
                 elementType: {
                   type: "reference",
-                  target: 136,
+                  target: 159,
                   name: "T",
-                  package: "typescript-api-mcp",
+                  package: "mcp-typescribe",
                   refersToTypeParameter: true,
                 },
               },
@@ -5114,7 +5968,7 @@ export const sampleTypeDocJson = {
           ],
         },
         {
-          id: 153 as ReflectionId,
+          id: 176,
           name: "summarizeTasksByStatus",
           variant: "declaration",
           kind: 64,
@@ -5122,13 +5976,13 @@ export const sampleTypeDocJson = {
           sources: [
             {
               fileName: "src/sample-api/utils.ts",
-              line: 77,
+              line: 89,
               character: 16,
             },
           ],
           signatures: [
             {
-              id: 154 as ReflectionId,
+              id: 177,
               name: "summarizeTasksByStatus",
               variant: "signature",
               kind: 4096,
@@ -5155,34 +6009,34 @@ export const sampleTypeDocJson = {
               sources: [
                 {
                   fileName: "src/sample-api/utils.ts",
-                  line: 77,
+                  line: 89,
                   character: 16,
                 },
               ],
               typeParameters: [
                 {
-                  id: 155 as ReflectionId,
+                  id: 178,
                   name: "T",
                   variant: "typeParam",
                   kind: 131072,
                   flags: {},
                   type: {
                     type: "reference",
-                    target: 118,
+                    target: 141,
                     typeArguments: [
                       {
                         type: "intrinsic",
-                        name: "any",
+                        name: "unknown",
                       },
                     ],
                     name: "Uffgabe",
-                    package: "typescript-api-mcp",
+                    package: "mcp-typescribe",
                   },
                 },
               ],
               parameters: [
                 {
-                  id: 156 as ReflectionId,
+                  id: 179,
                   name: "tasks",
                   variant: "param",
                   kind: 32768,
@@ -5199,9 +6053,9 @@ export const sampleTypeDocJson = {
                     type: "array",
                     elementType: {
                       type: "reference",
-                      target: 155,
+                      target: 178,
                       name: "T",
-                      package: "typescript-api-mcp",
+                      package: "mcp-typescribe",
                       refersToTypeParameter: true,
                     },
                   },
@@ -5210,14 +6064,16 @@ export const sampleTypeDocJson = {
               type: {
                 type: "reference",
                 target: {
+                  packageName: "typescript",
+                  packagePath: "lib/lib.es5.d.ts",
                   qualifiedName: "Record",
                 },
                 typeArguments: [
                   {
                     type: "reference",
-                    target: 103,
+                    target: 107,
                     name: "TaskStatus",
-                    package: "typescript-api-mcp",
+                    package: "mcp-typescribe",
                   },
                   {
                     type: "intrinsic",
@@ -5234,7 +6090,7 @@ export const sampleTypeDocJson = {
       groups: [
         {
           title: "Functions",
-          children: [179, 142, 161, 174, 157, 138, 134, 153],
+          children: [202, 165, 184, 197, 180, 161, 157, 176],
         },
       ],
       sources: [
@@ -5249,14 +6105,23 @@ export const sampleTypeDocJson = {
   groups: [
     {
       title: "Modules",
-      children: [1, 2, 102, 133],
+      children: [1, 6, 106, 156],
     },
   ],
-  packageName: "typescript-api-mcp",
+  packageName: "mcp-typescribe",
   readme: [
     {
       kind: "text",
-      text: "# TypeScript API MCP Server\n\nAn MCP (Model Context Protocol) server that answers questions about TypeScript APIs by loading TypeDoc JSON documentation and providing efficient query endpoints.\n\n## Overview\n\nThis project provides a way for AI agents to efficiently explore and understand unknown TypeScript APIs. It loads TypeDoc-generated JSON documentation and exposes it through a set of query endpoints that allow agents to search for symbols, get detailed information about specific parts of the API, and understand relationships between different components.\n\n## Features\n\n- **TypeDoc Integration**: Loads and indexes TypeDoc JSON documentation for efficient querying\n- **Comprehensive Query Capabilities**: Provides a wide range of tools for exploring TypeScript APIs\n- **MCP Protocol**: Follows the Model Context Protocol for seamless integration with AI agents\n\n## Query Capabilities\n\nThe server provides the following tools for querying the API:\n\n- ",
+      text: "[![npm version](https://img.shields.io/npm/v/mcp-typescribe.svg)](https://www.npmjs.com/package/your-package-name)\n\n# MCP-Typescribe - an MCP Server providing LLMs API information\n\n## The Problem\n\nLarge Language Models (LLMs) have made incredible strides in code generation and developer productivity. However, they face a key limitation: they can only reliably use APIs and libraries they’ve seen during training. This creates a bottleneck for adopting new tools, SDKs, or internal APIs — LLMs simply don’t know how to use them effectively.\n\nWhile tools can be given source code access (when interacting with APIs for which the sources are available) or access to documentation files (e.g. typescript type definition files), this doesn't scale well for large APIs. LLMs need a more efficient way to learn more about an API. Putting all the documentation into context for every request is inefficient, unfeasible, and leads to poor results.\n\n## As a result:\n\nLarger new or internal APIs remain \"invisible\" to LLMs.\n\nDevelopers must manually guide LLMs or provide example usage.\n\nInnovation is slowed by the lag between an API’s release and its widespread understanding by AI tools.\n\n## The Idea\n\nThis project is an open-source implementation of the Model Context Protocol (MCP)—a protocol designed to provide LLMs with contextual, real-time access to information. In this case it's the API documentation, and particularly for now in this project TypeScript definitions.\n\n## Our goal is to:\n\nParse TypeScript (and other) definitions into a machine-readable format.\n\nServe this context dynamically to LLMs through tools like Claude, Cline, Cursor, or Windsurf and other custom interfaces.\n\nEnable agentic behavior by letting LLMs query, plan, and adapt to unfamiliar APIs without retraining.\n\n## What This Enables\n\nPlug-and-play API support for LLM-based coding assistants.\n\nFaster onboarding for new or proprietary SDKs.\n\nA step toward more autonomous, context-aware coding agents.\n\n## Project Overview\n\n![Image](",
+    },
+    {
+      kind: "relative-link",
+      text: "docs/screenshot.png",
+      target: 9,
+    },
+    {
+      kind: "text",
+      text: ")\n\nThis project provides a way for AI agents to efficiently explore and understand unknown TypeScript APIs. It loads TypeDoc-generated JSON documentation and exposes it through a set of query endpoints that allow agents to search for symbols, get detailed information about specific parts of the API, and understand relationships between different components.\n\n## Current Features\n\n- **TypeDoc Integration**: Loads and indexes TypeDoc JSON documentation for efficient querying\n- **Comprehensive Query Capabilities**: Provides a wide range of tools for exploring TypeScript APIs\n- **MCP Protocol**: Follows the Model Context Protocol for seamless integration with AI agents\n\n## Query Capabilities\n\nThe server provides the following tools for querying the API:\n\n- ",
     },
     {
       kind: "code",
@@ -5328,7 +6193,7 @@ export const sampleTypeDocJson = {
     },
     {
       kind: "text",
-      text: ": Find where a type/function is used\n\n## Getting Started\n\n### Prerequisites\n\n- Node.js (v14 or later)\n- npm or yarn\n\n### Installation\n\n1. Clone the repository\n2. Install dependencies:\n   ",
+      text: ": Find where a type/function is used\n\n## Getting Started\n\n### Prerequisites\n\n- Node.js\n- npm\n\n### Installation\n\n1. Clone the repository\n2. Install dependencies:\n   ",
     },
     {
       kind: "code",
@@ -5336,7 +6201,7 @@ export const sampleTypeDocJson = {
     },
     {
       kind: "text",
-      text: "\n\n### Usage\n\n1. Generate TypeDoc JSON for your TypeScript API:\n   ",
+      text: "\n\n### Usage\n\n1. Generate TypeDoc JSON for your TypeScript API:\n\n   ",
     },
     {
       kind: "code",
@@ -5344,7 +6209,39 @@ export const sampleTypeDocJson = {
     },
     {
       kind: "text",
-      text: "\n\n2. Build the project:\n   ",
+      text: "\n\n   If you (only) have an existing",
+    },
+    {
+      kind: "code",
+      text: "`.d.ts`",
+    },
+    {
+      kind: "text",
+      text: " file, you can create an api json file like so:\n\n   Create a separate ",
+    },
+    {
+      kind: "code",
+      text: "`tsconfig.docs.json`",
+    },
+    {
+      kind: "text",
+      text: ":\n\n   ",
+    },
+    {
+      kind: "code",
+      text: '```json\n   {\n     "extends": "./tsconfig.json",\n     "files": ["existing.d.ts"],\n     "typedocOptions": {\n       "entryPoints": ["existing.d.ts"],\n       "json": "docs/api.json",\n       "pretty": false\n     }\n   }\n   ```',
+    },
+    {
+      kind: "text",
+      text: "\n\n   Then do\n\n   ",
+    },
+    {
+      kind: "code",
+      text: "```bash\n   npx typedoc --tsconfig tsconfig.docs.json\n   ```",
+    },
+    {
+      kind: "text",
+      text: "\n\n2. Build the project:\n\n   ",
     },
     {
       kind: "code",
@@ -5352,23 +6249,31 @@ export const sampleTypeDocJson = {
     },
     {
       kind: "text",
-      text: "\n\n3. Start the MCP server:\n   ",
+      text: "\n\n3. Explore the MCP server:\n\n   ",
     },
     {
       kind: "code",
-      text: "```bash\n   npm start -- docs/api.json\n   ```",
+      text: "```bash\n   npx @modelcontextprotocol/inspector node ./dist/mcp-server/index.js run-server docs/api.json\n   ```",
     },
     {
       kind: "text",
-      text: "\n\n4. Test the server with the MCP Inspector:\n   ",
+      text: "\n\n4. Connect an AI agent to the server to query the API\n\n   E.g. with cline in VSCode, specify the following MCP server in ",
     },
     {
       kind: "code",
-      text: "```bash\n   npm run inspect\n   ```",
+      text: "`cline_mcp_settings.json`",
     },
     {
       kind: "text",
-      text: "\n\n5. Connect an AI agent to the server to query the API\n\n## Project Structure\n\n- ",
+      text: ":\n\n   ",
+    },
+    {
+      kind: "code",
+      text: '```json\n   {\n     "mcpServers": {\n       "typescribe": {\n         "command": "npx",\n         "args": [\n           "-y",\n           "mcp-typescribe@latest",\n           "run-server",\n           "<PATH_TO_API_DOT_JSON>"\n         ],\n         "env": {}\n       }\n     }\n   }\n   ```',
+    },
+    {
+      kind: "text",
+      text: '\n\n5. Enable the server and likely auto-approve the various tools. Tell the agent to use the "typescribe" tool to learn about your API.\n\n## Project Structure\n\n- ',
     },
     {
       kind: "code",
@@ -5376,7 +6281,7 @@ export const sampleTypeDocJson = {
     },
     {
       kind: "text",
-      text: ": A sample TypeScript API for testing\n- ",
+      text: ": A sample TypeScript API for testing - it uses a weird German-like dialect for the API names to test that the LLM does not hallucinate the API\n- ",
     },
     {
       kind: "code",
@@ -5388,91 +6293,11 @@ export const sampleTypeDocJson = {
     },
     {
       kind: "code",
-      text: "`types/`",
-    },
-    {
-      kind: "text",
-      text: ": Type definitions\n    - ",
-    },
-    {
-      kind: "code",
-      text: "`typedoc-types.ts`",
-    },
-    {
-      kind: "text",
-      text: ": TypeDoc-related types\n    - ",
-    },
-    {
-      kind: "code",
-      text: "`api-types.ts`",
-    },
-    {
-      kind: "text",
-      text: ": API-related types\n    - ",
-    },
-    {
-      kind: "code",
-      text: "`handler-types.ts`",
-    },
-    {
-      kind: "text",
-      text: ": Handler-related types\n    - ",
-    },
-    {
-      kind: "code",
-      text: "`index.ts`",
-    },
-    {
-      kind: "text",
-      text: ": Type exports\n  - ",
-    },
-    {
-      kind: "code",
       text: "`utils/`",
     },
     {
       kind: "text",
-      text: ": Utility functions\n    - ",
-    },
-    {
-      kind: "code",
-      text: "`symbol-utils.ts`",
-    },
-    {
-      kind: "text",
-      text: ": Symbol-related utilities\n    - ",
-    },
-    {
-      kind: "code",
-      text: "`type-utils.ts`",
-    },
-    {
-      kind: "text",
-      text: ": Type-related utilities\n    - ",
-    },
-    {
-      kind: "code",
-      text: "`search-utils.ts`",
-    },
-    {
-      kind: "text",
-      text: ": Search-related utilities\n    - ",
-    },
-    {
-      kind: "code",
-      text: "`format-utils.ts`",
-    },
-    {
-      kind: "text",
-      text: ": Formatting utilities for LLM-friendly output\n    - ",
-    },
-    {
-      kind: "code",
-      text: "`index.ts`",
-    },
-    {
-      kind: "text",
-      text: ": Utility exports\n  - ",
+      text: ": Utility functions\n  - ",
     },
     {
       kind: "code",
@@ -5480,111 +6305,7 @@ export const sampleTypeDocJson = {
     },
     {
       kind: "text",
-      text: ": JSON schemas for the MCP tools\n    - ",
-    },
-    {
-      kind: "code",
-      text: "`tool-schemas.ts`",
-    },
-    {
-      kind: "text",
-      text: ": Tool schemas\n    - ",
-    },
-    {
-      kind: "code",
-      text: "`index.ts`",
-    },
-    {
-      kind: "text",
-      text: ": Schema exports\n  - ",
-    },
-    {
-      kind: "code",
-      text: "`handlers/`",
-    },
-    {
-      kind: "text",
-      text: ": Individual handlers for each tool\n    - ",
-    },
-    {
-      kind: "code",
-      text: "`search-symbols.ts`",
-    },
-    {
-      kind: "text",
-      text: ": Search symbols handler\n    - ",
-    },
-    {
-      kind: "code",
-      text: "`get-symbol-details.ts`",
-    },
-    {
-      kind: "text",
-      text: ": Get symbol details handler\n    - ",
-    },
-    {
-      kind: "code",
-      text: "`list-members.ts`",
-    },
-    {
-      kind: "text",
-      text: ": List members handler\n    - ",
-    },
-    {
-      kind: "code",
-      text: "`get-parameter-info.ts`",
-    },
-    {
-      kind: "text",
-      text: ": Get parameter info handler\n    - ",
-    },
-    {
-      kind: "code",
-      text: "`find-implementations.ts`",
-    },
-    {
-      kind: "text",
-      text: ": Find implementations handler\n    - ",
-    },
-    {
-      kind: "code",
-      text: "`search-by-return-type.ts`",
-    },
-    {
-      kind: "text",
-      text: ": Search by return type handler\n    - ",
-    },
-    {
-      kind: "code",
-      text: "`search-by-description.ts`",
-    },
-    {
-      kind: "text",
-      text: ": Search by description handler\n    - ",
-    },
-    {
-      kind: "code",
-      text: "`get-type-hierarchy.ts`",
-    },
-    {
-      kind: "text",
-      text: ": Get type hierarchy handler\n    - ",
-    },
-    {
-      kind: "code",
-      text: "`find-usages.ts`",
-    },
-    {
-      kind: "text",
-      text: ": Find usages handler\n    - ",
-    },
-    {
-      kind: "code",
-      text: "`index.ts`",
-    },
-    {
-      kind: "text",
-      text: ": Handler exports\n  - ",
+      text: ": JSON schemas for the MCP tools\n  - ",
     },
     {
       kind: "code",
@@ -5592,23 +6313,7 @@ export const sampleTypeDocJson = {
     },
     {
       kind: "text",
-      text: ": Core functionality\n    - ",
-    },
-    {
-      kind: "code",
-      text: "`typescript-api-handlers.ts`",
-    },
-    {
-      kind: "text",
-      text: ": Main handler class\n    - ",
-    },
-    {
-      kind: "code",
-      text: "`index.ts`",
-    },
-    {
-      kind: "text",
-      text: ": Core exports\n  - ",
+      text: ": Core functionality\n  - ",
     },
     {
       kind: "code",
@@ -5632,15 +6337,7 @@ export const sampleTypeDocJson = {
     },
     {
       kind: "text",
-      text: ": Tests for the API parsing functionality\n- ",
-    },
-    {
-      kind: "code",
-      text: "`docs/`",
-    },
-    {
-      kind: "text",
-      text: ": Generated TypeDoc JSON documentation\n\n## Enhanced Features\n\nThe server now supports:\n\n- Querying by ID or name for all handlers\n- Querying by arrays of IDs or names to get multiple results at once\n- LLM-friendly output format without metadata like sources\n\n## Development\n\n### Running Tests\n\n",
+      text: ": Tests for the API functionality\n\n## Development\n\n### Running Tests\n\n",
     },
     {
       kind: "code",
@@ -5656,596 +6353,1057 @@ export const sampleTypeDocJson = {
     },
     {
       kind: "text",
-      text: "\n\n## License\n\nISC",
+      text: "\n\n## License\n\nMIT\n\nCopyright 2025 yWorks GmbH - https://www.yworks.com",
     },
   ],
   symbolIdMap: {
     "1": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/index.ts",
       qualifiedName: "",
-    },
-    "2": {
-      qualifiedName: "",
-    },
-    "3": {
-      qualifiedName: "UffgabeFaehler",
-    },
-    "4": {
-      qualifiedName: "__global.ErrorConstructor.captureStackTrace",
-    },
-    "5": {
-      qualifiedName: "__global.ErrorConstructor.captureStackTrace",
     },
     "6": {
-      qualifiedName: "targetObject",
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "",
     },
     "7": {
-      qualifiedName: "constructorOpt",
-    },
-    "8": {
-      qualifiedName: "__global.ErrorConstructor.prepareStackTrace",
-    },
-    "9": {
-      qualifiedName: "__type",
-    },
-    "10": {
-      qualifiedName: "__type",
-    },
-    "11": {
-      qualifiedName: "err",
-    },
-    "12": {
-      qualifiedName: "stackTraces",
-    },
-    "13": {
-      qualifiedName: "__global.ErrorConstructor.stackTraceLimit",
-    },
-    "14": {
-      qualifiedName: "UffgabeFaehler.__constructor",
-    },
-    "15": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
       qualifiedName: "UffgabeFaehler",
     },
-    "16": {
-      qualifiedName: "message",
-    },
-    "17": {
-      qualifiedName: "Error.name",
-    },
-    "18": {
-      qualifiedName: "Error.message",
-    },
-    "19": {
-      qualifiedName: "Error.stack",
-    },
-    "20": {
-      qualifiedName: "UffgabeWechFaehler",
-    },
-    "21": {
+    "8": {
+      packageName: "@types/node",
+      packagePath: "globals.d.ts",
       qualifiedName: "__global.ErrorConstructor.captureStackTrace",
     },
-    "22": {
+    "9": {
+      packageName: "@types/node",
+      packagePath: "globals.d.ts",
       qualifiedName: "__global.ErrorConstructor.captureStackTrace",
     },
-    "23": {
+    "10": {
+      packageName: "@types/node",
+      packagePath: "globals.d.ts",
       qualifiedName: "targetObject",
     },
-    "24": {
+    "11": {
+      packageName: "@types/node",
+      packagePath: "globals.d.ts",
       qualifiedName: "constructorOpt",
     },
-    "25": {
+    "12": {
+      packageName: "@types/node",
+      packagePath: "globals.d.ts",
       qualifiedName: "__global.ErrorConstructor.prepareStackTrace",
     },
-    "26": {
+    "13": {
+      packageName: "@types/node",
+      packagePath: "globals.d.ts",
       qualifiedName: "__type",
     },
-    "27": {
+    "14": {
+      packageName: "@types/node",
+      packagePath: "globals.d.ts",
       qualifiedName: "__type",
     },
-    "28": {
+    "15": {
+      packageName: "@types/node",
+      packagePath: "globals.d.ts",
       qualifiedName: "err",
     },
-    "29": {
+    "16": {
+      packageName: "@types/node",
+      packagePath: "globals.d.ts",
       qualifiedName: "stackTraces",
     },
-    "30": {
+    "17": {
+      packageName: "@types/node",
+      packagePath: "globals.d.ts",
       qualifiedName: "__global.ErrorConstructor.stackTraceLimit",
     },
-    "31": {
-      qualifiedName: "UffgabeWechFaehler.__constructor",
+    "18": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "UffgabeFaehler.__constructor",
     },
-    "32": {
-      qualifiedName: "UffgabeWechFaehler",
+    "19": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "UffgabeFaehler",
     },
-    "33": {
-      qualifiedName: "taskId",
+    "20": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "message",
     },
-    "34": {
-      qualifiedName: "UffgabeWechFaehler.taskId",
-    },
-    "35": {
+    "21": {
+      packageName: "typescript",
+      packagePath: "lib/lib.es5.d.ts",
       qualifiedName: "Error.name",
     },
-    "36": {
+    "22": {
+      packageName: "typescript",
+      packagePath: "lib/lib.es5.d.ts",
       qualifiedName: "Error.message",
     },
-    "37": {
+    "23": {
+      packageName: "typescript",
+      packagePath: "lib/lib.es5.d.ts",
       qualifiedName: "Error.stack",
     },
+    "24": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "UffgabeWechFaehler",
+    },
+    "25": {
+      packageName: "@types/node",
+      packagePath: "globals.d.ts",
+      qualifiedName: "__global.ErrorConstructor.captureStackTrace",
+    },
+    "26": {
+      packageName: "@types/node",
+      packagePath: "globals.d.ts",
+      qualifiedName: "__global.ErrorConstructor.captureStackTrace",
+    },
+    "27": {
+      packageName: "@types/node",
+      packagePath: "globals.d.ts",
+      qualifiedName: "targetObject",
+    },
+    "28": {
+      packageName: "@types/node",
+      packagePath: "globals.d.ts",
+      qualifiedName: "constructorOpt",
+    },
+    "29": {
+      packageName: "@types/node",
+      packagePath: "globals.d.ts",
+      qualifiedName: "__global.ErrorConstructor.prepareStackTrace",
+    },
+    "30": {
+      packageName: "@types/node",
+      packagePath: "globals.d.ts",
+      qualifiedName: "__type",
+    },
+    "31": {
+      packageName: "@types/node",
+      packagePath: "globals.d.ts",
+      qualifiedName: "__type",
+    },
+    "32": {
+      packageName: "@types/node",
+      packagePath: "globals.d.ts",
+      qualifiedName: "err",
+    },
+    "33": {
+      packageName: "@types/node",
+      packagePath: "globals.d.ts",
+      qualifiedName: "stackTraces",
+    },
+    "34": {
+      packageName: "@types/node",
+      packagePath: "globals.d.ts",
+      qualifiedName: "__global.ErrorConstructor.stackTraceLimit",
+    },
+    "35": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "UffgabeWechFaehler.__constructor",
+    },
+    "36": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "UffgabeWechFaehler",
+    },
+    "37": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "taskId",
+    },
     "38": {
-      qualifiedName: "TaschgInEcht",
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "UffgabeWechFaehler.taskId",
     },
     "39": {
-      qualifiedName: "TaschgInEcht.__constructor",
+      packageName: "typescript",
+      packagePath: "lib/lib.es5.d.ts",
+      qualifiedName: "Error.name",
     },
     "40": {
-      qualifiedName: "TaschgInEcht",
+      packageName: "typescript",
+      packagePath: "lib/lib.es5.d.ts",
+      qualifiedName: "Error.message",
     },
     "41": {
-      qualifiedName: "TaschgInEcht.T",
+      packageName: "typescript",
+      packagePath: "lib/lib.es5.d.ts",
+      qualifiedName: "Error.stack",
     },
     "42": {
-      qualifiedName: "task",
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgInEcht",
     },
     "43": {
-      qualifiedName: "__type",
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgInEcht.__constructor",
     },
     "44": {
-      qualifiedName: "__type.status",
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgInEcht",
     },
     "45": {
-      qualifiedName: "TaschgInEcht.id",
-    },
-    "46": {
-      qualifiedName: "TaschgInEcht.do_Tittel",
-    },
-    "47": {
-      qualifiedName: "TaschgInEcht.umWosGoots",
-    },
-    "48": {
-      qualifiedName: "TaschgInEcht.status",
-    },
-    "49": {
-      qualifiedName: "TaschgInEcht.priority",
-    },
-    "50": {
-      qualifiedName: "TaschgInEcht.assignee",
-    },
-    "51": {
-      qualifiedName: "TaschgInEcht.dueDate",
-    },
-    "52": {
-      qualifiedName: "TaschgInEcht.data",
-    },
-    "53": {
-      qualifiedName: "TaschgInEcht.createdAt",
-    },
-    "54": {
-      qualifiedName: "TaschgInEcht.updatedAt",
-    },
-    "59": {
-      qualifiedName: "TaschgInEcht.korrigiera",
-    },
-    "60": {
-      qualifiedName: "TaschgInEcht.korrigiera",
-    },
-    "61": {
-      qualifiedName: "status",
-    },
-    "62": {
-      qualifiedName: "TaschgInEcht.delegiera",
-    },
-    "63": {
-      qualifiedName: "TaschgInEcht.delegiera",
-    },
-    "64": {
-      qualifiedName: "user",
-    },
-    "65": {
-      qualifiedName: "TaschgInEcht.wasWarDavor",
-    },
-    "66": {
-      qualifiedName: "TaschgInEcht.wasWarDavor",
-    },
-    "67": {
-      qualifiedName: "__type",
-    },
-    "68": {
-      qualifiedName: "__type.status",
-    },
-    "69": {
-      qualifiedName: "__type.timestamp",
-    },
-    "70": {
-      qualifiedName: "TaschgInEcht.ojeZuSpaet",
-    },
-    "71": {
-      qualifiedName: "TaschgInEcht.ojeZuSpaet",
-    },
-    "72": {
-      qualifiedName: "TaschgInEcht.toString",
-    },
-    "73": {
-      qualifiedName: "TaschgInEcht.toString",
-    },
-    "74": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
       qualifiedName: "TaschgInEcht.T",
     },
-    "75": {
-      qualifiedName: "TaschgMaenaedscha",
+    "46": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "task",
     },
-    "78": {
-      qualifiedName: "TaschgMaenaedscha.T",
-    },
-    "81": {
-      qualifiedName: "TaschgMaenaedscha.bauWatt",
-    },
-    "82": {
-      qualifiedName: "TaschgMaenaedscha.bauWatt",
-    },
-    "83": {
-      qualifiedName: "title",
-    },
-    "84": {
-      qualifiedName: "description",
-    },
-    "85": {
-      qualifiedName: "priority",
-    },
-    "86": {
-      qualifiedName: "options",
-    },
-    "87": {
-      qualifiedName: "TaschgMaenaedscha.suchs",
-    },
-    "88": {
-      qualifiedName: "TaschgMaenaedscha.suchs",
-    },
-    "89": {
-      qualifiedName: "id",
-    },
-    "90": {
-      qualifiedName: "TaschgMaenaedscha.iWillAelles",
-    },
-    "91": {
-      qualifiedName: "TaschgMaenaedscha.iWillAelles",
-    },
-    "92": {
-      qualifiedName: "TaschgMaenaedscha.holsMir",
-    },
-    "93": {
-      qualifiedName: "TaschgMaenaedscha.holsMir",
-    },
-    "94": {
-      qualifiedName: "status",
-    },
-    "95": {
-      qualifiedName: "TaschgMaenaedscha.holsFuerEnKerle",
-    },
-    "96": {
-      qualifiedName: "TaschgMaenaedscha.holsFuerEnKerle",
-    },
-    "97": {
-      qualifiedName: "userId",
-    },
-    "98": {
-      qualifiedName: "TaschgMaenaedscha.wechDamit",
-    },
-    "99": {
-      qualifiedName: "TaschgMaenaedscha.wechDamit",
-    },
-    "100": {
-      qualifiedName: "id",
-    },
-    "101": {
-      qualifiedName: "TaschgMaenaedscha.T",
-    },
-    "102": {
-      qualifiedName: "",
-    },
-    "103": {
-      qualifiedName: "TaskStatus",
-    },
-    "104": {
-      qualifiedName: "TaskStatus.PENDING",
-    },
-    "105": {
-      qualifiedName: "TaskStatus.LAEUFT",
-    },
-    "106": {
-      qualifiedName: "TaskStatus.FERTIG",
-    },
-    "107": {
-      qualifiedName: "TaskStatus.MIST",
-    },
-    "108": {
-      qualifiedName: "Priority",
-    },
-    "109": {
-      qualifiedName: "Priority.WENIG",
-    },
-    "110": {
-      qualifiedName: "Priority.GEHT_SO",
-    },
-    "111": {
-      qualifiedName: "Priority.SCHNELL",
-    },
-    "112": {
-      qualifiedName: "Priority.UI_UI_UI",
-    },
-    "113": {
-      qualifiedName: "Kerle",
-    },
-    "114": {
-      qualifiedName: "Kerle.id",
-    },
-    "115": {
-      qualifiedName: "Kerle.soi_name",
-    },
-    "116": {
-      qualifiedName: "Kerle.internet_brief",
-    },
-    "117": {
-      qualifiedName: "Kerle.role",
-    },
-    "118": {
-      qualifiedName: "Uffgabe",
-    },
-    "119": {
-      qualifiedName: "Uffgabe.id",
-    },
-    "120": {
-      qualifiedName: "Uffgabe.do_Tittel",
-    },
-    "121": {
-      qualifiedName: "Uffgabe.umWosGoots",
-    },
-    "122": {
-      qualifiedName: "Uffgabe.status",
-    },
-    "123": {
-      qualifiedName: "Uffgabe.priority",
-    },
-    "124": {
-      qualifiedName: "Uffgabe.assignee",
-    },
-    "125": {
-      qualifiedName: "Uffgabe.dueDate",
-    },
-    "126": {
-      qualifiedName: "Uffgabe.data",
-    },
-    "127": {
-      qualifiedName: "Uffgabe.T",
-    },
-    "128": {
-      qualifiedName: "TaskOptions",
-    },
-    "129": {
+    "47": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
       qualifiedName: "__type",
     },
-    "130": {
-      qualifiedName: "__type.autoAssign",
-    },
-    "131": {
-      qualifiedName: "__type.defaultPriority",
-    },
-    "132": {
-      qualifiedName: "__type.tags",
-    },
-    "133": {
-      qualifiedName: "",
-    },
-    "134": {
-      qualifiedName: "sortByPriority",
-    },
-    "135": {
-      qualifiedName: "sortByPriority",
-    },
-    "136": {
-      qualifiedName: "T",
-    },
-    "137": {
-      qualifiedName: "tasks",
-    },
-    "138": {
-      qualifiedName: "sortByDueDate",
-    },
-    "139": {
-      qualifiedName: "sortByDueDate",
-    },
-    "140": {
-      qualifiedName: "T",
-    },
-    "141": {
-      qualifiedName: "tasks",
-    },
-    "142": {
-      qualifiedName: "filterTasks",
-    },
-    "143": {
-      qualifiedName: "filterTasks",
-    },
-    "144": {
-      qualifiedName: "T",
-    },
-    "145": {
-      qualifiedName: "tasks",
-    },
-    "146": {
-      qualifiedName: "criteria",
-    },
-    "147": {
-      qualifiedName: "__type",
-    },
-    "148": {
+    "48": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
       qualifiedName: "__type.status",
     },
+    "49": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgInEcht.id",
+    },
+    "50": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgInEcht.do_Tittel",
+    },
+    "51": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgInEcht.umWosGoots",
+    },
+    "52": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgInEcht.status",
+    },
+    "53": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgInEcht.priority",
+    },
+    "54": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgInEcht.assignee",
+    },
+    "55": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgInEcht.dueDate",
+    },
+    "56": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgInEcht.data",
+    },
+    "57": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgInEcht.createdAt",
+    },
+    "58": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgInEcht.updatedAt",
+    },
+    "63": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgInEcht.korrigiera",
+    },
+    "64": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgInEcht.korrigiera",
+    },
+    "65": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "status",
+    },
+    "66": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgInEcht.delegiera",
+    },
+    "67": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgInEcht.delegiera",
+    },
+    "68": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "user",
+    },
+    "69": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgInEcht.wasWarDavor",
+    },
+    "70": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgInEcht.wasWarDavor",
+    },
+    "71": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "__type",
+    },
+    "72": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "__type.status",
+    },
+    "73": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "__type.timestamp",
+    },
+    "74": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgInEcht.ojeZuSpaet",
+    },
+    "75": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgInEcht.ojeZuSpaet",
+    },
+    "76": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgInEcht.toString",
+    },
+    "77": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgInEcht.toString",
+    },
+    "78": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgInEcht.T",
+    },
+    "79": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgMaenaedscha",
+    },
+    "82": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgMaenaedscha.T",
+    },
+    "85": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgMaenaedscha.bauWatt",
+    },
+    "86": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgMaenaedscha.bauWatt",
+    },
+    "87": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "title",
+    },
+    "88": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "description",
+    },
+    "89": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "priority",
+    },
+    "90": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "options",
+    },
+    "91": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgMaenaedscha.suchs",
+    },
+    "92": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgMaenaedscha.suchs",
+    },
+    "93": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "id",
+    },
+    "94": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgMaenaedscha.iWillAelles",
+    },
+    "95": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgMaenaedscha.iWillAelles",
+    },
+    "96": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgMaenaedscha.holsMir",
+    },
+    "97": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgMaenaedscha.holsMir",
+    },
+    "98": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "status",
+    },
+    "99": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgMaenaedscha.holsFuerEnKerle",
+    },
+    "100": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgMaenaedscha.holsFuerEnKerle",
+    },
+    "101": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "userId",
+    },
+    "102": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgMaenaedscha.wechDamit",
+    },
+    "103": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgMaenaedscha.wechDamit",
+    },
+    "104": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "id",
+    },
+    "105": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgMaenaedscha.T",
+    },
+    "106": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "",
+    },
+    "107": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "TaskStatus",
+    },
+    "108": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "TaskStatus.PENDING",
+    },
+    "109": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "TaskStatus.LAEUFT",
+    },
+    "110": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "TaskStatus.FERTIG",
+    },
+    "111": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "TaskStatus.MIST",
+    },
+    "112": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "TaskStatus",
+    },
+    "113": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "TaskStatus.prettyPrintTaskStatus",
+    },
+    "114": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "TaskStatus.prettyPrintTaskStatus",
+    },
+    "115": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "status",
+    },
+    "116": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "Priority",
+    },
+    "117": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "Priority.WENIG",
+    },
+    "118": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "Priority.GEHT_SO",
+    },
+    "119": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "Priority.SCHNELL",
+    },
+    "120": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "Priority.UI_UI_UI",
+    },
+    "121": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "Priority",
+    },
+    "122": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "Priority.prettyPrintPriority",
+    },
+    "123": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "Priority.prettyPrintPriority",
+    },
+    "124": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "priority",
+    },
+    "125": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "Kerle",
+    },
+    "126": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "Kerle.id",
+    },
+    "127": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "Kerle.soi_name",
+    },
+    "128": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "Kerle.internet_brief",
+    },
+    "129": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "Kerle.role",
+    },
+    "130": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "Kerle",
+    },
+    "135": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "Kerle.create",
+    },
+    "136": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "Kerle.create",
+    },
+    "137": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "id",
+    },
+    "138": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "name",
+    },
+    "139": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "email",
+    },
+    "140": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "role",
+    },
+    "141": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "Uffgabe",
+    },
+    "142": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "Uffgabe.id",
+    },
+    "143": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "Uffgabe.do_Tittel",
+    },
+    "144": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "Uffgabe.umWosGoots",
+    },
+    "145": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "Uffgabe.status",
+    },
+    "146": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "Uffgabe.priority",
+    },
+    "147": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "Uffgabe.assignee",
+    },
+    "148": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "Uffgabe.dueDate",
+    },
     "149": {
-      qualifiedName: "__type.priority",
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "Uffgabe.data",
     },
     "150": {
-      qualifiedName: "__type.assigneeId",
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "Uffgabe.T",
     },
     "151": {
-      qualifiedName: "__type.dueBefore",
-    },
-    "152": {
-      qualifiedName: "__type.dueAfter",
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "TaskOptions",
     },
     "153": {
-      qualifiedName: "summarizeTasksByStatus",
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "__type.autoAssign",
     },
     "154": {
-      qualifiedName: "summarizeTasksByStatus",
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "__type.defaultPriority",
     },
     "155": {
-      qualifiedName: "T",
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "__type.tags",
     },
     "156": {
-      qualifiedName: "tasks",
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "",
     },
     "157": {
-      qualifiedName: "kopiera",
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "sortByPriority",
     },
     "158": {
-      qualifiedName: "kopiera",
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "sortByPriority",
     },
     "159": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
       qualifiedName: "T",
     },
     "160": {
-      qualifiedName: "task",
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "tasks",
     },
     "161": {
-      qualifiedName: "formatTask",
-    },
-    "162": {
-      qualifiedName: "formatTask",
-    },
-    "163": {
-      qualifiedName: "task",
-    },
-    "164": {
-      qualifiedName: "__type",
-    },
-    "165": {
-      qualifiedName: "__type.status",
-    },
-    "166": {
-      qualifiedName: "formatTask",
-    },
-    "167": {
-      qualifiedName: "task",
-    },
-    "168": {
-      qualifiedName: "__type",
-    },
-    "169": {
-      qualifiedName: "__type.status",
-    },
-    "170": {
-      qualifiedName: "formatTask",
-    },
-    "171": {
-      qualifiedName: "task",
-    },
-    "172": {
-      qualifiedName: "__type",
-    },
-    "173": {
-      qualifiedName: "__type.status",
-    },
-    "174": {
-      qualifiedName: "isAdmin",
-    },
-    "175": {
-      qualifiedName: "isAdmin",
-    },
-    "176": {
-      qualifiedName: "user",
-    },
-    "177": {
-      qualifiedName: "__type",
-    },
-    "178": {
-      qualifiedName: "__type.role",
-    },
-    "179": {
-      qualifiedName: "calculateEstimatedCompletion",
-    },
-    "180": {
-      qualifiedName: "calculateEstimatedCompletion",
-    },
-    "181": {
-      qualifiedName: "task",
-    },
-    "182": {
-      qualifiedName: "estimatedHoursPerPriority",
-    },
-    "183": {
-      qualifiedName: "TaskStatus",
-    },
-    "184": {
-      qualifiedName: "Priority",
-    },
-    "185": {
-      qualifiedName: "Kerle",
-    },
-    "186": {
-      qualifiedName: "Uffgabe",
-    },
-    "187": {
-      qualifiedName: "TaskOptions",
-    },
-    "188": {
-      qualifiedName: "UffgabeFaehler",
-    },
-    "189": {
-      qualifiedName: "UffgabeWechFaehler",
-    },
-    "190": {
-      qualifiedName: "TaschgInEcht",
-    },
-    "191": {
-      qualifiedName: "TaschgMaenaedscha",
-    },
-    "192": {
-      qualifiedName: "sortByPriority",
-    },
-    "193": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
       qualifiedName: "sortByDueDate",
     },
-    "194": {
+    "162": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "sortByDueDate",
+    },
+    "163": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "T",
+    },
+    "164": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "tasks",
+    },
+    "165": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
       qualifiedName: "filterTasks",
     },
-    "195": {
+    "166": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "filterTasks",
+    },
+    "167": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "T",
+    },
+    "168": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "tasks",
+    },
+    "169": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "criteria",
+    },
+    "170": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "__type",
+    },
+    "171": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "__type.status",
+    },
+    "172": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "__type.priority",
+    },
+    "173": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "__type.assigneeId",
+    },
+    "174": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "__type.dueBefore",
+    },
+    "175": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "__type.dueAfter",
+    },
+    "176": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
       qualifiedName: "summarizeTasksByStatus",
     },
-    "196": {
+    "177": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "summarizeTasksByStatus",
+    },
+    "178": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "T",
+    },
+    "179": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "tasks",
+    },
+    "180": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
       qualifiedName: "kopiera",
     },
-    "197": {
+    "181": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "kopiera",
+    },
+    "182": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "T",
+    },
+    "183": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "task",
+    },
+    "184": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
       qualifiedName: "formatTask",
     },
+    "185": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "formatTask",
+    },
+    "186": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "task",
+    },
+    "187": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "__type",
+    },
+    "188": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "__type.status",
+    },
+    "189": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "formatTask",
+    },
+    "190": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "task",
+    },
+    "191": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "__type",
+    },
+    "192": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "__type.status",
+    },
+    "193": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "formatTask",
+    },
+    "194": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "task",
+    },
+    "195": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "__type",
+    },
+    "196": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "__type.status",
+    },
+    "197": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "isAdmin",
+    },
     "198": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
       qualifiedName: "isAdmin",
     },
     "199": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "user",
+    },
+    "200": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "__type",
+    },
+    "201": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "__type.role",
+    },
+    "202": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "calculateEstimatedCompletion",
+    },
+    "203": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "calculateEstimatedCompletion",
+    },
+    "204": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "task",
+    },
+    "205": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "estimatedHoursPerPriority",
+    },
+    "206": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "TaskStatus",
+    },
+    "207": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "Priority",
+    },
+    "208": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "Kerle",
+    },
+    "209": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "Uffgabe",
+    },
+    "210": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/types.ts",
+      qualifiedName: "TaskOptions",
+    },
+    "211": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "UffgabeFaehler",
+    },
+    "212": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "UffgabeWechFaehler",
+    },
+    "213": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgInEcht",
+    },
+    "214": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/taschg-maenaedscha.ts",
+      qualifiedName: "TaschgMaenaedscha",
+    },
+    "215": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "sortByPriority",
+    },
+    "216": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "sortByDueDate",
+    },
+    "217": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "filterTasks",
+    },
+    "218": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "summarizeTasksByStatus",
+    },
+    "219": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "kopiera",
+    },
+    "220": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "formatTask",
+    },
+    "221": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
+      qualifiedName: "isAdmin",
+    },
+    "222": {
+      packageName: "mcp-typescribe",
+      packagePath: "src/sample-api/utils.ts",
       qualifiedName: "calculateEstimatedCompletion",
     },
   },
   files: {
     entries: {
-      "1": "src/sample-api/index.ts",
-      "2": "src/sample-api/taschg-maenaedscha.ts",
-      "3": "src/sample-api/types.ts",
-      "4": "src/sample-api/utils.ts",
+      "1": "src/sample-api/docs/intro.md",
+      "2": "src/sample-api/index.ts",
+      "3": "src/sample-api/docs/links.md",
+      "4": "src/sample-api/docs/installation.md",
+      "5": "src/sample-api/docs/documentation.md",
+      "6": "src/sample-api/taschg-maenaedscha.ts",
+      "7": "src/sample-api/types.ts",
+      "8": "src/sample-api/utils.ts",
+      "9": "docs/screenshot.png",
     },
     reflections: {
-      "1": 1,
-      "2": 2,
-      "3": 102,
-      "4": 133,
+      "1": 131,
+      "2": 1,
+      "3": 134,
+      "4": 132,
+      "5": 133,
+      "6": 6,
+      "7": 106,
+      "8": 156,
     },
   },
 } as unknown as JSONOutput.ProjectReflection;

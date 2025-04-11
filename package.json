@@ -1,6 +1,6 @@
 {
   "name": "mcp-typescribe",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "An MCP server that answers questions about TypeScript APIs using TypeDoc JSON documentation",
   "main": "dist/mcp-server/index.js",
   "type": "module",
@@ -16,6 +16,7 @@
     "dev": "tsc -w",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:ui": "vitest --ui",
     "inspect": "npx @modelcontextprotocol/inspector node ./dist/mcp-server/index.js run-server docs/api.json",
     "release": "npm run build && changeset publish",
     "new-version": "changeset version && npm run format:write && npm run build"
@@ -42,9 +43,11 @@
     "prettier": "^3.5.3",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.29.0",
-    "vitest": "^3.1.1"
+    "vitest": "^3.1.1",
+    "@vitest/ui": "^3.1.1"
   },
   "dependencies": {
+    "langchain": "0.3.21",
     "@modelcontextprotocol/sdk": "^1.8.0",
     "commander": "^13.1.0",
     "typedoc": "^0.28.0",

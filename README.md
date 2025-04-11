@@ -1,6 +1,5 @@
 [![npm version](https://img.shields.io/npm/v/mcp-typescribe.svg)](https://www.npmjs.com/package/your-package-name)
 
-
 # MCP-Typescribe - an MCP Server providing LLMs API information
 
 ## The Problem

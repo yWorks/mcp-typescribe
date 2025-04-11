@@ -4,6 +4,7 @@
 
 import { ParameterInfo, SymbolInfo, TypeHierarchy } from "../types/index.js";
 import {
+  convertContent,
   createSymbolInfo,
   getDescription,
   getParentName,
@@ -50,7 +51,11 @@ export function formatDetailSymbols(
   symbol = maybeResolve(symbol) ?? symbol;
   const result = formatSymbolForLLM(symbol, verbosity);
   const childVerbosity = decreaseVerbosity(verbosity);
-  if (!result.children && childVerbosity !== Verbosity.HIDDEN) {
+  if (
+    !result.children &&
+    childVerbosity !== Verbosity.HIDDEN &&
+    symbol.kind !== ReflectionKind.TypeAlias
+  ) {
     if (symbol instanceof ContainerReflection && symbol.children) {
       result.children = [];
       for (const child of symbol.children) {
@@ -108,7 +113,21 @@ export function formatSymbolForLLM(
   }
 
   if (isDeclaration(symbol) && symbol.kind === ReflectionKind.TypeAlias) {
-    info.description += "\n" + formatType(symbol.type, "none", verbosity);
+    if (symbol.type) {
+      info.description += "\n" + formatType(symbol.type, "none", verbosity);
+    } else if (Array.isArray(symbol.children) && symbol.children.length > 0) {
+      const innerVerbosity = decreaseVerbosity(verbosity);
+      info.description +=
+        "\n\n{\n" +
+        symbol.children
+          .filter((c) => c.kind === ReflectionKind.Property)
+          .map(
+            (c) =>
+              `  ${c.comment ? "/** " + convertContent(c.comment.summary, true) + " */\n  " : ""}"${c.name}": ${formatType(c.type, "none", innerVerbosity)}${c.flags.isOptional ? "?" : ""}`,
+          )
+          .join(",\n") +
+        "\n}\n";
+    }
   }
 
   if (symbol.id) info.id = symbol.id;

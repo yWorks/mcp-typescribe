@@ -51,6 +51,7 @@ export interface TypeHierarchy extends SymbolInfo {
  */
 export interface ApiOverview {
   name: string;
+  documentation?: string;
   totalSymbols: number;
   countByKind: Record<string, number>;
   topLevelSymbols: SymbolInfo[];

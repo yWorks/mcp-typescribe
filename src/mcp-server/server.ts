@@ -98,7 +98,10 @@ export class TypescribeServer {
     this.server.setRequestHandler(
       ListResourceTemplatesRequestSchema,
       async () => ({
-        resourceTemplates: RESOURCE_TEMPLATE_DEFINITIONS,
+        resourceTemplates: RESOURCE_TEMPLATE_DEFINITIONS.map((template) => ({
+          ...template,
+          uriTemplate: template.uriTemplate.toString(),
+        })),
       }),
     );
 
@@ -146,17 +149,37 @@ export class TypescribeServer {
         }
 
         // Handle search
-        const searchMatch = uri.match(/^api:\/\/search\/(.+)$/);
+        const searchMatch =
+          RESOURCE_TEMPLATE_DEFINITIONS[1].uriTemplate.match(uri);
         if (searchMatch) {
-          const query = decodeURIComponent(searchMatch[1]);
+          const query = searchMatch.query as string;
           const results = handlers.searchSymbols(query);
-
           return {
             contents: [
               {
                 uri,
-                mimeType: "application/json",
+                mimeType: "text",
                 text: stringify(results),
+              },
+            ],
+          };
+        }
+
+        // handle documentation lookup
+        const docMatch =
+          RESOURCE_TEMPLATE_DEFINITIONS[2].uriTemplate.match(uri);
+        if (docMatch) {
+          const { id, pageOffset } = docMatch;
+          const results = await handlers.handleGetDocumentation(
+            parseInt((id as string) ?? "-1", 10),
+            parseInt((pageOffset as string) ?? "0", 10),
+          );
+          return {
+            contents: [
+              {
+                uri,
+                mimeType: "text", // application/yaml
+                text: "hello world! " + stringify(results),
               },
             ],
           };
