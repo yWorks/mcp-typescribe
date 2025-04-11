@@ -23,6 +23,7 @@ import {
 import {
   convertContent,
   createDocLink,
+  createMdApiLink,
   createSymbolInfo,
   findSymbolsByReturnType,
   formatDetailSymbols,
@@ -127,9 +128,12 @@ async function extractDocument(
  * Class that provides handlers for TypeScript API queries.
  */
 export class TypeScriptApiHandlers {
-  private symbolsById: Map<number, Reflection> = new Map();
   private symbolsByKind: Map<number, Reflection[]> = new Map();
   private readonly project: ProjectReflection;
+  private readonly overloadMapping: Map<
+    DeclarationReflection,
+    DeclarationReflection
+  >;
 
   /**
    * Creates a new TypeScriptApiHandlers instance.
@@ -143,6 +147,7 @@ export class TypeScriptApiHandlers {
       projectRoot: "/",
       registry: new FileRegistry(),
     });
+    this.overloadMapping = new Map();
     this.project = project;
     this.buildIndexes(project);
   }
@@ -190,6 +195,8 @@ export class TypeScriptApiHandlers {
    * @param projectReflection - The TypeDoc JSON documentation
    */
   private buildIndexes(projectReflection: ProjectReflection): void {
+    this.determineNamespaceOverloads(projectReflection);
+
     // Process all children recursively
     const processChildren = (node: Reflection) => {
       if (!node) return;
@@ -199,8 +206,6 @@ export class TypeScriptApiHandlers {
 
       // Index the current node if it has an id
       if (node.id !== undefined) {
-        this.symbolsById.set(node.id, node);
-
         // Index by kind
         if (node.kind !== undefined) {
           if (!this.symbolsByKind.has(node.kind)) {
@@ -221,18 +226,80 @@ export class TypeScriptApiHandlers {
     processChildren(projectReflection);
   }
 
+  private determineNamespaceOverloads(projectReflection: ProjectReflection) {
+    function getApiName(declarationReflection: DeclarationReflection) {
+      switch (declarationReflection.kind) {
+        case ReflectionKind.Project:
+        case ReflectionKind.Module:
+        case ReflectionKind.IndexSignature:
+        case ReflectionKind.TypeLiteral:
+        case ReflectionKind.Parameter:
+        case ReflectionKind.TypeParameter:
+        case ReflectionKind.GetSignature:
+        case ReflectionKind.SetSignature:
+        case ReflectionKind.TypeAlias:
+        case ReflectionKind.Reference:
+        case ReflectionKind.Document:
+          return undefined;
+        case ReflectionKind.Namespace:
+        case ReflectionKind.Enum:
+        case ReflectionKind.Function:
+        case ReflectionKind.Interface:
+        case ReflectionKind.Class:
+          return declarationReflection.getFullName(".");
+        case ReflectionKind.Constructor:
+          return declarationReflection.parent!.getFullName(".");
+        case ReflectionKind.EnumMember:
+        case ReflectionKind.Property:
+        case ReflectionKind.Method:
+        case ReflectionKind.Accessor:
+          return (
+            declarationReflection.parent!.getFullName(".") +
+            "." +
+            declarationReflection.name
+          );
+      }
+    }
+
+    const nameSpaces = projectReflection.getReflectionsByKind(
+      ReflectionKind.Namespace,
+    );
+    const nameSpacesByName = new Map<string, DeclarationReflection>();
+    for (const nameSpace of nameSpaces) {
+      const apiName = getApiName(nameSpace as DeclarationReflection);
+      if (apiName) {
+        nameSpacesByName.set(apiName, nameSpace as DeclarationReflection);
+      }
+    }
+    const possibleOverloads = projectReflection.getReflectionsByKind(
+      ReflectionKind.Class |
+        ReflectionKind.Interface |
+        ReflectionKind.Enum |
+        ReflectionKind.Function |
+        ReflectionKind.Constructor |
+        ReflectionKind.Property |
+        ReflectionKind.Method |
+        ReflectionKind.Accessor |
+        ReflectionKind.EnumMember,
+    ) as DeclarationReflection[];
+
+    possibleOverloads.forEach((overload) => {
+      const apiName = getApiName(overload);
+      if (apiName) {
+        if (nameSpacesByName.has(apiName)) {
+          const nameSpace = nameSpacesByName.get(apiName)!;
+          this.overloadMapping.set(overload, nameSpace);
+        }
+      }
+    });
+  }
+
   /**
    * Gets an overview of the API.
    *
    * @returns The API overview
    */
   getApiOverview(): ApiOverview {
-    // Count symbols by kind
-    const countByKind: Record<string, number> = {};
-    for (const [kind, symbols] of this.symbolsByKind.entries()) {
-      countByKind[getKindName(kind)] = symbols.length;
-    }
-
     let documentation: string | undefined = undefined;
     if (
       Array.isArray(this.project.documents) &&
@@ -249,8 +316,6 @@ export class TypeScriptApiHandlers {
 
     return {
       name: this.project.name,
-      totalSymbols: this.symbolsById.size,
-      countByKind,
       documentation,
       topLevelSymbols: this.getTopLevelSymbols(),
     };
@@ -571,7 +636,9 @@ export class TypeScriptApiHandlers {
   ): SymbolInfo[] | SearchResult<SymbolInfo> {
     const usages: SymbolInfo[] = [];
     // Check all symbols for references to this symbol
-    for (const otherSymbol of this.symbolsById.values()) {
+    for (const otherSymbol of this.project.getReflectionsByKind(
+      ReflectionKind.All,
+    )) {
       // Skip the symbol itself
       if (otherSymbol.id === symbol.id) continue;
 
@@ -604,9 +671,31 @@ export class TypeScriptApiHandlers {
   handleGetSymbolDetails(args: GetSymbolDetailsParams) {
     const symbols = this.lookupSymbols(args);
 
-    return symbols.map((symbol) =>
-      formatDetailSymbols(symbol, Verbosity.DETAIL, args.limit, args.offset),
-    );
+    // when there is another symbol with the same name (declaration merging) return that other symbol, too.
+    if (!args.name && !args.names) {
+      for (const symbol of symbols) {
+        const overloadedNamespace = this.overloadMapping.get(symbol);
+        if (overloadedNamespace) {
+          symbols.push(overloadedNamespace);
+        }
+      }
+    }
+
+    return symbols.map((symbol) => {
+      const symbolInfo = formatDetailSymbols(
+        symbol,
+        Verbosity.DETAIL,
+        args.limit,
+        args.offset,
+      );
+      if (!args.name && !args.names) {
+        const overloadedNamespace = this.overloadMapping.get(symbol);
+        if (overloadedNamespace) {
+          symbolInfo.description += `\n\n[NOTE!]\n> See also ${createMdApiLink(overloadedNamespace.name + " **namespace**", overloadedNamespace.id)} members!`;
+        }
+      }
+      return symbolInfo;
+    });
   }
 
   private lookupSymbols(args: GetSymbolDetailsParams) {

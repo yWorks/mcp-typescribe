@@ -7,7 +7,6 @@ import {
 } from "../src/mcp-server/utils/format-utils.js";
 import { TypeScriptApiHandlers } from "../src/mcp-server/core/typescript-api-handlers.js";
 import { RESOURCE_TEMPLATE_DEFINITIONS } from "../src/mcp-server/schemas/tool-schemas.js";
-import { stringify } from "yaml";
 
 function expectSearchResult<T>(
   result: T[] | SearchResult<T> | undefined,
@@ -52,11 +51,6 @@ describe("TypeScriptApiHandlers", () => {
       const overview = handlers.getApiOverview();
 
       expect(overview.name).toBe("mcp-typescribe");
-      expect(overview.totalSymbols).toBeGreaterThan(5);
-      expect(overview.countByKind).toHaveProperty("Enum");
-      expect(overview.countByKind).toHaveProperty("Interface");
-      expect(overview.countByKind).toHaveProperty("Class");
-      expect(overview.countByKind).toHaveProperty("Function");
       expect(overview.documentation).toBeDefined();
       expect(overview.documentation).toContain(
         "# MCP-Typescribe - an MCP Server providing LLMs API information",
@@ -362,6 +356,25 @@ describe("TypeScriptApiHandlers", () => {
   });
 
   describe("handleGetSymbolDetails", () => {
+    it("should perform declaration merging for interfaces", () => {
+      const result = handlers.getSymbolByName("TaskStatus");
+      expect(result.length).toBe(2);
+
+      const members = handlers.handleListMembers({ name: "TaskStatus" });
+      expect(members).toHaveLength(5);
+
+      const resultById = handlers.handleGetSymbolDetails({ id: result[0].id });
+      expect(resultById).toHaveLength(2);
+      expect(resultById[0].kind).toBe("Enum");
+      expect(resultById[1].kind).toBe("Namespace");
+
+      expect(resultById[0].description).toContain(
+        `\n[NOTE!]\n> See also [TaskStatus **namespace**](api://symbol/${resultById[1].id}) members!`,
+      );
+
+      const membersById = handlers.handleListMembers({ id: result[0].id });
+      expect(membersById).toHaveLength(4);
+    });
     it("should handle get_symbol_details tool for enums", () => {
       const result = handlers.handleGetSymbolDetails({ name: "TaskStatus" });
 

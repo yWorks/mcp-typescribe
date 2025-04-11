@@ -17,6 +17,7 @@ import {
 import { Verbosity } from "../types.js";
 import { formatType } from "./type-utils.js";
 import { RESOURCE_TEMPLATE_DEFINITIONS } from "../schemas/index.js";
+import { UriTemplate } from "@modelcontextprotocol/sdk/shared/uriTemplate.js";
 
 /**
  * Creates a documentation API link.
@@ -35,6 +36,16 @@ export function createDocLink(id: number, offset?: number): string {
   return RESOURCE_TEMPLATE_DEFINITIONS[2].uriTemplate
     .expand(variables)
     .toString();
+}
+
+const apiUrTemplate = new UriTemplate("api://symbol/{id}");
+
+export function createApiLink(id: number): string {
+  return apiUrTemplate.expand({ id: String(id) });
+}
+
+export function createMdApiLink(text: string, id: number) {
+  return `[${text}](${createApiLink(id)})`;
 }
 
 export function convertContent(
@@ -57,7 +68,7 @@ export function convertContent(
             return `[${part.text}](${createDocLink(part.target.id)})`;
           }
           if (part.target instanceof DeclarationReflection && part.target.id) {
-            return `[${part.text}](api://symbol/${part.target.id})`;
+            return createMdApiLink(part.text, part.target.id);
           }
         } else if (part.kind === "relative-link") {
           if (typeof part.target === "number") {
@@ -251,7 +262,7 @@ export function getSymbolsByParams(
 export function getParentName(symbol: Reflection): string | undefined {
   if (symbol.parent instanceof DeclarationReflection) {
     if (symbol.parent.id) {
-      return `[${symbol.parent.name}](api://symbol/${symbol.parent.id})`;
+      return createMdApiLink(symbol.parent.name, symbol.parent.id);
     } else {
       return symbol.parent.name;
     }
