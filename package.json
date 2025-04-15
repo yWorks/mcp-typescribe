@@ -8,8 +8,8 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
-    "docs": "typedoc --json docs/api.json --entryPointStrategy expand src/sample-api/",
-    "start": "node dist/mcp-server/index.js run-server docs/api.json",
+    "docs": "typedoc --json docs/api.json --entryPointStrategy expand --readme src/sample-api/docs/README.md src/sample-api/",
+    "start": "node dist/mcp-server/cli.js run-server docs/api.json",
     "format": "prettier --ignore-unknown --cache --check .",
     "format:write": "prettier --ignore-unknown --write .",
     "lint": "eslint . --ext .ts,.js,.mjs",
@@ -18,7 +18,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
-    "inspect": "npx @modelcontextprotocol/inspector node ./dist/mcp-server/index.js run-server docs/api.json",
+    "inspect": "npx -y @modelcontextprotocol/inspector node ./dist/mcp-server/cli.js run-server docs/api.json",
     "release": "npm run build && changeset publish",
     "new-version": "changeset version && npm run format:write && npm run build"
   },
@@ -33,7 +33,8 @@
     "mcp",
     "typedoc",
     "documentation",
-    "model-context-protocol"
+    "model-context-protocol",
+    "langgraph-agent"
   ],
   "author": "yWorks Support Team",
   "license": "MIT",

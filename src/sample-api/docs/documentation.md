@@ -1,49 +1,86 @@
 ---
-title: Helpful Docs
+title: Crazy task management API
 group: Documents
 category: Guides
 ---
 
 # Official Documentation
 
-## Version 1.0.3.7.2.9-alpha-preview-SNAPSHOT
+# Task Management API Overview
 
-Welcome to the _comprehensive_ documentation for our product.
+The Task Management API provides a comprehensive solution for managing tasks, users, and task assignments in TypeScript. Despite some unusual naming conventions (which appear to be German-influenced), the API offers a robust set of functionalities.
 
-## Getting Started
+## Core Components
 
-To get started, simply... um... start?
+### 1. Task Interface ({@link Uffgabe})
 
-## Features
+This is the base interface for tasks with properties like:
 
-Our product has several amazing features:
+- `id`: Unique identifier
+- `do_Tittel`: Task title
+- `umWosGoots`: Task description
+- `assignee`: User assigned to the task
+- `dueDate`: Due date
+- `status`: Current status
+- `priority`: Priority level
+- `data`: Custom data associated with the task
 
-- It exists
-- It does things (sometimes)
-- It rarely crashes more than twice per hour
-- Compatible with most computers that have electricity
+### 2. Concrete Task Implementation ({@link taschg-maenaedscha!TaschgInEcht})
 
-## Troubleshooting
+This class implements the `Uffgabe` interface and adds functionality like:
 
-Having problems? Here's our complete troubleshooting guide:
+- `createdAt` and `updatedAt`: Timestamps for tracking task lifecycle
+- `delegiera()`: Assigns tasks to users
+- `korrigiera()`: Updates task status with history tracking
+- `ojeZuSpaet()`: Checks if a task is overdue
+- `wasWarDavor()`: Gets the status history of a task
 
-1. Try turning it off and on again
-2. ¯\\\_(ツ)\_/¯
+### 3. Task Manager ({@link taschg-maenaedscha!TaschgMaenaedscha})
 
-## FAQ
+Manages collections of tasks with methods like:
 
-**Q: How do I use this product?**  
-A: Very carefully.
+- `bauWatt()`: Creates new tasks
+- `iWillAelles()`: Gets all tasks
+- `holsFuerEnKerle()`: Gets tasks assigned to a specific user
+- `holsMir()`: Gets tasks filtered by status
+- `suchs()`: Gets a task by ID
+- `wechDamit()`: Deletes a task
 
-**Q: Is there a tutorial?**  
-A: We believe in learning through exploration and random clicking.
+### 4. Enums
 
-**Q: Where can I find more detailed documentation?**  
-A: This is it. This is all of it. We spent upwards of 14 minutes creating this document.
+- `{@link TaskStatus}`: Defines possible statuses (PENDING, LAEUFT, FERTIG, MIST)
+- `{@link Priority}`: Defines priority levels (WENIG, GEHT_SO, SCHNELL, UI_UI_UI)
 
-**Q: What does error code 0x7B3912FF mean?**  
-A: It means you've discovered a feature we didn't know existed. Congratulations!
+### 5. User Interface ({@link Kerle})
 
-## Advanced Configuration
+Represents users with properties:
+
+- `id`: Unique identifier
+- `soi_name`: Full name
+- `internet_brief`: Email address
+- `role`: Role in the system
+
+### 6. Utility Functions
+
+- `calculateEstimatedCompletion()`: Estimates task completion time
+- `filterTasks()`: Filters tasks by various criteria
+- `formatTask()`: Formats task information as strings
+- `isAdmin()`: Type guard to check if a user has admin role
+- `kopiera()`: Creates a deep copy of a task
+- `sortByDueDate()`: Sorts tasks by due date
+- `sortByPriority()`: Sorts tasks by priority
+- `summarizeTasksByStatus()`: Generates task summaries grouped by status
+
+## Working with Tasks
+
+To use this API effectively, you would typically:
+
+1. Create a task manager instance
+2. Create tasks using the manager
+3. Assign tasks to users
+4. Update task status as they progress
+5. Filter and sort tasks as needed for display or reporting
+
+The API also includes error handling classes like `{@link UffgabeFaehler}` (base error class) and `{@link UffgabeWechFaehler}` (for when tasks are not found).
 
 Go [back](intro.md)

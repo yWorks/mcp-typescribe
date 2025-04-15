@@ -18,23 +18,8 @@ Here are some [links](./links.md)
 
 Check out {@link Kerle}
 
-### About the Project
-
-Our project aims to simplify complex workflows and improve productivity through intuitive interfaces and powerful automation tools.
-
-## Key Features
-
-- **Easy to Use**: Simple and intuitive interface
-- **Customizable**: Adapt to your specific needs
-- **Scalable**: Grows with your requirements
-- **Well Documented**: Comprehensive guides and tutorials
-
 ## Getting Started
 
 To get started with our project, please refer to the [installation guide](./installation.md) and [documentation](./documentation.md).
 
 Thank you for your interest in our project!
-
----
-
-_This is a testing document. The content is for demonstration purposes only._

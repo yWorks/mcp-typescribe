@@ -1,7 +1,6 @@
 import { beforeAll, describe, expect, it } from "vitest";
-import { sampleTypeDocJson } from "./sampleTypeDocJson.js";
 import { Verbosity } from "../src/mcp-server/types.js";
-import { extractSection } from "../src/index.js";
+import { extractSection, loadApiDocs } from "../src/index.js";
 import { paginateArray, SearchResult } from "../src/index.js";
 import { TypeScriptApiHandlers } from "../src/index.js";
 import { RESOURCE_TEMPLATE_DEFINITIONS } from "../src/index.js";
@@ -65,11 +64,13 @@ describe("mcp-api", () => {
   });
 });
 
+const apiJson = await loadApiDocs("docs/api.json");
+
 describe("TypeScriptApiHandlers", () => {
   let handlers: TypeScriptApiHandlers;
 
   beforeAll(() => {
-    handlers = new TypeScriptApiHandlers(sampleTypeDocJson);
+    handlers = apiJson;
   });
 
   describe("getApiOverview", () => {
@@ -78,7 +79,7 @@ describe("TypeScriptApiHandlers", () => {
 
       expect(overview.name).toBe("mcp-typescribe");
       expect(overview.documentation).toBeDefined();
-      expect(overview.documentation).toContain(
+      expect(overview.documentation).not.toContain(
         "# MCP-Typescribe - an MCP Server providing LLMs API information",
       );
       expect(overview.topLevelSymbols).toHaveLength(4);
@@ -145,10 +146,11 @@ Some text 7
       );
       expect(result).toBeDefined();
       expect(result).toContain("## Introduction");
-      expect(result).toContain("## About the Project");
+      expect(result).toContain("Complete File [here](api://doc/19)");
+      expect(result).toContain("Breadcrumbs: >> [Welcome to Our Project]");
       expect(result).not.toContain("# Welcome to Our Project");
       expect(result).not.toContain("Getting Started");
-      expect(result).not.toContain("# Key Features");
+      expect(result).not.toContain("Thank you");
     });
     it("should return a documentation page section", async () => {
       const result = await handlers.handleGetDocumentation(19);

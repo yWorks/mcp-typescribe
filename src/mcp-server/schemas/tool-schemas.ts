@@ -36,13 +36,12 @@ export const GET_API_OVERVIEW_DEFINITION = {
  */
 export const RESOURCE_DEFINITIONS = [GET_API_OVERVIEW_DEFINITION];
 
-export const GET_SYMBOL_RESOURCE_TEMPLATE_DEFINITION: ResourceTemplateDefinition =
-  {
-    uriTemplate: new UriTemplate("api://symbol/{symbolNameOrId}"),
-    name: "Symbol Details",
-    mimeType: "text",
-    description: "Details about a specific symbol (by name or ID) in the API",
-  };
+export const GET_SYMBOL_RESOURCE_TEMPLATE_DEFINITION = {
+  uriTemplate: new UriTemplate("api://symbol/{symbolNameOrId}"),
+  name: "Symbol Details",
+  mimeType: "text",
+  description: "Details about a specific symbol (by name or ID) in the API",
+} as const satisfies ResourceTemplateDefinition;
 
 export type ResourceTemplateDefinition = {
   uriTemplate: UriTemplate;
@@ -51,12 +50,13 @@ export type ResourceTemplateDefinition = {
   description: string;
 };
 
-export const SEARCH_RESOURCE_TEMPLATE_DEFINITION: ResourceTemplateDefinition = {
+export const SEARCH_RESOURCE_TEMPLATE_DEFINITION = {
   uriTemplate: new UriTemplate("api://search/{query}"),
   name: "Search Results",
   mimeType: "text",
   description: "Search results for a query",
-};
+} as const satisfies ResourceTemplateDefinition;
+
 export const DOCUMENTATION_RESOURCE_TEMPLATE_DEFINITION = {
   uriTemplate: new UriTemplate("api://doc/{id}{?pageOffset}"),
   name: "Load Documentation",
@@ -64,14 +64,15 @@ export const DOCUMENTATION_RESOURCE_TEMPLATE_DEFINITION = {
   description:
     "Loads a documentation page by ID. `pageOffset` is an optional pagination parameter.",
 } as const satisfies ResourceTemplateDefinition;
-export const DOCUMENTATION_SECTION_RESOURCE_TEMPLATE_DEFINITION: ResourceTemplateDefinition =
-  {
-    uriTemplate: new UriTemplate("api://doc/{id}/{section}{?pageOffset}"),
-    name: "Load a Section of a Documentation",
-    mimeType: "text",
-    description:
-      "Loads a a section from a documentation page by ID. `pageOffset` is an optional pagination parameter . Section is the slug of the header.",
-  };
+
+export const DOCUMENTATION_SECTION_RESOURCE_TEMPLATE_DEFINITION = {
+  uriTemplate: new UriTemplate("api://doc/{id}/{section}{?pageOffset}"),
+  name: "Load a Section of a Documentation",
+  mimeType: "text",
+  description:
+    "Loads a a section from a documentation page by ID. `pageOffset` is an optional pagination parameter . Section is the slug of the header.",
+} as const satisfies ResourceTemplateDefinition;
+
 /**
  * All resource template definitions for the TypeScript API MCP server.
  */

@@ -26,6 +26,8 @@ export default tseslint.config(
       "**/node_modules/**",
       "**/dist/**",
       "**/src/cline-playground/**",
+      "docs/api.json",
+      "**/src/search/**",
     ],
   },
 );

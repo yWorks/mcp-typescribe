@@ -36,35 +36,31 @@ const baseHandlerSchema = z
     },
   );
 
-const baseHandlerSchemaWithPagination = z
-  .object({
-    name: z
-      .string()
-      .optional()
-      .describe("The name of the symbol to search for"),
-    id: z.number().optional().describe("The ID# of the symbol to search for"),
-    names: z
-      .array(z.string())
-      .min(1)
-      .optional()
-      .describe("An array of names to search for"),
-    ids: z
-      .array(z.number())
-      .min(1)
-      .optional()
-      .describe("An array of ID#s to search for"),
-    limit: z
-      .number()
-      .default(20)
-      .optional()
-      .describe("The maximum number of results to return. Defaults to 20"),
-    offset: z
-      .number()
-      .default(0)
-      .optional()
-      .describe("The offset of the first result to return. Defaults to 0"),
-  })
-  .refine(
+const baseHandlerSchemaWithPagination = z.object({
+  name: z.string().optional().describe("The name of the symbol to search for"),
+  id: z.number().optional().describe("The ID# of the symbol to search for"),
+  names: z
+    .array(z.string())
+    .min(1)
+    .optional()
+    .describe("An array of names to search for"),
+  ids: z
+    .array(z.number())
+    .min(1)
+    .optional()
+    .describe("An array of ID#s to search for"),
+  limit: z
+    .number()
+    .default(20)
+    .optional()
+    .describe("The maximum number of results to return. Defaults to 20"),
+  offset: z
+    .number()
+    .default(0)
+    .optional()
+    .describe("The offset of the first result to return. Defaults to 0"),
+});
+/*  .refine(
     (data) => {
       let setProperties = 0;
       if (data.name !== undefined) setProperties++;
@@ -78,7 +74,7 @@ const baseHandlerSchemaWithPagination = z
       message: "Exactly one of 'name', 'id', 'names', or 'ids' must be set.",
       path: ["name", "id", "names", "ids"], // Specify all paths to highlight errors on all fields
     },
-  );
+  );*/
 
 // Search symbols schema
 const searchSymbolsSchema = z
@@ -119,7 +115,7 @@ const searchSymbolsSchema = z
 
 // Get symbol details schema
 const getSymbolDetailsSchema = baseHandlerSchemaWithPagination.describe(
-  "Gets details about a symbol. This includes the symbol's name, kind, and description. If the symbol is a class, interface, enum, or module, this also includes the members of the symbol. Use this to resolve api://symbol/[id] urls",
+  "Gets details about a symbol. This includes the symbol's name, kind, and description. If the symbol is a class, interface, enum, or module, this also includes the members of the symbol. Use this to resolve `api://symbol/[id]` urls",
 );
 
 // List members schema

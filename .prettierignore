@@ -4,3 +4,5 @@ lib/
 dist/
 pnpm-lock.yaml
 package-lock.json
+**/api.json
+src/search/

@@ -151,6 +151,10 @@ export namespace Kerle {
 /**
  * Represents a task that can be assigned to a {@link Kerle user}.
  *
+ * {@link Uffgabe}
+ * {@link TaskStatus}
+ * {@link taschg-maenaedscha!TaschgMaenaedscha}
+ *
  * @typeParam T - The type of data associated with this task
  */
 export interface Uffgabe<T = unknown> {

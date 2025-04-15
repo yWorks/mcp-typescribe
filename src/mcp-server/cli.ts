@@ -16,7 +16,8 @@ program
   .action(async function () {
     try {
       const server = new TypescribeServer();
-      await server.initialize(this.args[0]);
+      const docsPath = path.resolve(process.cwd(), this.args[0]);
+      await server.initialize(docsPath);
       await server.run();
     } catch (error) {
       program.error("Failed to start server: " + error);
