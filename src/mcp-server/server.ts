@@ -9,10 +9,7 @@ import {
   McpError,
   ReadResourceRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
-import fs from "fs/promises";
-import path from "path";
-import { fileURLToPath } from "url";
-import { TypeScriptApiHandlers } from "./core/index.js";
+import { loadApiDocs, TypeScriptApiHandlers } from "./core/index.js";
 import {
   RESOURCE_DEFINITIONS,
   RESOURCE_TEMPLATE_DEFINITIONS,
@@ -20,11 +17,6 @@ import {
 } from "./schemas/index.js";
 import { schemas } from "./types/index.js";
 import { createHandlerResponse, stringify } from "./utils/index.js";
-import { JSONOutput } from "typedoc";
-
-// Get the directory name of the current module
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 /**
  * TypeScript API Documentation MCP Server
@@ -56,27 +48,6 @@ export class TypescribeServer {
       await this.server.close();
       process.exit(0);
     });
-  }
-
-  /**
-   * Loads the TypeDoc JSON documentation and initializes handlers.
-   *
-   * @param filePath - Path to the TypeDoc JSON file
-   */
-  async loadApiDocs(filePath: string): Promise<void> {
-    try {
-      const docsPath = path.resolve(__dirname, "../../", filePath);
-      const data = await fs.readFile(docsPath, "utf-8");
-      const apiDocs = JSON.parse(data) as JSONOutput.ProjectReflection;
-
-      // Initialize handlers
-      this.handlers = new TypeScriptApiHandlers(apiDocs);
-
-      console.error(`Loaded API documentation with symbols`);
-    } catch (error) {
-      console.error("Failed to load API documentation:", error);
-      throw error;
-    }
   }
 
   /**
@@ -281,7 +252,7 @@ export class TypescribeServer {
    * @param docsPath - Path to the TypeDoc JSON file
    */
   async initialize(docsPath: string): Promise<void> {
-    await this.loadApiDocs(docsPath);
+    this.handlers = await loadApiDocs(docsPath);
     this.setupResourceHandlers();
     this.setupToolHandlers();
   }

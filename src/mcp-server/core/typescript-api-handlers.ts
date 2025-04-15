@@ -54,6 +54,37 @@ import {
   ReflectionKind,
 } from "typedoc";
 import { Verbosity } from "../types.js";
+import fs from "fs/promises";
+
+import path from "path";
+import { fileURLToPath } from "url";
+// Get the directory name of the current module
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+/**
+ * Loads the TypeDoc JSON documentation and initializes handlers.
+ *
+ * @param filePath - Path to the TypeDoc JSON file
+ */
+export const loadApiDocs = async (
+  filePath: string,
+): Promise<TypeScriptApiHandlers> => {
+  try {
+    const docsPath = path.resolve(__dirname, "../../", filePath);
+    const data = await fs.readFile(docsPath, "utf-8");
+    const apiDocs = JSON.parse(data) as JSONOutput.ProjectReflection;
+
+    // Initialize handlers
+    const handlers = new TypeScriptApiHandlers(apiDocs);
+
+    console.error(`Loaded API documentation with symbols`);
+    return handlers;
+  } catch (error) {
+    console.error("Failed to load API documentation:", error);
+    throw error;
+  }
+};
 
 /**
  * Class that provides handlers for TypeScript API queries.

@@ -3,3 +3,6 @@
 /node_modules/
 /src/cline-playground/
 /mcp-typescribe-*.tgz
+
+# LangGraph API
+.langgraph_api

@@ -24,51 +24,61 @@ type ToolType = {
   inputSchema: JsonSchema7Type;
 };
 
+export const GET_API_OVERVIEW_DEFINITION = {
+  uri: "api://overview",
+  name: "API Overview",
+  mimeType: "text",
+  description:
+    "Provides an overview of the TypeScript API. Along with a list of all symbols and documentation entries.",
+} as const;
 /**
  * All resource definitions for the TypeScript API MCP server.
  */
-export const RESOURCE_DEFINITIONS = [
-  {
-    uri: "api://overview",
-    name: "API Overview",
-    mimeType: "text",
-    description: "Overview of the TypeScript API",
-  },
-];
+export const RESOURCE_DEFINITIONS = [GET_API_OVERVIEW_DEFINITION];
 
-/**
- * All resource template definitions for the TypeScript API MCP server.
- */
-export const RESOURCE_TEMPLATE_DEFINITIONS = [
+export const GET_SYMBOL_RESOURCE_TEMPLATE_DEFINITION: ResourceTemplateDefinition =
   {
     uriTemplate: new UriTemplate("api://symbol/{symbolNameOrId}"),
     name: "Symbol Details",
     mimeType: "text",
     description: "Details about a specific symbol (by name or ID) in the API",
-  },
-  {
-    uriTemplate: new UriTemplate("api://search/{query}"),
-    name: "Search Results",
-    mimeType: "text",
-    description: "Search results for a query",
-  },
-  {
-    uriTemplate: new UriTemplate("api://doc/{id}{?pageOffset}"),
-    name: "Load Documentation",
-    mimeType: "text",
-    description:
-      "Loads a documentation page by ID. `pageOffset` is an optional pagination parameter.",
-  },
+  };
+
+export type ResourceTemplateDefinition = {
+  uriTemplate: UriTemplate;
+  name: string;
+  mimeType: "text";
+  description: string;
+};
+
+export const SEARCH_RESOURCE_TEMPLATE_DEFINITION: ResourceTemplateDefinition = {
+  uriTemplate: new UriTemplate("api://search/{query}"),
+  name: "Search Results",
+  mimeType: "text",
+  description: "Search results for a query",
+};
+export const DOCUMENTATION_RESOURCE_TEMPLATE_DEFINITION = {
+  uriTemplate: new UriTemplate("api://doc/{id}{?pageOffset}"),
+  name: "Load Documentation",
+  mimeType: "text",
+  description:
+    "Loads a documentation page by ID. `pageOffset` is an optional pagination parameter.",
+} as const satisfies ResourceTemplateDefinition;
+export const DOCUMENTATION_SECTION_RESOURCE_TEMPLATE_DEFINITION: ResourceTemplateDefinition =
   {
     uriTemplate: new UriTemplate("api://doc/{id}/{section}{?pageOffset}"),
     name: "Load a Section of a Documentation",
     mimeType: "text",
     description:
       "Loads a a section from a documentation page by ID. `pageOffset` is an optional pagination parameter . Section is the slug of the header.",
-  },
-] satisfies ReadonlyArray<{
-  uriTemplate: UriTemplate;
-  name: string;
-  mimeType: "text";
-  description: string;
-}>;
+  };
+/**
+ * All resource template definitions for the TypeScript API MCP server.
+ */
+export const RESOURCE_TEMPLATE_DEFINITIONS: ReadonlyArray<ResourceTemplateDefinition> =
+  [
+    GET_SYMBOL_RESOURCE_TEMPLATE_DEFINITION,
+    SEARCH_RESOURCE_TEMPLATE_DEFINITION,
+    DOCUMENTATION_RESOURCE_TEMPLATE_DEFINITION,
+    DOCUMENTATION_SECTION_RESOURCE_TEMPLATE_DEFINITION,
+  ];

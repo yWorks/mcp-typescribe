@@ -11,6 +11,10 @@
     "sourceMap": true,
     "rootDir": "src"
   },
-  "include": ["src/mcp-server/**/*", "src/sample-api/**/*"],
+  "include": [
+    "src/mcp-server/**/*",
+    "src/typescribe-agent/**/*",
+    "src/sample-api/**/*"
+  ],
   "exclude": ["node_modules", "dist"]
 }

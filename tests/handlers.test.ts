@@ -1,13 +1,10 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import { sampleTypeDocJson } from "./sampleTypeDocJson.js";
 import { Verbosity } from "../src/mcp-server/types.js";
-import { extractSection } from "../src/mcp-server/utils/format-utils.js";
-import {
-  paginateArray,
-  SearchResult,
-} from "../src/mcp-server/utils/format-utils.js";
-import { TypeScriptApiHandlers } from "../src/mcp-server/core/typescript-api-handlers.js";
-import { RESOURCE_TEMPLATE_DEFINITIONS } from "../src/mcp-server/schemas/tool-schemas.js";
+import { extractSection } from "../src/index.js";
+import { paginateArray, SearchResult } from "../src/index.js";
+import { TypeScriptApiHandlers } from "../src/index.js";
+import { RESOURCE_TEMPLATE_DEFINITIONS } from "../src/index.js";
 
 function expectSearchResult<T>(
   result: T[] | SearchResult<T> | undefined,
@@ -146,7 +143,6 @@ Some text 7
         0,
         "introduction",
       );
-      console.log(result);
       expect(result).toBeDefined();
       expect(result).toContain("## Introduction");
       expect(result).toContain("## About the Project");
