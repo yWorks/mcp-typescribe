@@ -21,10 +21,12 @@ import {
 } from "../types/index.js";
 import {
   convertContent,
+  convertContentPlainText,
   createDocLink,
   createMdApiLink,
   createSymbolInfo,
   extractDocument,
+  extractHeadingsAndSlugs,
   findSymbolsByReturnType,
   formatDetailSymbols,
   formatParameterForLLM,
@@ -35,7 +37,6 @@ import {
   paginateArray,
   reflectionIsReferencing,
   SearchResult,
-  searchSymbolsByDescription,
   searchSymbolsByName,
 } from "../utils/index.js";
 import { getKindName } from "../utils.js";
@@ -55,6 +56,7 @@ import {
 } from "typedoc";
 import { Verbosity } from "../types.js";
 import fs from "fs/promises";
+import { SearchService } from "./search-service.js";
 
 /**
  * Loads the TypeDoc JSON documentation and initializes handlers.
@@ -83,12 +85,23 @@ export const loadApiDocs = async (
  * Class that provides handlers for TypeScript API queries.
  */
 export class TypeScriptApiHandlers {
+  handlers() {
+    throw new Error("Method not implemented.");
+  }
   private symbolsByKind: Map<number, Reflection[]> = new Map();
   private readonly project: ProjectReflection;
   private readonly overloadMapping: Map<
     DeclarationReflection,
     DeclarationReflection
   >;
+
+  private nameSearchService = new SearchService<DeclarationReflection>();
+  private descriptionSearchService = new SearchService<DeclarationReflection>();
+  private documentationSearchService = new SearchService<{
+    title: string;
+    document: DocumentReflection;
+    slug: string;
+  }>();
 
   /**
    * Creates a new TypeScriptApiHandlers instance.
@@ -150,6 +163,31 @@ export class TypeScriptApiHandlers {
    */
   private buildIndexes(projectReflection: ProjectReflection): void {
     this.determineNamespaceOverloads(projectReflection);
+
+    this.project.getReflectionsByKind(ReflectionKind.All).forEach((symbol) => {
+      if (symbol instanceof DocumentReflection && symbol.content) {
+        const mdContent = convertContent(symbol.content);
+        const headings = extractHeadingsAndSlugs(mdContent);
+        for (const { text, slug } of headings) {
+          this.documentationSearchService.add(text, {
+            title: text,
+            document: symbol,
+            slug,
+          });
+        }
+      } else {
+        if (symbol instanceof DeclarationReflection) {
+          const text = this.getIndexTextName(symbol);
+          if (text && text.length > 0) {
+            this.nameSearchService.add(text, symbol);
+          }
+          const description = this.getIndexDescriptionText(symbol);
+          if (description && description.length > 0) {
+            this.descriptionSearchService.add(description, symbol);
+          }
+        }
+      }
+    });
 
     // Process all children recursively
     const processChildren = (node: Reflection) => {
@@ -294,11 +332,11 @@ export class TypeScriptApiHandlers {
    * @param limit - Optional result limit
    * @returns Array of matching symbols
    */
-  searchSymbols(
+  async searchSymbols(
     query: string,
     kind?: ReflectionKind.KindString | "any",
     limit?: number,
-  ): SymbolInfo[] {
+  ): Promise<SymbolInfo[]> {
     // see if query is a Number
     let matchingSymbols: DeclarationReflection[];
     if (!isNaN(Number(query))) {
@@ -308,7 +346,13 @@ export class TypeScriptApiHandlers {
         this.getSymbolByName.bind(this),
       );
     } else {
-      matchingSymbols = searchSymbolsByName(query, this.project, kind, limit);
+      matchingSymbols = await searchSymbolsByName(
+        query,
+        this.project,
+        kind,
+        limit,
+        this.nameSearchService,
+      );
     }
 
     if (matchingSymbols.length === 1) {
@@ -469,16 +513,42 @@ export class TypeScriptApiHandlers {
    * @param limit - the maximum amount of results
    * @returns Array of matching symbols
    */
-  searchInDescriptions(query: string, limit?: number): SymbolInfo[] {
-    const matchingSymbols = searchSymbolsByDescription(
+  async searchInDescriptions(
+    query: string,
+    limit?: number,
+  ): Promise<SymbolInfo[]> {
+    const matchingSymbols = await this.descriptionSearchService.search(
       query,
-      this.project,
-      limit,
+      limit ?? 10,
+      3,
     );
 
     return matchingSymbols.map((symbol) =>
       formatSymbolForLLM(symbol, Verbosity.SUMMARY),
     );
+  }
+
+  /**
+   * Searches for documentation titles containing a query.
+   * @param query - The search query
+   * @param limit - the maximum amount of results
+   * @returns Array of matching symbols
+   */
+  async searchInDocTitles(
+    query: string,
+    limit?: number,
+  ): Promise<{ document: DocumentReflection; title: string; slug: string }[]> {
+    const matchingSymbols = await this.documentationSearchService.search(
+      query,
+      limit ?? 10,
+      0.8,
+    );
+
+    return matchingSymbols.map((res) => ({
+      document: res.document,
+      title: res.title,
+      slug: res.slug,
+    }));
   }
 
   /**
@@ -609,11 +679,14 @@ export class TypeScriptApiHandlers {
    * @param args - The tool arguments
    * @returns The tool response
    */
-  handleSearchSymbols(args: SearchSymbolsParams) {
+  async handleSearchSymbols(args: SearchSymbolsParams) {
     const { query, kind, offset, limit } = args;
     const maxSearch = (limit ?? 10) + (offset ?? 0);
 
-    return paginateArray(this.searchSymbols(query, kind, maxSearch), args);
+    return paginateArray(
+      await this.searchSymbols(query, kind, maxSearch),
+      args,
+    );
   }
 
   /**
@@ -788,12 +861,12 @@ export class TypeScriptApiHandlers {
    * @param args - The tool arguments
    * @returns The tool response
    */
-  handleSearchByDescription(args: SearchByDescriptionParams) {
+  async handleSearchByDescription(args: SearchByDescriptionParams) {
     const { query, limit, offset } = args;
 
     // Search in descriptions
     return paginateArray(
-      this.searchInDescriptions(query, offset + limit),
+      await this.searchInDescriptions(query, offset + limit),
       args,
     );
   }
@@ -885,5 +958,45 @@ export class TypeScriptApiHandlers {
     }
 
     return "No page found";
+  }
+
+  private getIndexTextName(symbol: Reflection): string | undefined {
+    if (symbol instanceof ReferenceReflection) {
+      return;
+    }
+    switch (symbol.kind) {
+      case ReflectionKind.Namespace:
+        return "namespace " + symbol.getFullName();
+      case ReflectionKind.Module:
+        return "module " + symbol.getFullName();
+      case ReflectionKind.Variable:
+        return "variable " + symbol.getFullName();
+      case ReflectionKind.TypeAlias:
+        return "type " + symbol.getFullName();
+      case ReflectionKind.Interface:
+      case ReflectionKind.Function:
+      case ReflectionKind.Class:
+      case ReflectionKind.Enum:
+      case ReflectionKind.Method:
+      case ReflectionKind.EnumMember:
+        return symbol.name;
+      case ReflectionKind.Document:
+      default:
+        return undefined;
+    }
+  }
+
+  private getIndexDescriptionText(symbol: Reflection): string | undefined {
+    if (symbol instanceof DeclarationReflection && symbol.comment) {
+      return convertContentPlainText(symbol.comment.getShortSummary(true));
+    }
+    return undefined;
+  }
+
+  async dispose() {
+    await Promise.all([
+      this.descriptionSearchService?.dispose(),
+      this.nameSearchService?.dispose(),
+    ]);
   }
 }

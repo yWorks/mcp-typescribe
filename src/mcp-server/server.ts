@@ -99,7 +99,7 @@ export class TypescribeServer {
         const symbolMatch = uri.match(/^api:\/\/symbol\/(.+)$/);
         if (symbolMatch) {
           const symbolName = decodeURIComponent(symbolMatch[1]);
-          const results = handlers.searchSymbols(symbolName);
+          const results = await handlers.searchSymbols(symbolName);
 
           if (results.length === 0) {
             throw new McpError(

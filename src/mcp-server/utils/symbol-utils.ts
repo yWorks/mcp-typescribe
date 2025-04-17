@@ -61,7 +61,7 @@ export function createMdApiLink(text: string, id: number) {
 }
 
 export function convertContent(
-  parts: CommentDisplayPart[] | undefined,
+  parts: readonly CommentDisplayPart[] | undefined,
   summaryOnly = false,
 ): string {
   let stop = false;
@@ -86,6 +86,46 @@ export function convertContent(
           if (typeof part.target === "number") {
             return `${createDocLink(part.target, undefined, part.targetAnchor)}`;
           }
+        } else if (part.kind === "text") {
+          if (summaryOnly) {
+            if (part.text.includes(".\n")) {
+              const trimmedText = part.text.substring(
+                0,
+                part.text.indexOf(".\n"),
+              );
+              stop = true;
+              return trimmedText.trim() + "...";
+            }
+            if (part.text.trim().endsWith(".")) {
+              stop = true;
+              return part.text;
+            }
+          }
+        }
+        return part.text;
+      })
+      ?.join("")
+      ?.replace(/(\r)?\n/g, "\n")
+      ?.trim() ?? ""
+  );
+}
+
+export function convertContentPlainText(
+  parts: readonly CommentDisplayPart[] | undefined,
+  summaryOnly = false,
+): string {
+  let stop = false;
+  return (
+    parts
+      ?.map((part) => {
+        if (stop) return "";
+        if (part.kind === "code") {
+          return "`" + part.text + "`";
+        }
+        if (part.kind === "inline-tag") {
+          return part.text;
+        } else if (part.kind === "relative-link") {
+          return part.text;
         } else if (part.kind === "text") {
           if (summaryOnly) {
             if (part.text.includes(".\n")) {

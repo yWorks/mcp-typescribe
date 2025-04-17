@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { Verbosity } from "../src/mcp-server/types.js";
 import { extractSection, loadApiDocs } from "../src/index.js";
 import { paginateArray, SearchResult } from "../src/index.js";
@@ -71,6 +71,10 @@ describe("TypeScriptApiHandlers", () => {
 
   beforeAll(() => {
     handlers = apiJson;
+  });
+
+  afterAll(async () => {
+    await handlers.dispose();
   });
 
   describe("getApiOverview", () => {
@@ -174,32 +178,32 @@ Some text 7
   });
 
   describe("searchSymbols", () => {
-    it("should find symbols by name", () => {
-      const results = handlers.searchSymbols("Task");
+    it("should find symbols by name", async () => {
+      const results = await handlers.searchSymbols("Task");
 
       expect(results.length).toBeGreaterThan(0);
       expect(results.some((r) => r.name === "TaskStatus")).toBe(true);
     });
 
-    it("should filter symbols by kind", () => {
-      const results = handlers.searchSymbols("Uffgabe", "Class");
+    it("should filter symbols by kind", async () => {
+      const results = await handlers.searchSymbols("Uffgabe", "Class");
 
       expect(results.length).toBeGreaterThan(0);
       expect(results.every((r) => r.kind === "Class")).toBe(true);
       expect(results.some((r) => r.name === "UffgabeFaehler")).toBe(true);
     });
 
-    it("should limit the number of results", () => {
-      const results = handlers.searchSymbols("", undefined, 2);
+    it("should limit the number of results", async () => {
+      const results = await handlers.searchSymbols("", undefined, 2);
 
       expect(results.length).toBeLessThanOrEqual(2);
     });
   });
 
   describe("getMembers", () => {
-    it("should get members of a class", () => {
+    it("should get members of a class", async () => {
       // First find the class
-      const classResults = handlers.searchSymbols("Uffgabe", "Class");
+      const classResults = await handlers.searchSymbols("Uffgabe", "Class");
       expect(classResults.length).toBe(2);
       expect(classResults[0].name).toBe("UffgabeFaehler");
       expect(classResults[0].children).not.toBeDefined();
@@ -221,9 +225,12 @@ Some text 7
   });
 
   describe("findImplementations", () => {
-    it("should find implementations of an interface", () => {
+    it("should find implementations of an interface", async () => {
       // First find the interface
-      const interfaceResults = handlers.searchSymbols("Kerle", "Interface");
+      const interfaceResults = await handlers.searchSymbols(
+        "Kerle",
+        "Interface",
+      );
       expect(interfaceResults.length).toBeGreaterThan(0);
 
       // Get the interface symbol from the handlers
@@ -252,9 +259,9 @@ Some text 7
   });
 
   describe("getParameters", () => {
-    it("should get parameters of a function", () => {
+    it("should get parameters of a function", async () => {
       // First find the function
-      const functionResults = handlers.searchSymbols(
+      const functionResults = await handlers.searchSymbols(
         "sortByPriority",
         "Function",
       );
@@ -277,8 +284,8 @@ Some text 7
   });
 
   describe("searchInDescriptions", () => {
-    it("should find symbols with descriptions containing a query", () => {
-      const results = handlers.searchInDescriptions("task");
+    it("should find symbols with descriptions containing a query", async () => {
+      const results = await handlers.searchInDescriptions("task");
 
       expect(results.length).toBeGreaterThan(0);
       expect(results.some((r) => r.name === "TaskStatus")).toBe(true);
@@ -286,28 +293,28 @@ Some text 7
       expect(
         results.some((r) => r.description?.toLowerCase().includes("task")),
       ).toBe(true);
-    });
+    }, 15000);
   });
 
   describe("paging", () => {
-    it("should support the limit argument", () => {
+    it("should support the limit argument", async () => {
       const limit = 3;
       const offset = 0;
 
       const allResults = paginateArray(
-        handlers.searchSymbols("task", "any"),
+        await handlers.searchSymbols("task", "any"),
         {},
       );
       expectArray(allResults);
       expect(allResults.length).toBe(8);
 
       const firstPage = paginateArray(
-        handlers.searchSymbols("task", "any", 4),
+        await handlers.searchSymbols("task", "any", 4),
         { limit, offset: 0 },
       );
 
       const secondPage = paginateArray(
-        handlers.searchSymbols("task", "any", 6),
+        await handlers.searchSymbols("task", "any", 6),
         { limit, offset: limit },
       );
 
@@ -320,7 +327,11 @@ Some text 7
       expect(secondPage.result[0].id).toBe(allResults[limit].id);
 
       const thirdPage = paginateArray(
-        handlers.searchSymbols("task", "any", limit + limit + limit + offset),
+        await handlers.searchSymbols(
+          "task",
+          "any",
+          limit + limit + limit + offset,
+        ),
         { limit, offset: limit + limit },
       );
       expectSearchResult(thirdPage);
@@ -329,9 +340,12 @@ Some text 7
   });
 
   describe("getTypeHierarchy", () => {
-    it("should get the type hierarchy of a class", () => {
+    it("should get the type hierarchy of a class", async () => {
       // First find the class
-      const classResults = handlers.searchSymbols("TaschgInEcht", "Class");
+      const classResults = await handlers.searchSymbols(
+        "TaschgInEcht",
+        "Class",
+      );
       expect(classResults.length).toBeGreaterThan(0);
 
       // Get the class symbol from the handlers
@@ -368,8 +382,8 @@ Some text 7
 
   // Test the handler methods
   describe("handleSearchSymbols", () => {
-    it("should handle search_symbols tool", () => {
-      const result = handlers.handleSearchSymbols({
+    it("should handle search_symbols tool", async () => {
+      const result = await handlers.handleSearchSymbols({
         query: "prettyPrintTaskStatus",
       });
 

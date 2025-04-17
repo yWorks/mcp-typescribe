@@ -295,14 +295,38 @@ export function paginateArray<T>(
   return result;
 }
 
+// Function to convert a heading to a slug
+export function toSlug(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+export function extractHeadingsAndSlugs(content: string) {
+  // Split the markdown content into lines
+  const lines = content.split("\n");
+  const titles: { text: string; slug: string }[] = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    // Match headings in markdown (e.g., "# Heading" or "## Subheading")
+    const headingMatch = line.match(/^#+\s+(.*)/);
+
+    if (headingMatch) {
+      let [, headingText] = headingMatch;
+      headingText = headingText.trim();
+      const currentSlug = toSlug(headingText);
+      titles.push({ text: headingText, slug: currentSlug });
+    }
+  }
+
+  return titles;
+}
+
 export function extractSection(content: string, section: string) {
   const breadcrumbs: [title: string, slug: string][] = [];
-  // Function to convert a heading to a slug
-  const toSlug = (text: string): string =>
-    text
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
 
   // Split the markdown content into lines
   const lines = content.split("\n");

@@ -14,23 +14,24 @@ import {
   SignatureReflection,
 } from "typedoc";
 import { Verbosity } from "../types.js";
+import { SearchService } from "../core/index.js";
 
 /**
  * Searches for symbols by name.
  *
  * @param query - The search query
  * @param project - The project to search
- * @param kind - Optional kind filter
- * @param limit - Optional result limit
  * @returns Array of matching symbols
  */
-export function searchSymbolsByName(
+export async function searchSymbolsByName(
   query: string,
   project: ProjectReflection,
-  kind?: ReflectionKind.KindString | "any",
-  limit?: number,
-): DeclarationReflection[] {
-  const results: DeclarationReflection[] = [];
+  kind: ReflectionKind.KindString | "any" | undefined,
+  limit: number | undefined,
+  descriptionSearchService: SearchService<DeclarationReflection>,
+): Promise<DeclarationReflection[]> {
+  limit ??= 100;
+  let results: DeclarationReflection[] = [];
   const queryLower = query.toLowerCase();
 
   traverseAll(project, (symbol) => {
@@ -53,6 +54,15 @@ export function searchSymbolsByName(
     // Apply limit if specified
     return !(limit && results.length >= limit);
   });
+
+  if (results.length == 0) {
+    const extraResults = await descriptionSearchService.search(
+      query,
+      limit - results.length,
+      0.4,
+    );
+    results = results.concat(extraResults);
+  }
 
   return results;
 }
