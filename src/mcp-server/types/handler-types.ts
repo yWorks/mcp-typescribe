@@ -2,51 +2,28 @@ import { z } from "zod";
 import { ReflectionKind } from "typedoc";
 
 // Base handler schema
-const baseHandlerSchema = z
-  .object({
-    name: z
-      .string()
-      .optional()
-      .describe("The name of the symbol to search for"),
-    id: z.number().optional().describe("The ID# of the symbol to search for"),
-    names: z
-      .array(z.string())
-      .min(1)
-      .optional()
-      .describe("An array of names to search for"),
-    ids: z
-      .array(z.number())
-      .min(1)
-      .optional()
-      .describe("An array of ID#s to search for"),
-  })
-  .refine(
-    (data) => {
-      let setProperties = 0;
-      if (data.name !== undefined) setProperties++;
-      if (data.id !== undefined) setProperties++;
-      if (data.names !== undefined) setProperties++;
-      if (data.ids !== undefined) setProperties++;
-
-      return setProperties === 1;
-    },
-    {
-      message: "Exactly one of 'name', 'id', 'names', or 'ids' must be set.",
-      path: ["name", "id", "names", "ids"], // Specify all paths to highlight errors on all fields
-    },
-  );
+const baseHandlerSchema = z.object({
+  name: z.string().optional().describe("The name of the symbol to search for"),
+  id: z.number().optional().describe("The ID# of the symbol to search for"),
+  names: z
+    .array(z.string())
+    .optional()
+    .describe("An array of names to search for"),
+  ids: z
+    .array(z.number())
+    .optional()
+    .describe("An array of ID#s to search for"),
+});
 
 const baseHandlerSchemaWithPagination = z.object({
   name: z.string().optional().describe("The name of the symbol to search for"),
   id: z.number().optional().describe("The ID# of the symbol to search for"),
   names: z
     .array(z.string())
-    .min(1)
     .optional()
     .describe("An array of names to search for"),
   ids: z
     .array(z.number())
-    .min(1)
     .optional()
     .describe("An array of ID#s to search for"),
   limit: z
@@ -120,7 +97,6 @@ const getSymbolDetailsSchema = baseHandlerSchemaWithPagination.describe(
 
 // List members schema
 const listMembersSchema = baseHandlerSchema
-  .sourceType()
   .extend({
     includeInherited: z
       .boolean()

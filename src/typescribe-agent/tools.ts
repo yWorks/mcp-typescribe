@@ -116,7 +116,9 @@ export function createTools(file: string, prefix: string = "") {
     return tool<JSONSchema>(
       async (params) => {
         return stringify(
-          (await getApiHandler())[schema.target](params as unknown as never),
+          await (
+            await getApiHandler()
+          )[schema.target](params as unknown as never),
         );
       },
       {

@@ -204,10 +204,10 @@ export class TypescribeServer {
     this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
       const { name, arguments: args } = request.params;
 
-      function switchHandlers() {
+      async function switchHandlers() {
         switch (name) {
           case "search_symbols":
-            return handlers.handleSearchSymbols(
+            return await handlers.handleSearchSymbols(
               schemas.search_symbols.parse(args),
             );
           case "get_symbol_details":
@@ -242,7 +242,7 @@ export class TypescribeServer {
         }
       }
 
-      return createHandlerResponse(switchHandlers());
+      return createHandlerResponse(await switchHandlers());
     });
   }
 
