@@ -167,7 +167,7 @@ Some text 7
       expect(result).toContain("README");
     });
     it("should include api-doc links in descriptions", async () => {
-      const result = await handlers.handleGetSymbolDetails({ name: "Kerle" });
+      const result = handlers.handleGetSymbolDetails({ name: "Kerle" });
       expect(result).toHaveLength(2);
       expect(result).toBeDefined();
       expect(result[0].kind).toBe("Interface");
