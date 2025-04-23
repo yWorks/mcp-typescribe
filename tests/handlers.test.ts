@@ -193,10 +193,31 @@ Some text 7
       expect(results.some((r) => r.name === "UffgabeFaehler")).toBe(true);
     });
 
+    it("should filter symbols by kind", async () => {
+      const results = await handlers.searchSymbols("Uffgabe", "Interface");
+
+      expect(results.length).toBeGreaterThan(0);
+      expect(results[0].name).toBe("Uffgabe");
+      expect(results.every((r) => r.kind === "Interface")).toBe(true);
+    });
+
     it("should limit the number of results", async () => {
       const results = await handlers.searchSymbols("", undefined, 2);
-
       expect(results.length).toBeLessThanOrEqual(2);
+    });
+    it("should find symbols by fuzzy name", async () => {
+      const results = await handlers.searchSymbols(
+        "task options",
+        undefined,
+        5,
+      );
+      expect(results.length).toBeGreaterThan(0);
+      expect(results[0].name).toBe("TaskOptions");
+    });
+    it("should find symbols by description", async () => {
+      const results = await handlers.searchInDescriptions("Represents a task");
+      expect(results.length).toBeGreaterThan(0);
+      expect(results[0].name).toBe("TaskStatus");
     });
   });
 

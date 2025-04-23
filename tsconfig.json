@@ -7,14 +7,15 @@
     "strict": true,
     "noEmit": false,
     "outDir": "dist",
-    "declaration": false,
+    "declaration": true,
     "sourceMap": true,
     "rootDir": "src"
   },
   "include": [
     "src/mcp-server/**/*",
     "src/typescribe-agent/**/*",
-    "src/sample-api/**/*"
+    "src/sample-api/**/*",
+    "src/index.ts"
   ],
   "exclude": ["node_modules", "dist"]
 }

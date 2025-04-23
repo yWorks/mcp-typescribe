@@ -32,6 +32,8 @@ import { Verbosity } from "../types.js";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 
 export function stringify(json: unknown): string {
+  console.error("returning");
+  console.error(json);
   return yamlStringify(json, null, { lineWidth: 0 });
 }
 

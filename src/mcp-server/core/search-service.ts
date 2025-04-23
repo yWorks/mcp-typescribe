@@ -5,6 +5,15 @@ const HierarchicalNSW = HNSW.HierarchicalNSW;
 
 type Entry<T> = { label: number; embedding: number[]; t: T };
 
+let pipePromise: Promise<FeatureExtractionPipeline>;
+
+function getPipeline(): Promise<FeatureExtractionPipeline> {
+  return (pipePromise ??= pipeline(
+    "feature-extraction",
+    "Xenova/all-MiniLM-L6-v2",
+  ));
+}
+
 export class VectorDB<T> {
   db: HNSW.HierarchicalNSW;
   private size: number;
@@ -18,9 +27,8 @@ export class VectorDB<T> {
     this.db.initIndex((this.size = 100));
     this.cache = new Map();
 
-    let pipe: FeatureExtractionPipeline;
     this.embed = async function embed(text: string): Promise<number[]> {
-      pipe ??= await pipeline("feature-extraction", "Xenova/all-MiniLM-L6-v2");
+      const pipe = await getPipeline();
       const res = await pipe(text, { pooling: "mean", normalize: true });
       return Array.from(res["data"]);
     };
@@ -72,7 +80,10 @@ export class VectorDB<T> {
     if (this.entries.length < num) {
       num = this.entries.length;
     }
-    const { distances, neighbors } = this.db.searchKnn(embedding, num);
+    const { distances, neighbors } = this.db.searchKnn(
+      embedding,
+      Math.max(num, 10),
+    );
     const results: { value: T; distance: number }[] = [];
 
     for (let i = 0; i < distances.length; i++) {
@@ -82,6 +93,10 @@ export class VectorDB<T> {
           distance: distances[i],
         });
       }
+    }
+    results.sort((a, b) => a.distance - b.distance);
+    if (results.length > num) {
+      results.length = num;
     }
     return results;
   }
@@ -98,7 +113,7 @@ export class SearchService<T> {
 
   add(title: string | undefined, data: T): void {
     if (!title || title.length < 3) {
-      throw new Error();
+      return;
     }
     this.count++;
 

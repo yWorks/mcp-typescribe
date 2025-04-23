@@ -32,34 +32,56 @@ export async function searchSymbolsByName(
 ): Promise<DeclarationReflection[]> {
   limit ??= 100;
   let results: DeclarationReflection[] = [];
-  const queryLower = query.toLowerCase();
 
-  traverseAll(project, (symbol) => {
-    if (!symbol.name || symbol instanceof ReferenceReflection) return true;
+  function exactMatch(a: string, b: string) {
+    return a === b;
+  }
 
-    // Check if name matches query
-    if (symbol.name.toLowerCase().includes(queryLower)) {
-      // Filter by kind if specified
-      if (
-        kind &&
-        kind !== "any" &&
-        getKindName(symbol.kind).toLowerCase() !== kind.toLowerCase()
-      ) {
-        return true;
+  function caseInsensitiveMatch(a: string, b: string) {
+    return a.toLowerCase() === b.toLowerCase();
+  }
+
+  function partialMatch(a: string, b: string) {
+    return a.toLowerCase().includes(b.toLowerCase());
+  }
+
+  const matches = [exactMatch, caseInsensitiveMatch, partialMatch];
+
+  const resultSet = new Set<DeclarationReflection>();
+
+  for (const match of matches) {
+    traverseAll(project, (symbol) => {
+      if (!symbol.name || symbol instanceof ReferenceReflection) return true;
+
+      // Check if name matches query
+      if (match(symbol.name, query)) {
+        // Filter by kind if specified
+        if (
+          kind &&
+          kind !== "any" &&
+          getKindName(symbol.kind).toLowerCase() !== kind.toLowerCase()
+        ) {
+          return true;
+        }
+
+        if (!resultSet.has(symbol)) {
+          resultSet.add(symbol);
+          results.push(symbol);
+        }
       }
 
-      results.push(symbol);
-    }
+      // Apply limit if specified
+      return !(limit && results.length >= limit);
+    });
 
-    // Apply limit if specified
-    return !(limit && results.length >= limit);
-  });
+    if (results.length >= limit) break;
+  }
 
   if (results.length == 0) {
     const extraResults = await descriptionSearchService.search(
       query,
       limit - results.length,
-      0.4,
+      0.8,
     );
     results = results.concat(extraResults);
   }

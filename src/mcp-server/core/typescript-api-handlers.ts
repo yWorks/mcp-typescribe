@@ -71,10 +71,7 @@ export const loadApiDocs = async (
     const apiDocs = JSON.parse(data) as JSONOutput.ProjectReflection;
 
     // Initialize handlers
-    const handlers = new TypeScriptApiHandlers(apiDocs);
-
-    console.error(`Loaded API documentation with symbols`);
-    return handlers;
+    return new TypeScriptApiHandlers(apiDocs);
   } catch (error) {
     console.error("Failed to load API documentation:", error);
     throw error;
