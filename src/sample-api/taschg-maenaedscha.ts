@@ -180,6 +180,28 @@ export class TaschgMaenaedscha<T = any> {
   private nextId: number = 1;
 
   /**
+   * Creates a new TaskManager instance with default values.
+   */
+  constructor();
+  /**
+   * Creates a new TaskManager instance with a given first id to use.
+   */
+  constructor(nextId: number);
+  /**
+   * Creates a new TaskManager instance with a given initial set of tasks.
+   */
+  constructor(tasks: Map<string, TaschgInEcht<T>>);
+  constructor(...args: [number] | [Map<string, TaschgInEcht<T>>] | []) {
+    if (args.length === 1) {
+      if (args[0] instanceof Map) {
+        this.tasks = args[0];
+      } else {
+        this.nextId = args[0];
+      }
+    }
+  }
+
+  /**
    * Creates a new task.
    *
    * @param title - Task title

@@ -392,6 +392,7 @@ export class TypeScriptApiHandlers {
     if (Array.isArray(symbol.children)) {
       for (const child of symbol.children) {
         if (
+          child.kind === ReflectionKind.Constructor ||
           child.kind === ReflectionKind.Property ||
           child.kind === ReflectionKind.EnumMember ||
           child.kind === ReflectionKind.Method

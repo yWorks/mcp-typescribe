@@ -8,7 +8,6 @@ import {
 } from "../src/index.js";
 import { paginateArray, SearchResult } from "../src/index.js";
 import { TypeScriptApiHandlers } from "../src/index.js";
-import { RESOURCE_TEMPLATE_DEFINITIONS } from "../src/index.js";
 
 function expectSearchResult<T>(
   result: T[] | SearchResult<T> | undefined,
@@ -240,13 +239,50 @@ Some text 7
       // Get the class symbol from the handlers
       const members = handlers.handleListMembers({ name: "TaschgMaenaedscha" });
 
-      expect(members.length).toBe(6);
+      expect(members.length).toBe(7);
       const member = members.filter((m) => m.name === "bauWatt");
       expect(member).toHaveLength(1);
-      expect(member[0].id).toBe(69);
+      expect(member[0].id).toBe(75);
       expect(member[0].description).toBe(
         "Creates a new task.\n" +
           "Signature: bauWatt(title:string,description:string,priority:Priority,options:TaskOptions):TaschgInEcht<T>\n",
+      );
+    });
+    it("should list method overloads", async () => {
+      const members = handlers.handleListMembers({ name: "TaschgInEcht" });
+      expect(members.length).toBeGreaterThan(10);
+      expect(
+        members.filter((value) => value.name === "ueberladeNeueWerte").length,
+      ).toBe(1);
+      const overload = members.find(
+        (value) => value.name === "ueberladeNeueWerte",
+      );
+      expect(overload?.description).toContain(
+        "ueberladeNeueWerte(status:TaskStatus):this",
+      );
+      expect(overload?.description).toContain(
+        "ueberladeNeueWerte(data:T):this",
+      );
+      expect(overload?.description).toContain(
+        "ueberladeNeueWerte(status:TaskStatus,data:T):this",
+      );
+    });
+    it("should list constructor overloads", async () => {
+      const members = handlers.handleListMembers({ name: "TaschgMaenaedscha" });
+      expect(members.length).toBeGreaterThan(3);
+      console.log(members);
+      expect(
+        members.filter((value) => value.name === "constructor").length,
+      ).toBe(1);
+      const overload = members.find((value) => value.name === "constructor");
+      expect(overload?.description).toContain(
+        "constructor() => TaschgMaenaedscha<T>",
+      );
+      expect(overload?.description).toContain(
+        "constructor(nextId:number) => TaschgMaenaedscha<T>",
+      );
+      expect(overload?.description).toContain(
+        "constructor(tasks:Map<string, TaschgInEcht<T>>) => TaschgMaenaedscha<T>",
       );
     });
   });

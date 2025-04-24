@@ -19,7 +19,6 @@ import { formatType } from "./type-utils.js";
 import {
   DOCUMENTATION_RESOURCE_TEMPLATE_DEFINITION,
   DOCUMENTATION_SECTION_RESOURCE_TEMPLATE_DEFINITION,
-  RESOURCE_TEMPLATE_DEFINITIONS,
 } from "../schemas/index.js";
 import { UriTemplate } from "@modelcontextprotocol/sdk/shared/uriTemplate.js";
 
