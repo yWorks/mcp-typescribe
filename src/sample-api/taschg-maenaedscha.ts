@@ -95,6 +95,39 @@ export class TaschgInEcht<T = any> implements Uffgabe<T> {
   }
 
   /**
+   * Updates the state of the task.
+   *
+   * @param data - New data to set
+   * @returns The updated task
+   * @param status new state
+   */
+  ueberladeNeueWerte(status: TaskStatus): this;
+  /**
+   * Updates the data of the task.
+   *
+   * @param data - New data to set
+   * @returns The updated task
+   */
+  ueberladeNeueWerte(data: T): this;
+  /**
+   * Updates the state and data of the task.
+   *
+   * @param data - New data to set
+     @param status - New status to set   
+   * @returns The updated task
+   */
+  ueberladeNeueWerte(status: TaskStatus, data: T): this;
+  ueberladeNeueWerte(p1: T | TaskStatus, data?: T): this {
+    if (typeof p1 === "number") {
+      this.status = p1 as unknown as TaskStatus;
+    }
+    if (arguments.length === 2) {
+      this.data = data;
+    }
+    return this;
+  }
+
+  /**
    * Assigns the task to a user.
    *
    * @param user - User to assign the task to

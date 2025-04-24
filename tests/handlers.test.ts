@@ -1,6 +1,11 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { Verbosity } from "../src/mcp-server/types.js";
-import { extractSection, loadApiDocs } from "../src/index.js";
+import {
+  DOCUMENTATION_RESOURCE_TEMPLATE_DEFINITION,
+  DOCUMENTATION_SECTION_RESOURCE_TEMPLATE_DEFINITION,
+  extractSection,
+  loadApiDocs,
+} from "../src/index.js";
 import { paginateArray, SearchResult } from "../src/index.js";
 import { TypeScriptApiHandlers } from "../src/index.js";
 import { RESOURCE_TEMPLATE_DEFINITIONS } from "../src/index.js";
@@ -23,7 +28,7 @@ function expectArray<T>(
 
 describe("mcp-api", () => {
   it("should parse an uri", () => {
-    const uriTemplate = RESOURCE_TEMPLATE_DEFINITIONS[2].uriTemplate;
+    const uriTemplate = DOCUMENTATION_RESOURCE_TEMPLATE_DEFINITION.uriTemplate;
     const variables = uriTemplate.match("api://doc/1?pageOffset=2");
 
     expect(variables).toBeDefined();
@@ -37,7 +42,8 @@ describe("mcp-api", () => {
     expect(expandedShort).toBe("api://doc/1");
   });
   it("should parse a section uri", () => {
-    const uriTemplate = RESOURCE_TEMPLATE_DEFINITIONS[3].uriTemplate;
+    const uriTemplate =
+      DOCUMENTATION_SECTION_RESOURCE_TEMPLATE_DEFINITION.uriTemplate;
     const variables = uriTemplate.match("api://doc/1/slug?pageOffset=2");
 
     expect(variables).toBeDefined();
