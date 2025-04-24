@@ -193,6 +193,17 @@ export function getDescription(
       description += getDescription(sig, verbosity) + "\n";
     });
   }
+  if (
+    symbol.kind === ReflectionKind.Accessor &&
+    symbol instanceof DeclarationReflection
+  ) {
+    if (symbol.getSignature) {
+      description += getDescription(symbol.getSignature, verbosity) + "\n";
+    }
+    if (symbol.setSignature) {
+      description += getDescription(symbol.setSignature, verbosity) + "\n";
+    }
+  }
 
   return description.length > 0 ? description : undefined;
 }
@@ -248,7 +259,7 @@ export function getSignature(symbol: Reflection, verbosity: Verbosity) {
  * @returns The simplified symbol info
  */
 export function createSymbolInfo(
-  symbol: DeclarationReflection,
+  symbol: Reflection,
   verbosity: Verbosity,
 ): SymbolInfo {
   return {

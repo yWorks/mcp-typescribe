@@ -106,7 +106,7 @@ export function formatSymbolForLLM(
     };
   }
 
-  const info = createSymbolInfo(symbol as DeclarationReflection, verbosity);
+  const info = createSymbolInfo(symbol, verbosity);
 
   if (symbol instanceof SignatureReflection) {
     const decl = symbol;
@@ -124,7 +124,11 @@ export function formatSymbolForLLM(
       info.description +=
         "\n\n{\n" +
         symbol.children
-          .filter((c) => c.kind === ReflectionKind.Property)
+          .filter(
+            (c) =>
+              c.kind === ReflectionKind.Property ||
+              c.kind === ReflectionKind.Accessor,
+          )
           .map(
             (c) =>
               `  ${c.comment ? "/** " + convertContent(c.comment.summary, true) + " */\n  " : ""}"${c.name}": ${formatType(c.type, "none", innerVerbosity)}${c.flags.isOptional ? "?" : ""}`,

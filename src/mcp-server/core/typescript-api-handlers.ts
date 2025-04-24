@@ -131,6 +131,7 @@ export class TypeScriptApiHandlers {
       ReflectionKind.Method,
       ReflectionKind.EnumMember,
       ReflectionKind.Property,
+      ReflectionKind.Accessor,
       ReflectionKind.Module,
       ReflectionKind.Variable,
       ReflectionKind.Constructor,
@@ -388,6 +389,8 @@ export class TypeScriptApiHandlers {
       return members;
     }
 
+    const providedNames = new Set<string>();
+
     // Add direct members
     if (Array.isArray(symbol.children)) {
       for (const child of symbol.children) {
@@ -395,31 +398,42 @@ export class TypeScriptApiHandlers {
           child.kind === ReflectionKind.Constructor ||
           child.kind === ReflectionKind.Property ||
           child.kind === ReflectionKind.EnumMember ||
-          child.kind === ReflectionKind.Method
+          child.kind === ReflectionKind.Method ||
+          child.kind === ReflectionKind.Accessor
         ) {
           const memberInfo = formatSymbolForLLM(child, verbosity);
           memberInfo.inherited = false;
           members.push(memberInfo);
+          providedNames.add(child.name);
         }
       }
     }
 
     // Add inherited members if requested
-    if (includeInherited && Array.isArray(symbol.extendedTypes)) {
-      for (const extendedType of symbol.extendedTypes) {
-        if (
-          extendedType instanceof ReferenceType &&
-          extendedType.reflection instanceof DeclarationReflection
-        ) {
-          const parentMembers = this.getMembers(
-            extendedType.reflection,
-            true,
-            verbosity,
-          );
+    if (includeInherited) {
+      const classes = Array.isArray(symbol.extendedTypes)
+        ? symbol.extendedTypes
+        : [];
+      const interfaces = Array.isArray(symbol.implementedTypes)
+        ? symbol.implementedTypes
+        : [];
+
+      const extendedTypes = [...classes, ...interfaces];
+
+      for (const extendedType of extendedTypes) {
+        const effectiveType =
+          extendedType instanceof ReferenceType
+            ? extendedType.reflection
+            : extendedType;
+        if (effectiveType instanceof DeclarationReflection) {
+          const parentMembers = this.getMembers(effectiveType, true, verbosity);
           for (const member of parentMembers) {
-            member.inherited = true;
-            member.inheritedFrom = extendedType.name;
-            members.push(member);
+            // omit duplicate inherited members
+            if (!providedNames.has(member.name)) {
+              member.inherited = true;
+              member.inheritedFrom = effectiveType.name;
+              members.push(member);
+            }
           }
         }
       }
@@ -750,26 +764,26 @@ export class TypeScriptApiHandlers {
   handleListMembers(args: ListMembersParams) {
     const { includeInherited = false } = args;
 
-    const symbols = this.lookupSymbols(args);
+    const symbols = this.lookupSymbols(args).filter(
+      (value) =>
+        value.kind == ReflectionKind.Class ||
+        value.kind == ReflectionKind.Interface ||
+        value.kind == ReflectionKind.Enum ||
+        value.kind == ReflectionKind.Module ||
+        value.kind == ReflectionKind.Namespace ||
+        value.kind == ReflectionKind.TypeAlias,
+    );
 
     const results: SymbolInfo[] = [];
 
-    for (const symbol of symbols) {
-      // Check if symbol is a class or interface
-      if (
-        symbol.kind !== ReflectionKind.Class &&
-        symbol.kind !== ReflectionKind.Interface &&
-        symbol.kind !== ReflectionKind.Enum &&
-        symbol.kind !== ReflectionKind.Module &&
-        symbol.kind !== ReflectionKind.Namespace &&
-        symbol.kind !== ReflectionKind.TypeAlias
-      ) {
-        throw new McpError(
-          ErrorCode.InvalidParams,
-          `Symbol is not a class, interface, enum, namespace, type, or module: ${symbol.name} (${getKindName(symbol.kind)})`,
-        );
-      }
+    if (symbols.length === 0) {
+      throw new McpError(
+        ErrorCode.InvalidParams,
+        `No class, interface, enum, namespace, type, or module members found`,
+      );
+    }
 
+    for (const symbol of symbols) {
       // Get members
       const members = this.getMembers(
         symbol,
@@ -779,7 +793,7 @@ export class TypeScriptApiHandlers {
       results.push(...members);
     }
 
-    return results;
+    return paginateArray(results, args);
   }
 
   /**

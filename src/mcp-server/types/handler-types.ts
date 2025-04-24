@@ -107,7 +107,7 @@ const listMembersSchema = baseHandlerSchema
       ),
     limit: z
       .number()
-      .default(20)
+      .default(30)
       .optional()
       .describe(
         "The maximum number of members to return. If not specified only the first 20 results will be returned. ",

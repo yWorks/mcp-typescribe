@@ -239,6 +239,8 @@ Some text 7
       // Get the class symbol from the handlers
       const members = handlers.handleListMembers({ name: "TaschgMaenaedscha" });
 
+      expectArray(members);
+
       expect(members.length).toBe(7);
       const member = members.filter((m) => m.name === "bauWatt");
       expect(member).toHaveLength(1);
@@ -248,8 +250,69 @@ Some text 7
           "Signature: bauWatt(title:string,description:string,priority:Priority,options:TaskOptions):TaschgInEcht<T>\n",
       );
     });
+    it("should support paging for members of a class", async () => {
+      // Get the class symbol from the handlers
+      const allResults = handlers.handleListMembers({
+        name: "TaschgMaenaedscha",
+      });
+      expectArray(allResults);
+      expect(allResults.length).toBe(7);
+      {
+        // Get the class symbol from the handlers
+        const result = handlers.handleListMembers({
+          name: "TaschgMaenaedscha",
+          limit: 3,
+        });
+
+        expectSearchResult(result);
+        expect(result.total).toBe(7);
+        expect(result.offset).toBe(0);
+        const members = result.result;
+
+        expect(members.length).toBe(3);
+        const member = members.filter((m) => m.name === "bauWatt");
+        expect(member).toHaveLength(1);
+        expect(member[0].id).toBe(75);
+        expect(member[0].description).toBe(
+          "Creates a new task.\n" +
+            "Signature: bauWatt(title:string,description:string,priority:Priority,options:TaskOptions):TaschgInEcht<T>\n",
+        );
+        expect(members[0].id).toBe(allResults[0].id);
+      }
+      {
+        // Get the class symbol from the handlers
+        const result = handlers.handleListMembers({
+          name: "TaschgMaenaedscha",
+          limit: 3,
+          offset: 3,
+        });
+
+        expectSearchResult(result);
+        expect(result.total).toBe(7);
+        expect(result.offset).toBe(3);
+        const members = result.result;
+        expect(members.length).toBe(3);
+        expect(members[0].id).toBe(allResults[3].id);
+      }
+      {
+        // Get the class symbol from the handlers
+        const result = handlers.handleListMembers({
+          name: "TaschgMaenaedscha",
+          limit: 3,
+          offset: 6,
+        });
+
+        expectSearchResult(result);
+        expect(result.total).toBe(7);
+        expect(result.offset).toBe(6);
+        const members = result.result;
+        expect(members.length).toBe(1);
+        expect(members[0].id).toBe(allResults[6].id);
+      }
+    });
     it("should list method overloads", async () => {
       const members = handlers.handleListMembers({ name: "TaschgInEcht" });
+      expectArray(members);
       expect(members.length).toBeGreaterThan(10);
       expect(
         members.filter((value) => value.name === "ueberladeNeueWerte").length,
@@ -269,6 +332,7 @@ Some text 7
     });
     it("should list constructor overloads", async () => {
       const members = handlers.handleListMembers({ name: "TaschgMaenaedscha" });
+      expectArray(members);
       expect(members.length).toBeGreaterThan(3);
       console.log(members);
       expect(
@@ -475,6 +539,7 @@ Some text 7
     it("should handle list_symbols tool", () => {
       const result = handlers.handleListMembers({ name: "TaskStatus" });
 
+      expectArray(result);
       expect(result.length).toBe(5);
       expect(result[0].kind).toBe("EnumMember");
       expect(result[0].name).toBe("FERTIG");
@@ -482,6 +547,7 @@ Some text 7
     it("should handle list_symbols tool for modules", () => {
       const result = handlers.handleListMembers({ name: "types" });
 
+      expectArray(result);
       expect(result.length).toBe(8);
       expect(result[0].name).toBe("Kerle");
       expect(result[0].kind).toBe("Namespace");

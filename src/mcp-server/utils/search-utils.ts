@@ -151,7 +151,8 @@ export function findSymbolsByReturnType(
   const symbols2 = symbols
     .getReflectionsByKind(ReflectionKind.Method)
     .concat(symbols.getReflectionsByKind(ReflectionKind.Function))
-    .concat(symbols.getReflectionsByKind(ReflectionKind.Property));
+    .concat(symbols.getReflectionsByKind(ReflectionKind.Property))
+    .concat(symbols.getReflectionsByKind(ReflectionKind.Accessor));
 
   for (const symbol of symbols2) {
     if (
