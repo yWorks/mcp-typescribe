@@ -243,7 +243,7 @@ Some text 7
       expect(members.length).toBe(6);
       const member = members.filter((m) => m.name === "bauWatt");
       expect(member).toHaveLength(1);
-      expect(member[0].id).toBe(61);
+      expect(member[0].id).toBe(69);
       expect(member[0].description).toBe(
         "Creates a new task.\n" +
           "Signature: bauWatt(title:string,description:string,priority:Priority,options:TaskOptions):TaschgInEcht<T>\n",
