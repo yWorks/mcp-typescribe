@@ -116,7 +116,7 @@ The server provides the following tools for querying the API:
 3. Explore the MCP server:
 
    ```bash
-   npx @modelcontextprotocol/inspector node ./dist/mcp-server/index.js run-server docs/api.json
+   npx @modelcontextprotocol/inspector node ./dist/mcp-server/cli.js run-server docs/api.json
    ```
 
 4. Connect an AI agent to the server to query the API
@@ -150,7 +150,8 @@ The server provides the following tools for querying the API:
   - `schemas/`: JSON schemas for the MCP tools
   - `core/`: Core functionality
   - `server.ts`: The MCP server implementation
-  - `index.ts`: Entry point
+  - `index.ts`: Entry point for the library exports
+  - `cli.ts`: the entry point for the CLI/binary
 - `tests/`: Tests for the API functionality
 
 ## Development
