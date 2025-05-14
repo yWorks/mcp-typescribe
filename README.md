@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/yworks-mcp-typescribe-badge.png)](https://mseep.ai/app/yworks-mcp-typescribe)
+
 [![npm version](https://img.shields.io/npm/v/mcp-typescribe.svg)](https://www.npmjs.com/package/mcp-typescribe)
 
 # MCP-Typescribe - an MCP Server providing LLMs API information
