@@ -576,7 +576,7 @@ export class TypeScriptApiHandlers {
   ): TypeHierarchy {
     const kindName = getKindName(symbol.kind);
     const result: TypeHierarchy = {
-      id: symbol.id,
+      symbol_id: symbol.id,
       name: symbol.name,
       kind: kindName,
       description: getDescription(symbol, Verbosity.SUMMARY),
@@ -593,7 +593,7 @@ export class TypeScriptApiHandlers {
             result.extends.push(this.getTypeHierarchy(parentSymbol, "up"));
           } else {
             result.extends.push({
-              id: extendedType.reflection?.id,
+              symbol_id: extendedType.reflection?.id,
               name: extendedType.name,
               kind: "Unknown",
             });
@@ -610,7 +610,7 @@ export class TypeScriptApiHandlers {
           result.extendedBy.push(this.getTypeHierarchy(parentSymbol, "down"));
         } else {
           result.extendedBy.push({
-            id: parentSymbol?.id,
+            symbol_id: parentSymbol?.id,
             name: extendedBy.name,
             kind: "Unknown",
           });
@@ -629,7 +629,7 @@ export class TypeScriptApiHandlers {
             result.implements.push(this.getTypeHierarchy(parentSymbol, "up"));
           } else {
             result.implements.push({
-              id: parentSymbol?.id,
+              symbol_id: parentSymbol?.id,
               name: implementedType.name,
               kind: "Unknown",
             });
@@ -648,7 +648,7 @@ export class TypeScriptApiHandlers {
           );
         } else {
           result.implementedBy.push({
-            id: parentSymbol?.id,
+            symbol_id: parentSymbol?.id,
             name: implementedBy.name,
             kind: "Unknown",
           });
@@ -696,7 +696,7 @@ export class TypeScriptApiHandlers {
     const maxSearch = (limit ?? 10) + (offset ?? 0);
 
     return paginateArray(
-      await this.searchSymbols(query, kind, maxSearch),
+      await this.searchSymbols(query, kind ?? undefined, maxSearch),
       args,
     );
   }
@@ -724,8 +724,8 @@ export class TypeScriptApiHandlers {
       const symbolInfo = formatDetailSymbols(
         symbol,
         Verbosity.DETAIL,
-        args.limit,
-        args.offset,
+        args.limit ?? undefined,
+        args.offset ?? undefined,
       );
       if (!args.name && !args.names) {
         const overloadedNamespace = this.overloadMapping.get(symbol);
@@ -787,7 +787,7 @@ export class TypeScriptApiHandlers {
       // Get members
       const members = this.getMembers(
         symbol,
-        includeInherited,
+        includeInherited!,
         Verbosity.SUMMARY,
       );
       results.push(...members);
@@ -878,7 +878,7 @@ export class TypeScriptApiHandlers {
 
     // Search in descriptions
     return paginateArray(
-      await this.searchInDescriptions(query, offset + limit),
+      await this.searchInDescriptions(query, offset! + limit!),
       args,
     );
   }
@@ -923,7 +923,11 @@ export class TypeScriptApiHandlers {
         value.kind !== ReflectionKind.Document,
     )) {
       // Find usages
-      const usages = this.findUsages(symbol, args.limit, args.offset);
+      const usages = this.findUsages(
+        symbol,
+        args.limit ?? undefined,
+        args.offset ?? undefined,
+      );
 
       results.push(usages);
     }
@@ -969,7 +973,7 @@ export class TypeScriptApiHandlers {
       );
     }
 
-    return "No page found";
+    return `No document with id ${id} available. Did you use a symbol id? Only document ids are supported.`;
   }
 
   private getIndexTextName(symbol: Reflection): string | undefined {

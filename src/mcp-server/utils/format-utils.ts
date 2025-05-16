@@ -138,7 +138,7 @@ export function formatSymbolForLLM(
     }
   }
 
-  if (symbol.id) info.id = symbol.id;
+  if (symbol.id) info.symbol_id = symbol.id;
 
   if (verbosity === Verbosity.DETAIL) {
     const parentName = getParentName(symbol);
@@ -210,7 +210,7 @@ export function formatTypeHierarchyForLLM(
   hierarchy: TypeHierarchy,
 ): TypeHierarchy {
   const formatted: TypeHierarchy = {
-    id: hierarchy.id,
+    symbol_id: hierarchy.symbol_id,
     name: hierarchy.name,
     kind: hierarchy.kind,
     description: hierarchy.description,
@@ -221,7 +221,7 @@ export function formatTypeHierarchyForLLM(
   formatted.implements = hierarchy.implements?.map(formatTypeHierarchyForLLM);
 
   formatted.implementedBy = hierarchy.implementedBy?.map((info) => ({
-    id: info.id,
+    symbol_id: info.symbol_id,
     name: info.name,
     kind: info.kind,
     description: info.description,
@@ -229,7 +229,7 @@ export function formatTypeHierarchyForLLM(
   }));
 
   formatted.extendedBy = hierarchy.extendedBy?.map((info) => ({
-    id: info.id,
+    symbol_id: info.symbol_id,
     name: info.name,
     kind: info.kind,
     description: info.description,
@@ -273,14 +273,14 @@ export type SearchResult<T> = {
  */
 export function paginateArray<T>(
   array: T[],
-  { offset, limit }: { offset?: number; limit?: number },
+  { offset, limit }: { offset?: number | null; limit?: number | null },
 ): T[] | SearchResult<T> {
   offset ??= 0;
   // Ensure offset is not negative
   const safeOffset = Math.max(0, offset);
 
   // If no limit is provided, return all items after the offset
-  if (limit === undefined) {
+  if (limit === undefined || limit === null) {
     return array.slice(safeOffset);
   }
 

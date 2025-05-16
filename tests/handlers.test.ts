@@ -92,7 +92,7 @@ describe("TypeScriptApiHandlers", () => {
         "# MCP-Typescribe - an MCP Server providing LLMs API information",
       );
       expect(overview.topLevelSymbols).toHaveLength(4);
-      expect(overview.topLevelSymbols[0].id).toBe(1);
+      expect(overview.topLevelSymbols[0].symbol_id).toBe(1);
       expect(overview.topLevelSymbols[0].name).toBe("index");
       expect(overview.topLevelSymbols[0].kind).toBe("Module");
       expect(overview.topLevelSymbols[0].description).toContain(
@@ -228,7 +228,7 @@ Some text 7
 
   describe("getMembers", () => {
     it("should get members of a class", async () => {
-      // First find the class
+      // first, find the class
       const classResults = await handlers.searchSymbols("Uffgabe", "Class");
       expect(classResults.length).toBe(2);
       expect(classResults[0].name).toBe("UffgabeFaehler");
@@ -244,7 +244,7 @@ Some text 7
       expect(members.length).toBe(7);
       const member = members.filter((m) => m.name === "bauWatt");
       expect(member).toHaveLength(1);
-      expect(member[0].id).toBe(75);
+      expect(member[0].symbol_id).toBe(75);
       expect(member[0].description).toBe(
         "Creates a new task.\n" +
           "Signature: bauWatt(title:string,description:string,priority:Priority,options:TaskOptions):TaschgInEcht<T>\n",
@@ -272,12 +272,12 @@ Some text 7
         expect(members.length).toBe(3);
         const member = members.filter((m) => m.name === "bauWatt");
         expect(member).toHaveLength(1);
-        expect(member[0].id).toBe(75);
+        expect(member[0].symbol_id).toBe(75);
         expect(member[0].description).toBe(
           "Creates a new task.\n" +
             "Signature: bauWatt(title:string,description:string,priority:Priority,options:TaskOptions):TaschgInEcht<T>\n",
         );
-        expect(members[0].id).toBe(allResults[0].id);
+        expect(members[0].symbol_id).toBe(allResults[0].symbol_id);
       }
       {
         // Get the class symbol from the handlers
@@ -292,7 +292,7 @@ Some text 7
         expect(result.offset).toBe(3);
         const members = result.result;
         expect(members.length).toBe(3);
-        expect(members[0].id).toBe(allResults[3].id);
+        expect(members[0].symbol_id).toBe(allResults[3].symbol_id);
       }
       {
         // Get the class symbol from the handlers
@@ -307,7 +307,7 @@ Some text 7
         expect(result.offset).toBe(6);
         const members = result.result;
         expect(members.length).toBe(1);
-        expect(members[0].id).toBe(allResults[6].id);
+        expect(members[0].symbol_id).toBe(allResults[6].symbol_id);
       }
     });
     it("should list method overloads", async () => {
@@ -450,8 +450,8 @@ Some text 7
 
       expect(firstPage.result.length).toBe(limit);
       expect(secondPage.result.length).toBe(limit);
-      expect(firstPage.result[0].id).toBe(allResults[0].id);
-      expect(secondPage.result[0].id).toBe(allResults[limit].id);
+      expect(firstPage.result[0].symbol_id).toBe(allResults[0].symbol_id);
+      expect(secondPage.result[0].symbol_id).toBe(allResults[limit].symbol_id);
 
       const thirdPage = paginateArray(
         await handlers.searchSymbols(
@@ -592,16 +592,20 @@ Some text 7
       const members = handlers.handleListMembers({ name: "TaskStatus" });
       expect(members).toHaveLength(5);
 
-      const resultById = handlers.handleGetSymbolDetails({ id: result[0].id });
+      const resultById = handlers.handleGetSymbolDetails({
+        id: result[0].id,
+      });
       expect(resultById).toHaveLength(2);
       expect(resultById[0].kind).toBe("Enum");
       expect(resultById[1].kind).toBe("Namespace");
 
       expect(resultById[0].description).toContain(
-        `\n[NOTE!]\n> See also [TaskStatus **namespace**](api://symbol/${resultById[1].id}) members!`,
+        `\n[NOTE!]\n> See also [TaskStatus **namespace**](api://symbol/${resultById[1].symbol_id}) members!`,
       );
 
-      const membersById = handlers.handleListMembers({ id: result[0].id });
+      const membersById = handlers.handleListMembers({
+        id: result[0].id,
+      });
       expect(membersById).toHaveLength(4);
     });
     it("should handle get_symbol_details tool for enums", () => {
@@ -632,9 +636,9 @@ Some text 7
       expect(result[1].description).toContain(
         "Represents a user in the system.",
       );
-      expect(result[1].id).toBeDefined();
+      expect(result[1].symbol_id).toBeDefined();
       expect(result[0].description).toContain(
-        `](api://symbol/${result[1].id})`,
+        `](api://symbol/${result[1].symbol_id})`,
       );
     });
     it("should show code examples", () => {
@@ -657,7 +661,9 @@ Some text 7
       );
       expect(result[2].name).toBe("types");
       expect(result[0].parent).toBeDefined();
-      expect(result[0].parent).toContain(`](api://symbol/${result[2].id})`);
+      expect(result[0].parent).toContain(
+        `](api://symbol/${result[2].symbol_id})`,
+      );
     });
     it("should handle get_symbol_details tool for modules", () => {
       const result = handlers.handleGetSymbolDetails({ name: "index" });

@@ -27,6 +27,7 @@ export function createTools(file: string, prefix: string = "") {
     {
       name: prefix + "get_api_overview",
       description: GET_API_OVERVIEW_DEFINITION.description,
+      schema: z.object({}),
     },
   );
 
@@ -34,25 +35,31 @@ export function createTools(file: string, prefix: string = "") {
     async ({ id, pageOffset, sectionTitle }) => {
       return (await getApiHandler()).handleGetDocumentation(
         id,
-        pageOffset,
-        sectionTitle,
+        pageOffset ?? undefined,
+        sectionTitle ?? undefined,
       );
     },
     {
       description:
-        "Endpoint for loading documentation files. Do not pass symbol ids. This works for loading documentation referenced as URLs from within the documentation of the shape " +
+        "Endpoint for retrieving documentation for urls in the documentation of the shape api://doc/{id}/{section}{?pageOffset}. Do not guess IDs or title sections. Do not pass symbol ids, only document IDs. This works for loading documentation referenced as URLs from within the documentation of the shape " +
         DOCUMENTATION_SECTION_RESOURCE_TEMPLATE_DEFINITION.uriTemplate.toString(),
       name: prefix + "get_documentation",
       schema: z.object({
-        id: z.number().describe("The id of the document to load"),
+        id: z
+          .number()
+          .describe(
+            "The id of the document to load. Get this from the parsed URL. Do not guess it.",
+          ),
         pageOffset: z
           .number()
-          .optional()
+          .nullable()
           .describe("An optional page offset for pagination."),
         sectionTitle: z
           .string()
-          .optional()
-          .describe("The optional slug of the title section to load."),
+          .nullable()
+          .describe(
+            "The optional slug of the title section to load. Get this from the parsed URL. Do not guess it.",
+          ),
       }),
     },
   );
@@ -64,7 +71,7 @@ export function createTools(file: string, prefix: string = "") {
     {
       name: prefix + "get_symbol_details",
       description:
-        "Endpoint for getting API symbol details. Pass in symbol ids or names. Other endpoints will return or list symbol IDs as pure data in text or in the form of URLs of the shape " +
+        "Endpoint for getting API symbol details. Pass in symbol ids or names of symbols. Other endpoints will return or list symbol IDs as pure data in text or in the form of URLs of the shape " +
         GET_SYMBOL_RESOURCE_TEMPLATE_DEFINITION.uriTemplate.toString(),
       schema: schemas.get_symbol_details,
     },

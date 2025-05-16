@@ -263,7 +263,7 @@ export function createSymbolInfo(
   verbosity: Verbosity,
 ): SymbolInfo {
   return {
-    id: symbol.id,
+    symbol_id: symbol.id,
     name: symbol.name,
     kind: getKindName(symbol.kind),
     description: getDescription(symbol, verbosity),
@@ -279,7 +279,12 @@ export function createSymbolInfo(
  * @returns Array of matching symbols
  */
 export function getSymbolsByParams(
-  params: { name?: string; id?: number; names?: string[]; ids?: number[] },
+  params: {
+    name?: string | null;
+    id?: number | null;
+    names?: string[] | null;
+    ids?: number[] | null;
+  },
   project: ProjectReflection,
   symbolsByName: (name: string) => DeclarationReflection[],
 ) {
@@ -292,7 +297,7 @@ export function getSymbolsByParams(
   }
 
   // Handle single ID
-  if (params.id !== undefined) {
+  if (params.id !== undefined && params.id !== null) {
     const symbol = project.getReflectionById(params.id);
     if (symbol instanceof DeclarationReflection) {
       symbols.push(symbol);

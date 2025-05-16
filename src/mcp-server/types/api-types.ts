@@ -10,7 +10,7 @@ import { SearchResult } from "../utils/index.js";
  * LLM-friendly format without metadata like sources.
  */
 export interface SymbolInfo {
-  id?: number;
+  symbol_id?: number;
   name: string;
   kind?: ReflectionKind.KindString | string;
   description?: string;

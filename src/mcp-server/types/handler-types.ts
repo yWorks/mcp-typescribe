@@ -1,41 +1,54 @@
 import { z } from "zod";
 import { ReflectionKind } from "typedoc";
 
+const optionalNullable = <T>(schema: z.ZodSchema<T>, defaultValue?: T) => {
+  return defaultValue !== undefined
+    ? z.preprocess(
+        (value) => (value === null ? defaultValue : value),
+        // @ts-expect-error don't know how to properly type T to make this work
+        schema.nullable().optional().default(defaultValue),
+      )
+    : z.preprocess(
+        (value) => (value === null ? undefined : value),
+        schema.nullable().optional(),
+      );
+};
+
 // Base handler schema
 const baseHandlerSchema = z.object({
-  name: z.string().optional().describe("The name of the symbol to search for"),
-  id: z.number().optional().describe("The ID# of the symbol to search for"),
-  names: z
-    .array(z.string())
-    .optional()
-    .describe("An array of names to search for"),
-  ids: z
-    .array(z.number())
-    .optional()
-    .describe("An array of ID#s to search for"),
+  name: optionalNullable(z.string()).describe(
+    "The name of the symbol to search for",
+  ),
+  id: optionalNullable(z.number()).describe(
+    "The ID# of the symbol to search for",
+  ),
+  names: optionalNullable(z.array(z.string())).describe(
+    "An array of names to search for",
+  ),
+  ids: optionalNullable(z.array(z.number())).describe(
+    "An array of ID#s to search for",
+  ),
 });
 
 const baseHandlerSchemaWithPagination = z.object({
-  name: z.string().optional().describe("The name of the symbol to search for"),
-  id: z.number().optional().describe("The ID# of the symbol to search for"),
-  names: z
-    .array(z.string())
-    .optional()
-    .describe("An array of names to search for"),
-  ids: z
-    .array(z.number())
-    .optional()
-    .describe("An array of ID#s to search for"),
-  limit: z
-    .number()
-    .default(20)
-    .optional()
-    .describe("The maximum number of results to return. Defaults to 20"),
-  offset: z
-    .number()
-    .default(0)
-    .optional()
-    .describe("The offset of the first result to return. Defaults to 0"),
+  name: optionalNullable(z.string()).describe(
+    "The name of the symbol to search for",
+  ),
+  id: optionalNullable(z.number()).describe(
+    "The ID# of the symbol to search for",
+  ),
+  names: optionalNullable(z.array(z.string())).describe(
+    "An array of names to search for",
+  ),
+  ids: optionalNullable(z.array(z.number())).describe(
+    "An array of ID#s to search for",
+  ),
+  limit: optionalNullable(z.number(), 20).describe(
+    "The maximum number of results to return. Defaults to 20",
+  ),
+  offset: optionalNullable(z.number(), 0).describe(
+    "The offset of the first result to return. Defaults to 0",
+  ),
 });
 /*  .refine(
     (data) => {
@@ -61,30 +74,23 @@ const searchSymbolsSchema = z
       .describe(
         "the name of the symbol to search for. This can be a partial match. ",
       ),
-    kind: z
-      .enum([
+    kind: optionalNullable(
+      z.enum([
         ...(Object.keys(ReflectionKind) as [
           ReflectionKind.KindString,
           ...ReflectionKind.KindString[],
         ]),
         "any",
-      ])
-      .optional()
-      .describe(
-        "The kind of symbol to search for. One of Module,Namespace,Enum,EnumMember,Function,Class,Interface,Property,Method,CallSignature",
-      ),
-    limit: z
-      .number()
-      .default(10)
-      .optional()
-      .describe("The maximum number of results to return. Defaults to 10."),
-    offset: z
-      .number()
-      .default(0)
-      .optional()
-      .describe(
-        "The offset of the first result to return. If not specified, the first result will be returned. ",
-      ),
+      ]),
+    ).describe(
+      "The kind of symbol to search for. One of Module,Namespace,Enum,EnumMember,Function,Class,Interface,Property,Method,CallSignature",
+    ),
+    limit: optionalNullable(z.number(), 10).describe(
+      "The maximum number of results to return. Defaults to 10.",
+    ),
+    offset: optionalNullable(z.number(), 0).describe(
+      "The offset of the first result to return. If not specified, the first result will be returned. ",
+    ),
   })
   .describe(
     "Searches for symbols with a given name. You can search by type and limit the number of results.",
@@ -98,27 +104,15 @@ const getSymbolDetailsSchema = baseHandlerSchemaWithPagination.describe(
 // List members schema
 const listMembersSchema = baseHandlerSchema
   .extend({
-    includeInherited: z
-      .boolean()
-      .default(false)
-      .optional()
-      .describe(
-        "Whether to include inherited members. If not specified, only direct members will be returned.",
-      ),
-    limit: z
-      .number()
-      .default(30)
-      .optional()
-      .describe(
-        "The maximum number of members to return. If not specified only the first 20 results will be returned. ",
-      ),
-    offset: z
-      .number()
-      .default(0)
-      .optional()
-      .describe(
-        "The offset of the first member to return. If not specified, the first result will be returned. ",
-      ),
+    includeInherited: optionalNullable(z.boolean(), false).describe(
+      "Whether to include inherited members. If not specified, only direct members will be returned.",
+    ),
+    limit: optionalNullable(z.number(), 30).describe(
+      "The maximum number of members to return. If not specified only the first 20 results will be returned. ",
+    ),
+    offset: optionalNullable(z.number(), 0).describe(
+      "The offset of the first member to return. If not specified, the first result will be returned. ",
+    ),
   })
   .describe(
     "Lists the members of a class, interface, enum, or module. If includeInherited is true, inherited members will also be returned.",
@@ -138,20 +132,12 @@ const findImplementationsSchema = baseHandlerSchemaWithPagination.describe(
 const searchByReturnTypeSchema = z
   .object({
     typeName: z.string().describe("the name of the type"),
-    limit: z
-      .number()
-      .optional()
-      .default(10)
-      .describe(
-        "The maximum number of results to return. If not specified only the first 10 results will be returned. ",
-      ),
-    offset: z
-      .number()
-      .optional()
-      .default(0)
-      .describe(
-        "The offset of the first result to return. If not specified, the first result will be returned. ",
-      ),
+    limit: optionalNullable(z.number(), 10).describe(
+      "The maximum number of results to return. If not specified only the first 10 results will be returned. ",
+    ),
+    offset: optionalNullable(z.number(), 0).describe(
+      "The offset of the first result to return. If not specified, the first result will be returned. ",
+    ),
   })
   .describe(
     "Finds functions and methods with a specific return type. This can be used to find functions and methods that return a specific type, or to find functions and methods that return a type that is a subclass of a given type.",
@@ -165,20 +151,12 @@ const searchByDescriptionSchema = z
       .describe(
         "the description to search for. This can be a partial text match. ",
       ),
-    limit: z
-      .number()
-      .optional()
-      .default(10)
-      .describe(
-        "The maximum number of results to return. If not specified only the first 10 results will be returned. ",
-      ),
-    offset: z
-      .number()
-      .optional()
-      .default(0)
-      .describe(
-        "The offset of the first result to return. If not specified, the first result will be returned. ",
-      ),
+    limit: optionalNullable(z.number(), 10).describe(
+      "The maximum number of results to return. If not specified only the first 10 results will be returned. ",
+    ),
+    offset: optionalNullable(z.number(), 0).describe(
+      "The offset of the first result to return. If not specified, the first result will be returned. ",
+    ),
   })
   .describe(
     "Searches for symbols with descriptions containing a query. This can be used to find symbols that are similar to a given description, or to find symbols that are related to a given description.",
