@@ -458,7 +458,7 @@ export async function extractDocument(
   }
 
   const mdSplitter = RecursiveCharacterTextSplitter.fromLanguage("markdown", {
-    chunkSize: 1000,
+    chunkSize: 5000,
     chunkOverlap: 0,
   });
   const mdDocs = await mdSplitter.createDocuments([content]);

@@ -121,10 +121,16 @@ export class TypescribeServer {
 
         // Handle search
         const searchMatch =
-          RESOURCE_TEMPLATE_DEFINITIONS[1].uriTemplate.match(uri);
+          RESOURCE_TEMPLATE_DEFINITIONS[0].uriTemplate.match(uri);
         if (searchMatch) {
           const query = searchMatch.query as string;
-          const results = handlers.searchSymbols(query);
+          let results;
+          if (query.length > 0 && !isNaN(Number(query))) {
+            results = handlers.handleGetSymbolDetails({ id: Number(query) });
+          } else {
+            results = handlers.handleGetSymbolDetails({ name: query });
+          }
+
           return {
             contents: [
               {
@@ -136,11 +142,11 @@ export class TypescribeServer {
           };
         }
 
-        // handle documentation lookup
-        const docMatch =
-          RESOURCE_TEMPLATE_DEFINITIONS[2].uriTemplate.match(uri);
+        // handle documentation lookup api://doc/75634?pageOffset=1
+        const docMatch = /api:\/\/doc\/(\d+)(?:\?pageOffset=(\d+))?/.exec(uri);
+
         if (docMatch) {
-          const { id, pageOffset } = docMatch;
+          const [, id, pageOffset] = docMatch;
           const results = await handlers.handleGetDocumentation(
             parseInt((id as string) ?? "-1", 10),
             parseInt((pageOffset as string) ?? "0", 10),
@@ -158,9 +164,9 @@ export class TypescribeServer {
 
         // handle documentation lookup
         const docSectionMatch =
-          RESOURCE_TEMPLATE_DEFINITIONS[3].uriTemplate.match(uri);
+          /api:\/\/doc\/(\d+)\/([^?]+)(?:\?pageOffset=(\d+))?/.exec(uri);
         if (docSectionMatch) {
-          const { id, pageOffset, section } = docSectionMatch;
+          const [, id, pageOffset, section] = docSectionMatch;
           const results = await handlers.handleGetDocumentation(
             parseInt((id as string) ?? "-1", 10),
             parseInt((pageOffset as string) ?? "0", 10),

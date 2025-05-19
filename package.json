@@ -1,6 +1,6 @@
 {
   "name": "mcp-typescribe",
-  "version": "0.7.4",
+  "version": "0.7.5",
   "description": "An MCP server that answers questions about TypeScript APIs using TypeDoc JSON documentation",
   "main": "dist/mcp-server/index.js",
   "type": "module",
