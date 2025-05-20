@@ -22,9 +22,11 @@ describe("search-service", () => {
       "Race a bike",
     ] as const;
 
-    entries.forEach((entry) => {
-      db.add(entry, entry);
-    });
+    for (const entry of entries) {
+      await db.add(entry, entry);
+    }
+
+    expect(db.entryCount).toBe(new Set(entries).size);
 
     const testEntries = [
       "How to create a node?",

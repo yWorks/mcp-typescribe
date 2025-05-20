@@ -57,21 +57,30 @@ import {
 import { Verbosity } from "../types.js";
 import fs from "fs/promises";
 import { SearchService } from "./search-service.js";
+import path from "node:path";
 
 /**
  * Loads the TypeDoc JSON documentation and initializes handlers.
  *
  * @param filePath - Path to the TypeDoc JSON file
+ * @param cacheDirectoryPath - Optional path where the search cache should be written.
+ * Defaults to a ".mcp-typescribe-cache" directory next to the given TypeDoc file.
  */
 export const loadApiDocs = async (
   filePath: string,
+  cacheDirectoryPath?: string,
 ): Promise<TypeScriptApiHandlers> => {
+  cacheDirectoryPath ??= path.join(
+    path.dirname(filePath),
+    ".mcp-typescribe-cache",
+  );
+
   try {
     const data = await fs.readFile(filePath, "utf-8");
     const apiDocs = JSON.parse(data) as JSONOutput.ProjectReflection;
 
     // Initialize handlers
-    return new TypeScriptApiHandlers(apiDocs);
+    return new TypeScriptApiHandlers(apiDocs, cacheDirectoryPath);
   } catch (error) {
     console.error("Failed to load API documentation:", error);
     throw error;
@@ -92,22 +101,37 @@ export class TypeScriptApiHandlers {
     DeclarationReflection
   >;
 
-  private nameSearchService = new SearchService<DeclarationReflection>();
-  private descriptionSearchService = new SearchService<DeclarationReflection>();
-  private documentationSearchService = new SearchService<{
+  private readonly nameSearchService: SearchService<DeclarationReflection>;
+  private readonly descriptionSearchService: SearchService<DeclarationReflection>;
+  private readonly documentationSearchService: SearchService<{
     title: string;
     document: DocumentReflection;
     slug: string;
-  }>();
+  }>;
 
   /**
    * Creates a new TypeScriptApiHandlers instance.
    *
    * @param apiDocs - The TypeDoc JSON documentation
+   * @param cacheDirectoryPath - The path of the cache directory
    */
-  constructor(apiDocs: JSONOutput.ProjectReflection) {
+  constructor(
+    apiDocs: JSONOutput.ProjectReflection,
+    cacheDirectoryPath: string,
+  ) {
     const deserializer = new Deserializer(new ConsoleLogger());
     apiDocs.schemaVersion ??= "2.0";
+
+    this.nameSearchService = new SearchService(
+      path.join(cacheDirectoryPath, "name-search.cache"),
+    );
+    this.descriptionSearchService = new SearchService(
+      path.join(cacheDirectoryPath, "description-search.cache"),
+    );
+    this.documentationSearchService = new SearchService(
+      path.join(cacheDirectoryPath, "documentation-search.cache"),
+    );
+
     const project = deserializer.reviveProject("typescript-api-mcp", apiDocs, {
       projectRoot: "/",
       registry: new FileRegistry(),
