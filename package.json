@@ -1,6 +1,6 @@
 {
   "name": "mcp-typescribe",
-  "version": "0.7.5",
+  "version": "0.7.6",
   "description": "An MCP server that answers questions about TypeScript APIs using TypeDoc JSON documentation",
   "main": "dist/mcp-server/index.js",
   "type": "module",
@@ -17,6 +17,7 @@
     "build": "tsc",
     "watch": "tsc --watch",
     "docs": "typedoc --json docs/api.json --entryPointStrategy expand --readme src/sample-api/docs/README.md src/sample-api/",
+    "cache-docs": "node dist/mcp-server/cli.js build-cache-db docs/api.json",
     "start": "node dist/mcp-server/cli.js run-server docs/api.json",
     "format": "prettier --ignore-unknown --cache --check .",
     "format:write": "prettier --ignore-unknown --write .",

@@ -3,6 +3,7 @@ import { Command } from "commander";
 import { TypescribeServer } from "./server.js";
 import { createTypedoc } from "./typedoc-helper/create-typedoc.js";
 import path from "path";
+import { loadApiDocs } from "./core/index.js";
 
 /**
  * Main entry point for the TypeScript API MCP server.
@@ -19,6 +20,20 @@ program
       const docsPath = path.resolve(process.cwd(), this.args[0]);
       await server.initialize(docsPath);
       await server.run();
+    } catch (error) {
+      program.error("Failed to start server: " + error);
+    }
+  });
+
+program
+  .command("build-cache-db")
+  .argument("<typedocjson>", "Path to the TypeDoc JSON file")
+  .description("Build the database cache for the typedoc JSON file")
+  .action(async function () {
+    try {
+      const docsPath = path.resolve(process.cwd(), this.args[0]);
+      const handlers = await loadApiDocs(docsPath);
+      await handlers.dispose();
     } catch (error) {
       program.error("Failed to start server: " + error);
     }
