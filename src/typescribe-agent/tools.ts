@@ -1,23 +1,36 @@
 import { tool } from "@langchain/core/tools";
+import { loadApiDocs, TypeScriptApiHandlers } from "../mcp-server/index.js";
 import {
-  loadApiDocs,
-  TypeScriptApiHandlers,
-} from "../mcp-server/core/typescript-api-handlers.js";
-import {
+  DOCUMENTATION_SECTION_RESOURCE_TEMPLATE_DEFINITION,
   GET_API_OVERVIEW_DEFINITION,
   GET_SYMBOL_RESOURCE_TEMPLATE_DEFINITION,
-  DOCUMENTATION_SECTION_RESOURCE_TEMPLATE_DEFINITION,
-} from "../mcp-server/schemas/tool-schemas.js";
+} from "../mcp-server/index.js";
 import { z } from "zod";
-import { stringify } from "../mcp-server/utils/format-utils.js";
-import { schemas } from "../mcp-server/types/index.js";
+import { stringify } from "../mcp-server/index.js";
+import { schemas } from "../mcp-server/index.js";
 import { JSONSchema } from "@langchain/core/utils/json_schema";
 
-export function createTools(file: string, prefix: string = "") {
-  let apiHandler: TypeScriptApiHandlers | undefined;
-
+/**
+ * Creates a collection of tools for interacting with the TypeScript API,
+ * including retrieving API overviews, documentation, symbol details, and
+ * performing various searches or operations on the API.
+ *
+ * @param fileOrApiHandler - The path to the file containing the TypeDoc
+ * API JSON to be loaded. Alternatively, an instance of
+ * {@link TypeScriptApiHandlers} can be passed (see {@link loadApiDocs}).
+ * @param prefix - An optional prefix to be applied to tool names for namespacing.
+ * @return An array of tools, each corresponding to a specific API functionality,
+ * such as retrieving overviews, fetching documentation, or performing
+ * symbol-related queries.
+ */
+export function createTools(
+  fileOrApiHandler: string | TypeScriptApiHandlers,
+  prefix: string = "",
+) {
+  let apiHandler =
+    typeof fileOrApiHandler === "string" ? undefined : fileOrApiHandler;
   async function getApiHandler(): Promise<TypeScriptApiHandlers> {
-    return (apiHandler ??= await loadApiDocs(file));
+    return (apiHandler ??= await loadApiDocs(fileOrApiHandler as string));
   }
 
   const getApiOverview = tool(
