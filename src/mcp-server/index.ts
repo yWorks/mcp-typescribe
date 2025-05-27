@@ -3,6 +3,7 @@
  * This file re-exports all modules from the various directories.
  */
 export * from "./types/index.js";
+export * from "./types.js";
 export * from "./utils/index.js";
 export * from "./schemas/index.js";
 export * from "./core/index.js";
