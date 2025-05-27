@@ -17,21 +17,13 @@ function getPipeline(): Promise<FeatureExtractionPipeline> {
   ));
 }
 
-async function exists(path: string) {
-  try {
-    await fs.access(path);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
 export class VectorDB<T> {
   db: HNSW.HierarchicalNSW;
   private size: number;
   private entries: Entry<T>[];
   private cache: Map<string, Entry<T>>;
   embed: (text: string) => Promise<number[]>;
+  private dirty = false;
 
   constructor() {
     this.db = new HierarchicalNSW("l2", 384);
@@ -51,9 +43,15 @@ export class VectorDB<T> {
   }
 
   async writeCache(filePath: string): Promise<void> {
+    if (!this.dirty) {
+      return;
+    }
+
     const dirPath = path.dirname(filePath);
-    if (!(await exists(dirPath))) {
+    try {
       await fs.mkdir(dirPath, { recursive: true });
+    } catch {
+      // ignore - directory probably already exists
     }
 
     // Collect entries with defined t property
@@ -110,15 +108,16 @@ export class VectorDB<T> {
 
     // Write buffer to file
     await fs.writeFile(filePath, buffer);
+    this.dirty = false;
   }
 
-  async readCache(filePath: string): Promise<number> {
-    if (!(await exists(filePath))) {
-      return 0;
+  async readCache(filePath: string): Promise<void> {
+    let buffer: Buffer<ArrayBufferLike>;
+    try {
+      buffer = await fs.readFile(filePath);
+    } catch {
+      return;
     }
-
-    // Read the binary file
-    const buffer = await fs.readFile(filePath);
 
     // Clear existing data
     this.entries = [];
@@ -171,8 +170,6 @@ export class VectorDB<T> {
       // Add to HNSW index
       this.db.addPoint(embedding, label);
     }
-
-    return this.entries.length;
   }
 
   resize(size: number) {
@@ -209,6 +206,7 @@ export class VectorDB<T> {
       this.db.resizeIndex(this.size);
     }
     this.db.addPoint(embedding, label);
+    this.dirty = true;
   }
 
   async search(
@@ -306,7 +304,11 @@ export class SearchService<T> {
       await this.db.readCache(this.cacheFilePath);
       this.count = this.db.entryCount;
     } catch (error) {
-      console.error(`Failed to read cache: ${error}`);
+      let message = `Failed to read cache: ${error}`;
+      if (error instanceof Error) {
+        message += "\n" + error.stack;
+      }
+      console.error(message);
     }
   }
 
