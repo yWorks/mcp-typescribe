@@ -58,6 +58,7 @@ import { Verbosity } from "../types.js";
 import fs from "fs/promises";
 import { SearchService } from "./search-service.js";
 import path from "node:path";
+import { PageRank } from "./page-rank.js";
 
 /**
  * Loads the TypeDoc JSON documentation and initializes handlers.
@@ -80,7 +81,9 @@ export const loadApiDocs = async (
     const apiDocs = JSON.parse(data) as JSONOutput.ProjectReflection;
 
     // Initialize handlers
-    return new TypeScriptApiHandlers(apiDocs, cacheDirectoryPath);
+    const apiHandlers = new TypeScriptApiHandlers(apiDocs, cacheDirectoryPath);
+    await apiHandlers.initializeRanks();
+    return apiHandlers;
   } catch (error) {
     console.error("Failed to load API documentation:", error);
     throw error;
@@ -91,6 +94,7 @@ export const loadApiDocs = async (
  * Class that provides handlers for TypeScript API queries.
  */
 export class TypeScriptApiHandlers {
+  private pageRanks?: Map<number, number>;
   handlers() {
     throw new Error("Method not implemented.");
   }
@@ -139,6 +143,13 @@ export class TypeScriptApiHandlers {
     this.overloadMapping = new Map();
     this.project = project;
     this.buildIndexes(project);
+  }
+
+  async initializeRanks() {
+    const pageRank = new PageRank(this.project);
+    await pageRank.buildGraph();
+    this.pageRanks = await pageRank.computePageRanks();
+    await pageRank.dispose();
   }
 
   /**
@@ -380,9 +391,9 @@ export class TypeScriptApiHandlers {
     if (matchingSymbols.length === 1) {
       return [formatSymbolForLLM(matchingSymbols[0], Verbosity.DETAIL)];
     } else {
-      return matchingSymbols.map((symbol) =>
-        formatSymbolForLLM(symbol, Verbosity.SUMMARY),
-      );
+      return matchingSymbols
+        .toSorted((a, b) => Math.sign(this.getRank(b) - this.getRank(a)))
+        .map((symbol) => formatSymbolForLLM(symbol, Verbosity.SUMMARY));
     }
   }
 
@@ -559,9 +570,9 @@ export class TypeScriptApiHandlers {
       3,
     );
 
-    return matchingSymbols.map((symbol) =>
-      formatSymbolForLLM(symbol, Verbosity.SUMMARY),
-    );
+    return matchingSymbols
+      .map((symbol) => formatSymbolForLLM(symbol, Verbosity.SUMMARY))
+      .toSorted((a, b) => Math.sign(this.getRank(b) - this.getRank(a)));
   }
 
   /**
@@ -1033,10 +1044,19 @@ export class TypeScriptApiHandlers {
     return undefined;
   }
 
+  getRank(symbol: Reflection | SymbolInfo): number {
+    const id = "id" in symbol ? symbol.id : symbol.symbol_id;
+    if (id === undefined) {
+      return -1;
+    }
+    return this.pageRanks?.get(id) ?? -1;
+  }
+
   async dispose() {
     await Promise.all([
       this.descriptionSearchService?.dispose(),
       this.nameSearchService?.dispose(),
+      this.documentationSearchService?.dispose(),
     ]);
   }
 }

@@ -23,7 +23,9 @@ export function reflectionIsReferencing(
         symbol.typeParameters?.some((type) =>
           isReferencing(type.type, typeName),
         ) ||
-        symbol.signatures?.some((s) => reflectionIsReferencing(s, typeName));
+        symbol.signatures?.some((s) => reflectionIsReferencing(s, typeName)) ||
+        // Check children (properties, methods, etc.) for references
+        symbol.children?.some((child) => reflectionIsReferencing(child, typeName));
     },
     signature: (refl) => {
       result =

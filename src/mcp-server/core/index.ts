@@ -5,3 +5,4 @@
 
 export * from "./typescript-api-handlers.js";
 export { SearchService } from "./search-service.js";
+export { PageRank } from "./page-rank.js";

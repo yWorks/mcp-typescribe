@@ -1,13 +1,14 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { Verbosity } from "../src/mcp-server/types.js";
 import {
   DOCUMENTATION_RESOURCE_TEMPLATE_DEFINITION,
   DOCUMENTATION_SECTION_RESOURCE_TEMPLATE_DEFINITION,
   extractSection,
   loadApiDocs,
+  paginateArray,
+  SearchResult,
+  TypeScriptApiHandlers,
+  Verbosity,
 } from "../src/index.js";
-import { paginateArray, SearchResult } from "../src/index.js";
-import { TypeScriptApiHandlers } from "../src/index.js";
 
 function expectSearchResult<T>(
   result: T[] | SearchResult<T> | undefined,
@@ -69,14 +70,12 @@ describe("mcp-api", () => {
   });
 });
 
-const apiJson = await loadApiDocs("docs/api.json");
-
 describe("TypeScriptApiHandlers", () => {
   let handlers: TypeScriptApiHandlers;
 
-  beforeAll(() => {
-    handlers = apiJson;
-  });
+  beforeAll(async () => {
+    handlers = await loadApiDocs("docs/api.json");
+  }, 20_000);
 
   afterAll(async () => {
     await handlers.dispose();
@@ -224,6 +223,22 @@ Some text 7
       expect(results.length).toBeGreaterThan(0);
       expect(results[0].name).toBe("TaskStatus");
     });
+
+    it("should return symbols sorted by page rank", async () => {
+      const symbols = await handlers.searchSymbols("Uffgabe");
+
+      // Verify that symbols are returned
+      expect(symbols.length).toBe(3);
+
+      // Verify that symbols are sorted by page rank (highest rank first)
+      // This assumes that page rank scores will be accessible on the symbols
+      // or that the order will reflect the page rank
+      for (let i = 0; i < symbols.length - 1; i++) {
+        const currentRank = handlers.getRank(symbols[i]);
+        const nextRank = handlers.getRank(symbols[i + 1]);
+        expect(currentRank).toBeGreaterThanOrEqual(nextRank);
+      }
+    });
   });
 
   describe("getMembers", () => {
@@ -334,7 +349,6 @@ Some text 7
       const members = handlers.handleListMembers({ name: "TaschgMaenaedscha" });
       expectArray(members);
       expect(members.length).toBeGreaterThan(3);
-      console.log(members);
       expect(
         members.filter((value) => value.name === "constructor").length,
       ).toBe(1);

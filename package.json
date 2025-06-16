@@ -68,10 +68,14 @@
     "@langchain/openai": "^0.5.10",
     "@modelcontextprotocol/sdk": "^1.11.3",
     "commander": "^13.1.0",
+    "kuzu": "^0.10.0",
     "langchain": "0.3.26",
     "typedoc": "^0.28.4",
     "yaml": "^2.8.0",
     "zod": "^3.24.4",
     "zod-to-json-schema": "^3.24.5"
+  },
+  "engines": {
+    "node": ">= 20"
   }
 }
