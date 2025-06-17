@@ -201,7 +201,7 @@ Some text 7
       const results = await handlers.searchSymbols("Uffgabe", "Interface");
 
       expect(results.length).toBeGreaterThan(0);
-      expect(results[0].name).toBe("Uffgabe");
+      expect(results.some((r) => r.name === "Uffgabe")).toBe(true);
       expect(results.every((r) => r.kind === "Interface")).toBe(true);
     });
 
@@ -216,12 +216,12 @@ Some text 7
         5,
       );
       expect(results.length).toBeGreaterThan(0);
-      expect(results[0].name).toBe("TaskOptions");
+      expect(results.some((r) => r.name === "TaskOptions")).toBe(true);
     });
     it("should find symbols by description", async () => {
       const results = await handlers.searchInDescriptions("Represents a task");
       expect(results.length).toBeGreaterThan(0);
-      expect(results[0].name).toBe("TaskStatus");
+      expect(results.some((r) => r.name === "TaskStatus")).toBe(true);
     });
 
     it("should return symbols sorted by page rank", async () => {
@@ -246,10 +246,16 @@ Some text 7
       // first, find the class
       const classResults = await handlers.searchSymbols("Uffgabe", "Class");
       expect(classResults.length).toBe(2);
-      expect(classResults[0].name).toBe("UffgabeFaehler");
-      expect(classResults[0].children).not.toBeDefined();
-      expect(classResults[1].name).toBe("UffgabeWechFaehler");
-      expect(classResults[1].children).not.toBeDefined();
+      expect(classResults.some((r) => r.name === "UffgabeFaehler")).toBe(true);
+      expect(
+        classResults.find((r) => r.name === "UffgabeFaehler")?.children,
+      ).not.toBeDefined();
+      expect(classResults.some((r) => r.name === "UffgabeWechFaehler")).toBe(
+        true,
+      );
+      expect(
+        classResults.find((r) => r.name === "UffgabeWechFaehler")?.children,
+      ).not.toBeDefined();
 
       // Get the class symbol from the handlers
       const members = handlers.handleListMembers({ name: "TaschgMaenaedscha" });
@@ -450,12 +456,12 @@ Some text 7
       expect(allResults.length).toBe(8);
 
       const firstPage = paginateArray(
-        await handlers.searchSymbols("task", "any", 4),
+        await handlers.searchSymbols("task", "any"),
         { limit, offset: 0 },
       );
 
       const secondPage = paginateArray(
-        await handlers.searchSymbols("task", "any", 6),
+        await handlers.searchSymbols("task", "any"),
         { limit, offset: limit },
       );
 

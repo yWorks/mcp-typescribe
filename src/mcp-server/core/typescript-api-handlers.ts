@@ -178,8 +178,8 @@ export class TypeScriptApiHandlers {
       ReflectionKind.Variable,
     ];
 
-    return kinds
-      .map((kind) =>
+    return this.sortByRank(
+      kinds.flatMap((kind) =>
         this.project
           .getReflectionsByKind(kind)
           .filter((result) => result.name === name)
@@ -188,8 +188,8 @@ export class TypeScriptApiHandlers {
               ? (value.getTargetReflectionDeep() as DeclarationReflection)
               : (value as DeclarationReflection),
           ),
-      )
-      .reduce((a, b) => a.concat(b));
+      ),
+    );
   }
 
   /**
@@ -365,7 +365,9 @@ export class TypeScriptApiHandlers {
    *
    * @param query - The search query
    * @param kind - Optional kind filter
-   * @param limit - Optional result limit
+   * @param limit - Optional result limit. Note that, when provided, the result
+   * may not necessarily contain the highest ranked symbols. First, the method
+   * collects a subset of all matching symbols. Then it sorts the subset by rank.
    * @returns Array of matching symbols
    */
   async searchSymbols(
@@ -394,9 +396,9 @@ export class TypeScriptApiHandlers {
     if (matchingSymbols.length === 1) {
       return [formatSymbolForLLM(matchingSymbols[0], Verbosity.DETAIL)];
     } else {
-      return matchingSymbols
-        .toSorted((a, b) => Math.sign(this.getRank(b) - this.getRank(a)))
-        .map((symbol) => formatSymbolForLLM(symbol, Verbosity.SUMMARY));
+      return this.sortByRank(matchingSymbols).map((symbol) =>
+        formatSymbolForLLM(symbol, Verbosity.SUMMARY),
+      );
     }
   }
 
@@ -539,7 +541,7 @@ export class TypeScriptApiHandlers {
         }
       }
     }
-    return implementations;
+    return this.sortByRank(implementations);
   }
 
   /**
@@ -560,7 +562,9 @@ export class TypeScriptApiHandlers {
    * Searches for symbols with descriptions containing a query.
    *
    * @param query - The search query
-   * @param limit - the maximum amount of results
+   * @param limit - the maximum number of results. Note that, when provided, the result
+   * may not necessarily contain the highest ranked symbols. First, the method
+   * collects a subset of all matching symbols. Then it sorts the subset by rank.
    * @returns Array of matching symbols
    */
   async searchInDescriptions(
@@ -573,9 +577,11 @@ export class TypeScriptApiHandlers {
       3,
     );
 
-    return matchingSymbols
-      .map((symbol) => formatSymbolForLLM(symbol, Verbosity.SUMMARY))
-      .toSorted((a, b) => Math.sign(this.getRank(b) - this.getRank(a)));
+    return this.sortByRank(
+      matchingSymbols.map((symbol) =>
+        formatSymbolForLLM(symbol, Verbosity.SUMMARY),
+      ),
+    );
   }
 
   /**
@@ -720,7 +726,7 @@ export class TypeScriptApiHandlers {
         usages.push(formatSymbolForLLM(otherSymbol, Verbosity.SUMMARY));
       }
     }
-    return paginateArray(usages, { limit, offset });
+    return paginateArray(this.sortByRank(usages), { limit, offset });
   }
 
   /**
@@ -731,12 +737,11 @@ export class TypeScriptApiHandlers {
    */
   async handleSearchSymbols(args: SearchSymbolsParams) {
     const { query, kind, offset, limit } = args;
-    const maxSearch = (limit ?? 10) + (offset ?? 0);
 
-    return paginateArray(
-      await this.searchSymbols(query, kind ?? undefined, maxSearch),
-      args,
-    );
+    return paginateArray(await this.searchSymbols(query, kind ?? undefined), {
+      offset,
+      limit,
+    });
   }
 
   /**
@@ -915,10 +920,10 @@ export class TypeScriptApiHandlers {
     const { query, limit, offset } = args;
 
     // Search in descriptions
-    return paginateArray(
-      await this.searchInDescriptions(query, offset! + limit!),
-      args,
-    );
+    return paginateArray(await this.searchInDescriptions(query), {
+      limit,
+      offset,
+    });
   }
 
   /**
@@ -1045,6 +1050,14 @@ export class TypeScriptApiHandlers {
       return convertContentPlainText(symbol.comment.getShortSummary(true));
     }
     return undefined;
+  }
+
+  private sortByRank<TSymbol extends Reflection | SymbolInfo>(
+    symbols: TSymbol[],
+  ): TSymbol[] {
+    return symbols.toSorted((a, b) =>
+      Math.sign(this.getRank(b) - this.getRank(a)),
+    );
   }
 
   getRank(symbol: Reflection | SymbolInfo): number {
