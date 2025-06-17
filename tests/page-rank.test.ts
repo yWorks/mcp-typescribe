@@ -4,118 +4,11 @@ import {
   ConsoleLogger,
   Deserializer,
   FileRegistry,
-  JSONOutput,
   ProjectReflection,
-  ReflectionKind,
 } from "typedoc";
 // @ts-expect-error kuzu's typings are a mess
 import { QueryResult } from "kuzu";
-
-// Create a sample TypeDoc project for testing
-function createSampleProject(): ProjectReflection {
-  // Create a minimal JSON structure for a TypeDoc project
-  const projectJson: JSONOutput.ProjectReflection = {
-    name: "TestProject",
-    kind: ReflectionKind.Project,
-    schemaVersion: "2.0",
-    flags: {},
-    variant: "project", // Add variant property
-    children: [
-      {
-        // @ts-expect-error weird id type
-        id: 1,
-        name: "Class1",
-        kind: ReflectionKind.Class,
-        flags: {},
-        variant: "declaration", // Add variant property
-        sources: [{ fileName: "test.ts", line: 1, character: 0 }],
-        children: [
-          {
-            // @ts-expect-error weird id type
-            id: 2,
-            name: "interfaceProperty",
-            kind: ReflectionKind.Property,
-            flags: {},
-            variant: "declaration",
-            sources: [{ fileName: "test.ts", line: 2, character: 2 }],
-            type: {
-              type: "reference",
-              name: "Interface1",
-              target: 4,
-            },
-          },
-          {
-            // @ts-expect-error weird id type
-            id: 3,
-            name: "typeProperty",
-            kind: ReflectionKind.Property,
-            flags: {},
-            variant: "declaration",
-            sources: [{ fileName: "test.ts", line: 3, character: 2 }],
-            type: {
-              type: "reference",
-              name: "Type1",
-              target: 6,
-            },
-          },
-        ],
-      },
-      {
-        // @ts-expect-error weird id type
-        id: 4,
-        name: "Interface1",
-        kind: ReflectionKind.Interface,
-        flags: {},
-        variant: "declaration", // Add variant property
-        sources: [{ fileName: "test.ts", line: 10, character: 0 }],
-        children: [
-          {
-            // @ts-expect-error weird id type
-            id: 5,
-            name: "typeProperty",
-            kind: ReflectionKind.Property,
-            flags: {},
-            variant: "declaration",
-            sources: [{ fileName: "test.ts", line: 11, character: 2 }],
-            type: {
-              type: "reference",
-              name: "Type1",
-              target: 6,
-            },
-          },
-        ],
-      },
-      {
-        // @ts-expect-error weird id type
-        id: 6,
-        name: "Type1",
-        kind: ReflectionKind.TypeAlias,
-        flags: {},
-        variant: "declaration", // Add variant property
-        sources: [{ fileName: "test.ts", line: 20, character: 0 }],
-        type: {
-          type: "intrinsic",
-          name: "string",
-        },
-      },
-    ],
-    groups: [],
-    sources: [{ fileName: "test.ts", line: 0, character: 0 }],
-    // Add files property
-    files: {
-      // @ts-expect-error weird id type
-      entries: { 1: "test.ts" },
-      reflections: { 1: 0 },
-    },
-  };
-
-  // Use the Deserializer to create a real ProjectReflection
-  const deserializer = new Deserializer(new ConsoleLogger());
-  return deserializer.reviveProject("test-project", projectJson, {
-    projectRoot: "/",
-    registry: new FileRegistry(),
-  });
-}
+import { createSampleProject } from "./create-sample.project.js";
 
 describe("PageRank", { concurrent: false }, () => {
   let pageRank: PageRank;
@@ -123,7 +16,16 @@ describe("PageRank", { concurrent: false }, () => {
 
   beforeAll(async () => {
     // Create a real project using the deserializer
-    project = createSampleProject();
+    // Use the Deserializer to create a real ProjectReflection
+    const deserializer = new Deserializer(new ConsoleLogger());
+    project = deserializer.reviveProject(
+      "test-project",
+      createSampleProject(),
+      {
+        projectRoot: "/",
+        registry: new FileRegistry(),
+      },
+    );
 
     // Create a new PageRank instance with the real project
     pageRank = new PageRank(project);

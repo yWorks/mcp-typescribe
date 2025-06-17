@@ -58,7 +58,7 @@ import { Verbosity } from "../types.js";
 import fs from "fs/promises";
 import { SearchService } from "./search-service.js";
 import path from "node:path";
-import { PageRank } from "./page-rank.js";
+import { initializeRanks } from "./initialize-ranks.js";
 
 /**
  * Loads the TypeDoc JSON documentation and initializes handlers.
@@ -104,6 +104,7 @@ export class TypeScriptApiHandlers {
     DeclarationReflection,
     DeclarationReflection
   >;
+  private readonly cacheDirectoryPath: string;
 
   private readonly nameSearchService: SearchService<DeclarationReflection>;
   private readonly descriptionSearchService: SearchService<DeclarationReflection>;
@@ -126,6 +127,8 @@ export class TypeScriptApiHandlers {
     const deserializer = new Deserializer(new ConsoleLogger());
     apiDocs.schemaVersion ??= "2.0";
 
+    this.cacheDirectoryPath = cacheDirectoryPath;
+
     this.nameSearchService = new SearchService(
       path.join(cacheDirectoryPath, "name-search.cache"),
     );
@@ -146,10 +149,10 @@ export class TypeScriptApiHandlers {
   }
 
   async initializeRanks() {
-    const pageRank = new PageRank(this.project);
-    await pageRank.buildGraph();
-    this.pageRanks = await pageRank.computePageRanks();
-    await pageRank.dispose();
+    this.pageRanks = await initializeRanks(
+      this.project,
+      path.join(this.cacheDirectoryPath, "ranks.cache"),
+    );
   }
 
   /**
