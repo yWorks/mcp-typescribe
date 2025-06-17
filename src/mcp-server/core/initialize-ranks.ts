@@ -2,24 +2,36 @@ import fs from "fs/promises";
 import path from "node:path";
 import { ProjectReflection } from "typedoc";
 import { PageRank } from "./page-rank.js";
+import objectHash from "object-hash";
 
 /**
- * Serializes page ranks to a buffer
+ * Serializes page ranks and project hash to a buffer
  *
  * @param pageRanks - Map of type IDs to page rank scores
- * @returns Buffer containing serialized page ranks
+ * @param projectHash - Hash of the project to validate cache
+ * @returns Buffer containing serialized page ranks and project hash
  */
-function serializePageRanks(pageRanks: Map<number, number>): Buffer {
-  // Calculate buffer size: 4 bytes for entry count + (8 bytes per entry (4 for key, 4 for value))
+function serializePageRanks(
+  pageRanks: Map<number, number>,
+  projectHash: Buffer<ArrayBufferLike>,
+): Buffer {
+  // Calculate buffer size:
+  // 4 bytes for hash length + hash length + 4 bytes for entry count + (8 bytes per entry (4 for key, 4 for value))
   const entryCount = pageRanks.size;
-  const bufferSize = 4 + entryCount * 8;
+  const bufferSize = 4 + projectHash.length + 4 + entryCount * 8;
   const buffer = Buffer.alloc(bufferSize);
 
+  // Write hash length
+  buffer.writeUInt32LE(projectHash.length, 0);
+
+  // Write hash
+  projectHash.copy(buffer, 4);
+
   // Write entry count
-  buffer.writeUInt32LE(entryCount, 0);
+  buffer.writeUInt32LE(entryCount, 4 + projectHash.length);
 
   // Write entries
-  let offset = 4;
+  let offset = 8 + projectHash.length;
   for (const [key, value] of pageRanks.entries()) {
     buffer.writeUInt32LE(key, offset);
     offset += 4;
@@ -31,19 +43,27 @@ function serializePageRanks(pageRanks: Map<number, number>): Buffer {
 }
 
 /**
- * Deserializes page ranks from a buffer
+ * Deserializes page ranks and project hash from a buffer
  *
- * @param buffer - Buffer containing serialized page ranks
- * @returns Map of type IDs to page rank scores
+ * @param buffer - Buffer containing serialized page ranks and project hash
+ * @returns Object containing page ranks map and project hash
  */
-function deserializePageRanks(buffer: Buffer): Map<number, number> {
+function deserializePageRanks(buffer: Buffer): {
+  pageRanks: Map<number, number>;
+  projectHash: Buffer;
+} {
   const pageRanks = new Map<number, number>();
 
+  // Read hash length
+  const hashLength = buffer.readUInt32LE(0);
+
+  const projectHash = buffer.subarray(4, 4 + hashLength);
+
   // Read entry count
-  const entryCount = buffer.readUInt32LE(0);
+  const entryCount = buffer.readUInt32LE(4 + hashLength);
 
   // Read entries
-  let offset = 4;
+  let offset = 8 + hashLength;
   for (let i = 0; i < entryCount; i++) {
     const key = buffer.readUInt32LE(offset);
     offset += 4;
@@ -52,20 +72,22 @@ function deserializePageRanks(buffer: Buffer): Map<number, number> {
     pageRanks.set(key, value);
   }
 
-  return pageRanks;
+  return { pageRanks, projectHash };
 }
 
 /**
- * Writes page ranks to cache file
+ * Writes page ranks and project hash to cache file
  *
  * @param cacheFilePath - Path to the cache file
  * @param pageRanks - Map of type IDs to page rank scores
+ * @param projectHash - Hash of the project to validate cache
  */
 async function writeRankCache(
   cacheFilePath: string,
   pageRanks: Map<number, number>,
+  projectHash: Buffer<ArrayBufferLike>,
 ): Promise<void> {
-  const buffer = serializePageRanks(pageRanks);
+  const buffer = serializePageRanks(pageRanks, projectHash);
 
   try {
     await fs.mkdir(path.dirname(cacheFilePath), { recursive: true });
@@ -78,14 +100,14 @@ async function writeRankCache(
 }
 
 /**
- * Tries to read page ranks from cache file
+ * Tries to read page ranks and project hash from cache file
  *
  * @param cacheFilePath - Path to the cache file
- * @returns Map of type IDs to page rank scores, or null if cache read fails
+ * @returns Object containing page ranks map and project hash, or null if cache read fails
  */
 async function tryReadRankCache(
   cacheFilePath: string,
-): Promise<Map<number, number> | null> {
+): Promise<{ pageRanks: Map<number, number>; projectHash: Buffer } | null> {
   let buffer: Buffer<ArrayBufferLike>;
   try {
     buffer = await fs.readFile(cacheFilePath);
@@ -93,6 +115,35 @@ async function tryReadRankCache(
     return null;
   }
   return deserializePageRanks(buffer);
+}
+
+function createProjectHash(
+  project: ProjectReflection,
+): Buffer<ArrayBufferLike> {
+  const hashKeys = new Set([
+    "name",
+    "children",
+    "id",
+    "comment",
+    "signatures",
+    "type",
+    "typeParameters",
+    "indexSignatures",
+    "defaultValue",
+    "overwrites",
+    "inheritedFrom",
+    "implementationOf",
+    "extendedTypes",
+    "extendedBy",
+    "implementedTypes",
+    "implementedBy",
+    "typeHierarchy",
+  ]);
+  return objectHash(project, {
+    encoding: "buffer",
+    algorithm: "sha1",
+    excludeKeys: (key) => !hashKeys.has(key),
+  });
 }
 
 /**
@@ -106,17 +157,23 @@ export async function initializeRanks(
   project: ProjectReflection,
   cacheFilePath: string,
 ): Promise<Map<number, number>> {
+  const currentProjectHash = createProjectHash(project);
+
   // Try to load from cache first
-  const pageRanks = await tryReadRankCache(cacheFilePath);
-  if (pageRanks) {
-    return pageRanks;
+  const cacheResult = await tryReadRankCache(cacheFilePath);
+
+  // Use cache only if it exists and the project hash matches
+  if (cacheResult && cacheResult.projectHash.equals(currentProjectHash)) {
+    return cacheResult.pageRanks;
   } else {
+    // Compute new page ranks if cache is invalid or doesn't exist
     const pageRank = new PageRank(project);
     await pageRank.buildGraph();
     const ranks = await pageRank.computePageRanks();
     await pageRank.dispose();
 
-    await writeRankCache(cacheFilePath, ranks);
+    // Save the new ranks with the current project hash
+    await writeRankCache(cacheFilePath, ranks, currentProjectHash);
     return ranks;
   }
 }
