@@ -1,6 +1,6 @@
 import {
-  ProjectReflection,
   DeclarationReflection,
+  ProjectReflection,
   ReflectionKind,
 } from "typedoc";
 import { reflectionIsReferencing } from "../utils/index.js";
@@ -43,7 +43,7 @@ export class PageRank {
    */
   async buildGraph(): Promise<void> {
     // Create node and edge tables
-    await this.connection.query(`
+    await this.executeQuery(`
       CREATE NODE TABLE Types (
         id INT64,
         name STRING,
@@ -52,7 +52,7 @@ export class PageRank {
       )
     `);
 
-    await this.connection.query(`
+    await this.executeQuery(`
       CREATE REL TABLE References (
         FROM Types TO Types,
         weight FLOAT
@@ -64,7 +64,7 @@ export class PageRank {
 
     // Insert nodes for all types
     for (const type of types) {
-      await this.connection.query(`
+      await this.executeQuery(`
         CREATE (t:Types {id: ${type.id}, name: '${type.name.replace(/'/g, "''")}', kind: ${type.kind}})
       `);
     }
@@ -75,7 +75,7 @@ export class PageRank {
         if (sourceType.id !== targetType.id) {
           // Check if source type references target type
           if (reflectionIsReferencing(sourceType, targetType.name)) {
-            await this.connection.query(`
+            await this.executeQuery(`
               MATCH (source:Types {id: ${sourceType.id}}), (target:Types {id: ${targetType.id}})
               CREATE (source)-[r:References]->(target)
             `);
@@ -84,7 +84,7 @@ export class PageRank {
       }
     }
 
-    await this.connection.query(`INSTALL ALGO; LOAD EXTENSION ALGO;`);
+    await this.executeQuery(`INSTALL ALGO; LOAD EXTENSION ALGO;`);
   }
 
   /**
@@ -93,28 +93,31 @@ export class PageRank {
    * @returns A map of type IDs to their page rank scores
    */
   async computePageRanks(): Promise<Map<number, number>> {
-    // Execute PageRank algorithm using Kuzu
-    const result = await this.connection.query(`
+    // Execute PageRank algorithm using Kuzu and process the result
+    return (await this.executeQuery(
+      `
       CALL project_graph('Graph', ['Types'], ['References']);
 
       CALL page_rank('Graph')
       RETURN node.id as id, rank ORDER BY rank DESC;
-    `);
+    `,
+      async (result) => {
+        if (!Array.isArray(result) || result.length !== 2) {
+          throw new Error("unexpected query result");
+        }
 
-    if (!Array.isArray(result) || result.length !== 2) {
-      throw new Error("unexpected query result");
-    }
+        // Convert result to a map of type IDs to page rank scores
+        const rows = await result[1].getAll();
+        const pageRanks = new Map<number, number>();
+        for (const row of rows) {
+          const id = row["id"] as number;
+          const rank = row["rank"] as number;
+          pageRanks.set(id, rank);
+        }
 
-    // Convert result to a map of type IDs to page rank scores
-    const rows = await result[1].getAll();
-    const pageRanks = new Map<number, number>();
-    for (const row of rows) {
-      const id = row["id"] as number;
-      const rank = row["rank"] as number;
-      pageRanks.set(id, rank);
-    }
-
-    return pageRanks;
+        return pageRanks;
+      },
+    ))!;
   }
 
   /**
@@ -129,11 +132,49 @@ export class PageRank {
   }
 
   /**
+   * Executes a query and optionally processes the result with a callback.
+   * Ensures the result is closed after processing.
+   *
+   * @param query - The SQL query to execute
+   * @param callback - Optional function to process the query result
+   * @returns The result of the callback if provided, otherwise void
+   */
+  private async executeQuery<T = void>(
+    query: string,
+    callback?: (result: kuzu.QueryResult | kuzu.QueryResult[]) => Promise<T>,
+  ): Promise<T | void> {
+    const result = await this.connection.query(query);
+    try {
+      return await callback?.(result);
+    } finally {
+      this.closeQueryResult(result);
+    }
+  }
+
+  /**
+   * Closes a QueryResult or an Array of QueryResults.
+   *
+   * @param result - The query result or array of query results to close
+   */
+  private closeQueryResult(
+    result: kuzu.QueryResult | kuzu.QueryResult[] | null | undefined,
+  ): void {
+    if (!result) return;
+
+    if (Array.isArray(result)) {
+      for (const r of result) {
+        this.closeQueryResult(r);
+      }
+    } else {
+      result.close();
+    }
+  }
+
+  /**
    * Disposes of the database connection and resources.
    */
   async dispose(): Promise<void> {
     await this.connection.close();
-    // There is a bug when closing the db ATM. See https://github.com/kuzudb/kuzu/issues/5545.
-    // await this.db.close();
+    await this.db.close();
   }
 }

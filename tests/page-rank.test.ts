@@ -138,19 +138,20 @@ describe("PageRank", { concurrent: false }, () => {
     // @ts-expect-error private property
     const connection = pageRank.connection;
 
-    const countNodesResult = await connection.query(
+    const countNodesResult = (await connection.query(
       "MATCH (n) RETURN COUNT(n) AS count",
-    );
-    const countNodesRows = await (countNodesResult as QueryResult).getAll();
+    )) as QueryResult;
+    const countNodesRows = await countNodesResult.getAll();
     expect(countNodesRows[0]["count"] as number).toBe(3);
 
-    const countRelationsResult = await connection.query(
+    const countRelationsResult = (await connection.query(
       "MATCH ()-[r:References]->() RETURN COUNT(r) AS count",
-    );
-    const countRelationsRows = await (
-      countRelationsResult as QueryResult
-    ).getAll();
+    )) as QueryResult;
+    const countRelationsRows = await countRelationsResult.getAll();
     expect(countRelationsRows[0]["count"] as number).toBe(3);
+
+    countNodesResult.close();
+    countRelationsResult.close();
   });
 
   it("should compute page ranks correctly", async () => {
@@ -172,8 +173,7 @@ describe("PageRank", { concurrent: false }, () => {
     expect(interface1Rank).toBeLessThan(type1Rank);
   });
 
-  // skip test because of db.close issue (https://github.com/kuzudb/kuzu/issues/5545)
-  it.skip("should dispose resources correctly", async () => {
+  it("should dispose resources correctly", async () => {
     // Create a new instance to test disposal
     const testPageRank = new PageRank(project);
 
