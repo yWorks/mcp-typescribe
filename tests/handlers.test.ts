@@ -148,27 +148,36 @@ Some text 7
   describe("getDocumentation", () => {
     it("should return the documentation page", async () => {
       const result = await handlers.handleGetDocumentation(
-        19,
+        1,
         0,
         "introduction",
       );
       expect(result).toBeDefined();
       expect(result).toContain("## Introduction");
-      expect(result).toContain("Complete File [here](api://doc/19)");
+      expect(result).toContain("Complete File [here](api://doc/1)");
       expect(result).toContain("Breadcrumbs: >> [Welcome to Our Project]");
       expect(result).not.toContain("# Welcome to Our Project");
       expect(result).not.toContain("Getting Started");
       expect(result).not.toContain("Thank you");
     });
     it("should return a documentation page section", async () => {
-      const result = await handlers.handleGetDocumentation(19);
+      const result = await handlers.handleGetDocumentation(1);
       expect(result).toBeDefined();
       expect(result).toContain("# External Markdown");
     });
-    it("should return the README page", async () => {
-      const result = await handlers.handleGetDocumentation(0);
+    it("should properly link between api docs", async () => {
+      const result = await handlers.handleGetDocumentation(1);
       expect(result).toBeDefined();
-      expect(result).toContain("README");
+      expect(result).toContain("api://doc/");
+      expect(result).toMatch(/api:\/\/doc\/(\d+)/);
+      const id = Number.parseInt(
+        result.match(/\[links]\(api:\/\/doc\/(\d+)/)![1],
+      );
+      const linkedDocument = await handlers.handleGetDocumentation(id);
+      expect(linkedDocument).toBeDefined();
+
+      expect(linkedDocument).toContain("External");
+      expect(linkedDocument).toContain("[External Markdown](api://doc/1)");
     });
     it("should include api-doc links in descriptions", async () => {
       const result = handlers.handleGetSymbolDetails({ name: "Kerle" });

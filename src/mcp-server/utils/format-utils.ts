@@ -19,6 +19,7 @@ import {
   DeclarationReflection,
   DocumentReflection,
   ParameterReflection,
+  ProjectReflection,
   ReferenceReflection,
   Reflection,
   ReflectionKind,
@@ -381,6 +382,20 @@ export function extractSection(content: string, section: string) {
   return { filteredContent, breadcrumbs };
 }
 
+function convertReflectionToDocumentId(
+  walker: ProjectReflection | undefined,
+  child: DocumentReflection,
+) {
+  let id = 1;
+  let resolved = walker?.project.files.resolve(id, walker?.project);
+  while (typeof resolved !== "undefined" && resolved !== child) {
+    id++;
+    resolved = walker?.project.files.resolve(id, walker?.project);
+  }
+  if (resolved === child) return id;
+  return undefined;
+}
+
 export async function extractDocument(
   offset: number,
   id: number,
@@ -395,13 +410,18 @@ export async function extractDocument(
 
   //breadcrumbs
   let walker = parent;
+  const breadCrumbs: string[] = [];
   while (walker instanceof DocumentReflection) {
-    finalResult += `[${walker.name}](${createDocLink(walker.id)}) > `;
+    const id = convertReflectionToDocumentId(walker.project, walker);
+    if (id) {
+      breadCrumbs.push(`[${walker.name}](${createDocLink(id)}) `);
+    } else {
+      breadCrumbs.push(walker.name);
+    }
     walker = walker.parent;
   }
-
-  if (finalResult.length > 0) {
-    finalResult += "\n\n";
+  if (breadCrumbs.length > 0) {
+    finalResult += "Breadcrumbs: >> " + breadCrumbs.join(" >> ") + "\n\n";
   }
 
   if (offset == 0) {
@@ -423,10 +443,20 @@ export async function extractDocument(
           finalResult += `**Tags:** ${frontmatter.tags.join(", ")}\n\n`;
         }
       }
+      /*
+      We cannot link to child ids because we need a file id and we only get a reflection id.
+       */
       if (Array.isArray(children) && children.length > 0) {
         finalResult += "## Child Pages\n\n";
         finalResult += children
-          .map((child) => `- [${child.name}](${createDocLink(child.id)})`)
+          .map((child) => {
+            const id = convertReflectionToDocumentId(walker?.project, child);
+            if (id) {
+              return `- [${child.name}](${createDocLink(id)})`;
+            } else {
+              return `- ${child.name}`;
+            }
+          })
           .join("\n");
       }
     }
