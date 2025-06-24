@@ -121,9 +121,9 @@ function createProjectHash(
   project: ProjectReflection,
 ): Buffer<ArrayBufferLike> {
   const hashKeys = new Set([
+    // don't include "id", it is not deterministic
     "name",
     "children",
-    "id",
     "comment",
     "signatures",
     "type",
@@ -144,6 +144,16 @@ function createProjectHash(
     algorithm: "sha1",
     excludeKeys: (key) => !hashKeys.has(key),
   });
+}
+
+async function computeRanks(
+  project: ProjectReflection,
+): Promise<Map<number, number>> {
+  const pageRank = new PageRank(project);
+  await pageRank.buildGraph();
+  const ranks = await pageRank.computePageRanks();
+  await pageRank.dispose();
+  return ranks;
 }
 
 /**
@@ -167,10 +177,7 @@ export async function initializeRanks(
     return cacheResult.pageRanks;
   } else {
     // Compute new page ranks if cache is invalid or doesn't exist
-    const pageRank = new PageRank(project);
-    await pageRank.buildGraph();
-    const ranks = await pageRank.computePageRanks();
-    await pageRank.dispose();
+    const ranks = await computeRanks(project);
 
     // Save the new ranks with the current project hash
     await writeRankCache(cacheFilePath, ranks, currentProjectHash);
