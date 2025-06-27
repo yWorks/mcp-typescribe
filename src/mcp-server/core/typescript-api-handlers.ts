@@ -46,6 +46,7 @@ import {
   DeclarationReflection,
   Deserializer,
   DocumentReflection,
+  FileId,
   FileRegistry,
   JSONOutput,
   ProjectReflection,
@@ -990,7 +991,7 @@ export class TypeScriptApiHandlers {
     offset: number = 0,
     section?: string,
   ): Promise<string> {
-    const result = this.project.files.resolve(id, this.project);
+    const result = this.project.files.resolve(id as FileId, this.project);
     if (result instanceof ProjectReflection && result.readme) {
       return await extractDocument(
         offset,
