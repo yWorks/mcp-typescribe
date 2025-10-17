@@ -1,3 +1,7 @@
+> [!CAUTION]
+>   Public development is currently suspended as no active community formed. We are working on a follow-up project, specifically for the [yFiles](https://yfiles.com) API. You can read more, here: [yFiles MCP Server](https://www.yfiles.com/the-yfiles-sdk/web/yfiles-for-html/yfiles-mcp-server). yFiles developers can use the MCP to query API, development guides, source code snippets and recipes using those tools, instead. They work far better than the implementation in this repository.
+
+
 [![npm version](https://img.shields.io/npm/v/mcp-typescribe.svg)](https://www.npmjs.com/package/mcp-typescribe)
 
 # MCP-Typescribe - an MCP Server providing LLMs API information
